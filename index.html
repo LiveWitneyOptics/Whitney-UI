@@ -146,8 +146,8 @@
         </button>
 
         <button onclick="openShareModal()" class="px-2.5 py-1 text-xs font-medium rounded border border-[#74D16F]/40 bg-[#74D16F]/10 text-[#74D16F] hover:bg-[#74D16F]/20 transition flex items-center space-x-1.5">
-          <i data-lucide="share-2" class="w-3.5 h-3.5"></i>
-          <span>Share / Export</span>
+          <i data-lucide="download" class="w-3.5 h-3.5"></i>
+          <span>Export</span>
         </button>
 
         <!-- livewitnessoptics.com domain badge -->
@@ -180,11 +180,6 @@
         <!-- Sidebar Navigation -->
         <nav class="space-y-1">
           <div class="px-2 pb-1 text-[10px] font-bold text-slate-400 uppercase tracking-wider">Navigation</div>
-          
-          <button onclick="switchTab('schedule')" class="w-full flex items-center space-x-3 px-3 py-2 text-sm rounded-md transition text-[#74D16F] bg-slate-800/90 font-medium">
-            <i data-lucide="calendar" class="w-4 h-4 text-[#74D16F]"></i>
-            <span>Witness Schedule</span>
-          </button>
 
           <button onclick="switchTab('schedule')" class="w-full flex items-center space-x-3 px-3 py-2 text-sm rounded-md transition text-slate-300 hover:text-white hover:bg-slate-800/50">
             <i data-lucide="layout-dashboard" class="w-4 h-4"></i>
@@ -200,12 +195,70 @@
             <i data-lucide="help-circle" class="w-4 h-4"></i>
             <span>Help</span>
           </button>
-
-          <button onclick="switchTab('schedule')" class="w-full flex items-center space-x-3 px-3 py-2 text-sm rounded-md transition text-slate-300 hover:text-white hover:bg-slate-800/50">
-            <i data-lucide="file-check-2" class="w-4 h-4"></i>
-            <span>Audit Trail</span>
-          </button>
         </nav>
+
+        <!-- Search Bar with Magnifying Glass for Lot, Patient, MRN, etc. -->
+        <div class="pt-1 relative">
+          <div class="relative">
+            <i data-lucide="search" class="w-3.5 h-3.5 text-[#74D16F] absolute left-2.5 top-1/2 -translate-y-1/2 pointer-events-none"></i>
+            <input type="text" id="globalSearchInput" oninput="handleGlobalSearch(this.value)" placeholder="Search Lot, Patient, MRN..." class="w-full bg-slate-800/90 text-white placeholder-slate-400 text-xs rounded-lg pl-8 pr-7 py-2 border border-slate-700/80 focus:border-[#74D16F] focus:outline-none focus:ring-1 focus:ring-[#74D16F] transition">
+            <button id="clearSearchBtn" onclick="clearGlobalSearch()" class="hidden absolute right-2 top-1/2 -translate-y-1/2 text-slate-400 hover:text-white" title="Clear search">
+              <i data-lucide="x" class="w-3 h-3"></i>
+            </button>
+          </div>
+          <!-- Real-Time Search Results Popover -->
+          <div id="searchResultsDropdown" class="hidden absolute left-0 right-0 mt-1 bg-[#0D1B2A] border border-[#74D16F]/40 rounded-lg shadow-2xl z-50 overflow-hidden text-xs max-h-72 overflow-y-auto">
+            <div id="searchResultsList" class="p-1 space-y-1 divide-y divide-slate-800"></div>
+          </div>
+        </div>
+
+        <!-- Ask Whitney AI Input Field (With AI Sparkle Logo) -->
+        <div class="pt-1 relative">
+          <div class="relative group">
+            <div class="absolute inset-0 bg-gradient-to-r from-[#4A9755]/30 to-[#74D16F]/30 rounded-lg blur-xs group-focus-within:opacity-100 opacity-60 transition"></div>
+            <div class="relative flex items-center bg-[#102235] border border-[#74D16F]/40 rounded-lg px-2.5 py-1.5 focus-within:border-[#74D16F] focus-within:ring-1 focus-within:ring-[#74D16F] transition">
+              <!-- AI Sparkle Logo / Icon -->
+              <div class="w-4 h-4 mr-2 flex items-center justify-center text-[#74D16F] flex-shrink-0 animate-pulse">
+                <i data-lucide="sparkles" class="w-3.5 h-3.5"></i>
+              </div>
+              <input type="text" id="askWhitneyInput" onkeydown="handleAskWhitneyKey(event)" placeholder="Ask Whitney..." class="w-full bg-transparent text-white placeholder-slate-400 text-xs focus:outline-none font-medium">
+              <button onclick="submitAskWhitney()" class="p-1 rounded text-slate-400 hover:text-[#74D16F] transition" title="Ask Whitney AI">
+                <i data-lucide="arrow-right" class="w-3 h-3"></i>
+              </button>
+            </div>
+          </div>
+
+          <!-- Ask Whitney Quick Popover Modal / Response Box -->
+          <div id="askWhitneyDropdown" class="hidden absolute left-0 right-0 mt-1.5 bg-[#0D1B2A] border border-[#74D16F]/40 rounded-lg shadow-2xl z-50 overflow-hidden text-xs max-h-80 overflow-y-auto">
+            <div class="bg-[#142938] px-3 py-2 border-b border-slate-700/80 flex items-center justify-between">
+              <div class="flex items-center space-x-1.5 text-[#74D16F] font-bold">
+                <i data-lucide="bot" class="w-3.5 h-3.5"></i>
+                <span>Whitney AI Assistant</span>
+              </div>
+              <button onclick="closeAskWhitney()" class="text-slate-400 hover:text-white">
+                <i data-lucide="x" class="w-3 h-3"></i>
+              </button>
+            </div>
+            <div id="askWhitneyResponseArea" class="p-3 text-slate-300 space-y-2">
+              <div class="text-[11px] text-slate-400">Ask about procedure protocols, witness validation status, tank storage locations, or QC schedules.</div>
+              <div class="space-y-1">
+                <div class="text-[10px] font-bold text-slate-400 uppercase tracking-wide">Quick Queries:</div>
+                <button onclick="runQuickAiQuery('Is Whitney Witness Day 0 retrieval verified?')" class="w-full text-left p-1.5 rounded bg-slate-800/80 hover:bg-slate-700 text-slate-200 text-[11px] flex items-center justify-between">
+                  <span>Is Day 0 retrieval verified?</span>
+                  <i data-lucide="chevron-right" class="w-3 h-3 text-slate-500"></i>
+                </button>
+                <button onclick="runQuickAiQuery('Where are E. Davis oocytes stored?')" class="w-full text-left p-1.5 rounded bg-slate-800/80 hover:bg-slate-700 text-slate-200 text-[11px] flex items-center justify-between">
+                  <span>Where are E. Davis oocytes stored?</span>
+                  <i data-lucide="chevron-right" class="w-3 h-3 text-slate-500"></i>
+                </button>
+                <button onclick="runQuickAiQuery('Show pending monthly QC duties')" class="w-full text-left p-1.5 rounded bg-slate-800/80 hover:bg-slate-700 text-slate-200 text-[11px] flex items-center justify-between">
+                  <span>Show pending monthly QC duties</span>
+                  <i data-lucide="chevron-right" class="w-3 h-3 text-slate-500"></i>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
 
       <!-- Footer Version info: VERSION: 0001 -->
@@ -265,6 +318,15 @@
               <span class="uppercase tracking-wide">Cryoinventory</span>
             </span>
           </button>
+
+          <!-- 6. AUDIT TRAIL -->
+          <button id="tab-audit" onclick="switchTab('audit')" 
+                  class="px-3.5 py-2 text-xs sm:text-sm font-medium border-t-2 border-r-2 border-l-2 border-transparent hover:border-[#DDD4C0] rounded-t-lg text-slate-700 hover:text-slate-900 bg-[#E8E2D6] hover:bg-[#FAF8F5] transition">
+            <span class="flex items-center space-x-1.5">
+              <i data-lucide="file-check-2" class="w-3.5 h-3.5 text-[#4A9755]"></i>
+              <span class="uppercase tracking-wide">Audit Trail</span>
+            </span>
+          </button>
         </div>
       </div>
 
@@ -307,18 +369,21 @@
                 <button onclick="navigateDay(-1)" class="p-1 rounded bg-[#FAF8F5] border border-[#DDD4C0] hover:bg-white text-slate-600" title="Previous Day">
                   <i data-lucide="chevron-left" class="w-4 h-4"></i>
                 </button>
-                <span id="dayNavLabel" class="px-2 font-mono font-bold text-slate-800 text-xs">MON Sep 14</span>
+                <span id="dayNavLabel" contenteditable="true" class="px-2 py-0.5 rounded font-mono font-bold text-slate-800 text-xs cursor-text hover:bg-white hover:ring-1 hover:ring-[#4A9755] focus:outline-none focus:ring-2 focus:ring-[#4A9755] focus:bg-white transition" title="Click to edit date">MON Sep 14</span>
                 <button onclick="navigateDay(1)" class="p-1 rounded bg-[#FAF8F5] border border-[#DDD4C0] hover:bg-white text-slate-600" title="Next Day">
                   <i data-lucide="chevron-right" class="w-4 h-4"></i>
                 </button>
               </div>
 
               <div id="weekNavControls" class="flex items-center space-x-1">
-                <button onclick="changeWeek(-1)" class="p-1 rounded bg-[#FAF8F5] border border-[#DDD4C0] hover:bg-white text-slate-600">
+                <button onclick="changeWeek(-1)" class="p-1 rounded bg-[#FAF8F5] border border-[#DDD4C0] hover:bg-white text-slate-600" title="Previous Week">
                   <i data-lucide="chevron-left" class="w-4 h-4"></i>
                 </button>
-                <span class="px-2 font-mono font-semibold text-slate-800">September 2026</span>
-                <button onclick="changeWeek(1)" class="p-1 rounded bg-[#FAF8F5] border border-[#DDD4C0] hover:bg-white text-slate-600">
+                <div class="relative group/edit flex items-center">
+                  <span id="currentMonthYearLabel" contenteditable="true" class="px-2 py-0.5 rounded font-mono font-semibold text-slate-800 text-xs cursor-text hover:bg-white hover:ring-1 hover:ring-[#4A9755] focus:outline-none focus:ring-2 focus:ring-[#4A9755] focus:bg-white transition" title="Click to edit Month and Year">September 2026</span>
+                  <i data-lucide="pencil" class="w-2.5 h-2.5 text-slate-400 group-hover/edit:text-[#4A9755] ml-0.5 opacity-0 group-hover/edit:opacity-100 transition pointer-events-none"></i>
+                </div>
+                <button onclick="changeWeek(1)" class="p-1 rounded bg-[#FAF8F5] border border-[#DDD4C0] hover:bg-white text-slate-600" title="Next Week">
                   <i data-lucide="chevron-right" class="w-4 h-4"></i>
                 </button>
               </div>
@@ -431,35 +496,32 @@
                     <th class="w-24 p-2.5 border-r border-[#DDD4C0] text-center bg-[#F4EFE6] text-slate-800">TIME</th>
                     <th class="p-2.5 border-r border-[#DDD4C0] min-w-[125px] text-center bg-[#FAF8F5]">
                       <div class="font-bold text-slate-800">DAY 0</div>
-                      <div class="text-[10px] text-slate-500 font-normal">Retrieval / Insem</div>
+                      <div class="text-[10px] text-slate-500 font-normal">RETRIEVAL / SPERM PREP / INSEM</div>
                     </th>
                     <th class="p-2.5 border-r border-[#DDD4C0] min-w-[125px] text-center bg-[#FAF8F5]">
                       <div class="font-bold text-slate-800">DAY 1</div>
-                      <div class="text-[10px] text-slate-500 font-normal">Fert Check 2PN</div>
+                      <div class="text-[10px] text-slate-500 font-normal">FERT CHECK</div>
                     </th>
                     <th class="p-2.5 border-r border-[#DDD4C0] min-w-[125px] text-center bg-[#FAF8F5]">
                       <div class="font-bold text-slate-800">DAY 2</div>
-                      <div class="text-[10px] text-slate-500 font-normal">Cleavage Stage</div>
                     </th>
                     <th class="p-2.5 border-r border-[#DDD4C0] min-w-[125px] text-center bg-[#FAF8F5]">
                       <div class="font-bold text-slate-800">DAY 3</div>
-                      <div class="text-[10px] text-slate-500 font-normal">Cell Eval</div>
                     </th>
                     <th class="p-2.5 border-r border-[#DDD4C0] min-w-[125px] text-center bg-[#FAF8F5]">
                       <div class="font-bold text-slate-800">DAY 4</div>
-                      <div class="text-[10px] text-slate-500 font-normal">Morula / Compact</div>
                     </th>
                     <th class="p-2.5 border-r border-[#DDD4C0] min-w-[125px] text-center bg-[#FAF8F5]">
                       <div class="font-bold text-slate-800">DAY 5</div>
-                      <div class="text-[10px] text-slate-500 font-normal">Blastocyst / PGT</div>
+                      <div class="text-[10px] text-slate-500 font-normal">CHECK/BIOPSY/CRYO</div>
                     </th>
                     <th class="p-2.5 border-r border-[#DDD4C0] min-w-[125px] text-center bg-[#FAF8F5]">
                       <div class="font-bold text-slate-800">DAY 6</div>
-                      <div class="text-[10px] text-slate-500 font-normal">Ext Blast / Cryo</div>
+                      <div class="text-[10px] text-slate-500 font-normal">CHECK/BIOPSY/CRYO</div>
                     </th>
                     <th class="p-2.5 min-w-[125px] text-center bg-[#FAF8F5]">
                       <div class="font-bold text-slate-800">DAY 7</div>
-                      <div class="text-[10px] text-slate-500 font-normal">Final Cryo</div>
+                      <div class="text-[10px] text-slate-500 font-normal">CHECK/BIOPSY/CRYO</div>
                     </th>
                   </tr>
                 </thead>
@@ -474,54 +536,835 @@
 
         <!-- VIEW 2: QC -->
         <div id="view-qc" class="hidden space-y-4">
-          <div class="bg-white p-4 rounded-lg border border-[#DDD4C0] shadow-sm flex items-center justify-between">
+          <div class="bg-white p-4 rounded-lg border border-[#DDD4C0] shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-3">
             <div>
-              <h2 class="text-lg font-bold text-slate-900">Optical QC & Calibration Checklist</h2>
-              <p class="text-xs text-slate-500">Optical camera calibration, dish RFID barcode scanning alignment, and laser witness tests.</p>
+              <h2 id="qcHeadingTitle" class="text-lg font-bold text-slate-900">QC REPORT</h2>
             </div>
-            <button onclick="addQCRow()" class="px-3 py-1.5 bg-[#4A9755] hover:bg-[#3D8046] text-white rounded text-xs font-medium transition">
-              + New QC Log Entry
+            <div class="flex items-center space-x-2">
+              <button onclick="addQCRow()" class="bg-[#4A9755] hover:bg-[#3D8046] text-white font-semibold px-4 py-2 rounded-lg shadow-sm flex items-center space-x-2 transition text-xs sm:text-sm">
+                <i data-lucide="glasses" class="w-4 h-4"></i>
+                <span id="qcCaptureBtnLabel">Capture QC</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- QC Sub-Tabs: Daily, Weekly, Monthly, Quarterly, Yearly -->
+          <div class="bg-[#EFEAE1] border-b border-[#DDD4C0] px-3 pt-2.5 rounded-t-lg flex flex-wrap items-end space-x-1 shadow-sm">
+            <button id="qc-tab-daily" onclick="switchQCTab('daily')" 
+                    class="px-4 py-2 text-xs sm:text-sm font-semibold border-t-2 border-r-2 border-l-2 border-[#DDD4C0] rounded-t-lg transition bg-[#FAF8F5] text-[#1A365D] border-b-transparent shadow-sm">
+              <span class="flex items-center space-x-1.5">
+                <i data-lucide="sun" class="w-3.5 h-3.5 text-[#4A9755]"></i>
+                <span class="uppercase tracking-wide">Daily</span>
+              </span>
+            </button>
+            
+            <button id="qc-tab-weekly" onclick="switchQCTab('weekly')" 
+                    class="px-4 py-2 text-xs sm:text-sm font-medium border-t-2 border-r-2 border-l-2 border-transparent hover:border-[#DDD4C0] rounded-t-lg transition text-slate-700 hover:text-slate-900 bg-[#E8E2D6] hover:bg-[#FAF8F5]">
+              <span class="flex items-center space-x-1.5">
+                <i data-lucide="calendar" class="w-3.5 h-3.5 text-slate-500"></i>
+                <span class="uppercase tracking-wide">Weekly</span>
+              </span>
+            </button>
+
+            <button id="qc-tab-monthly" onclick="switchQCTab('monthly')" 
+                    class="px-4 py-2 text-xs sm:text-sm font-medium border-t-2 border-r-2 border-l-2 border-transparent hover:border-[#DDD4C0] rounded-t-lg transition text-slate-700 hover:text-slate-900 bg-[#E8E2D6] hover:bg-[#FAF8F5]">
+              <span class="flex items-center space-x-1.5">
+                <i data-lucide="calendar-days" class="w-3.5 h-3.5 text-slate-500"></i>
+                <span class="uppercase tracking-wide">Monthly</span>
+              </span>
+            </button>
+
+            <button id="qc-tab-quarterly" onclick="switchQCTab('quarterly')" 
+                    class="px-4 py-2 text-xs sm:text-sm font-medium border-t-2 border-r-2 border-l-2 border-transparent hover:border-[#DDD4C0] rounded-t-lg transition text-slate-700 hover:text-slate-900 bg-[#E8E2D6] hover:bg-[#FAF8F5]">
+              <span class="flex items-center space-x-1.5">
+                <i data-lucide="pie-chart" class="w-3.5 h-3.5 text-slate-500"></i>
+                <span class="uppercase tracking-wide">Quarterly</span>
+              </span>
+            </button>
+
+            <button id="qc-tab-yearly" onclick="switchQCTab('yearly')" 
+                    class="px-4 py-2 text-xs sm:text-sm font-medium border-t-2 border-r-2 border-l-2 border-transparent hover:border-[#DDD4C0] rounded-t-lg transition text-slate-700 hover:text-slate-900 bg-[#E8E2D6] hover:bg-[#FAF8F5]">
+              <span class="flex items-center space-x-1.5">
+                <i data-lucide="award" class="w-3.5 h-3.5 text-slate-500"></i>
+                <span class="uppercase tracking-wide">Yearly</span>
+              </span>
             </button>
           </div>
 
-          <div class="bg-white rounded-lg border border-[#DDD4C0] overflow-hidden">
+          <!-- 1. DAILY QC TABLE -->
+          <div id="qc-view-daily" class="bg-white rounded-b-lg border-x border-b border-[#DDD4C0] overflow-hidden shadow-sm">
+            <div class="bg-[#FAF8F5] px-4 py-2.5 border-b border-[#DDD4C0] flex items-center justify-between">
+              <div class="flex items-center space-x-2.5">
+                <i data-lucide="calendar" class="w-4 h-4 text-[#4A9755]"></i>
+                <span class="font-mono font-bold text-slate-800 text-xs">09/14/26 Monday</span>
+                <span class="text-slate-300">•</span>
+                <span class="font-mono font-bold text-slate-700 text-xs uppercase tracking-wide bg-slate-100 px-2 py-0.5 rounded border border-slate-200">TECHNICIAN: LP</span>
+              </div>
+              <span class="text-[11px] font-mono font-semibold text-[#4A9755] bg-[#EAF7EC] border border-[#74D16F]/40 px-2 py-0.5 rounded-full">3 of 3 Verified</span>
+            </div>
+            <div class="overflow-x-auto w-full">
+              <table class="w-full text-xs text-left border-collapse">
+                <thead class="bg-[#FAF8F5]/80 border-b border-[#DDD4C0] font-bold text-slate-700 uppercase tracking-wider text-[11px]">
+                  <tr>
+                    <th class="p-3 min-w-[190px] whitespace-nowrap">Equipment / Station</th>
+                    <th class="p-3 min-w-[170px] whitespace-nowrap text-center">Temperature Set Point</th>
+                    <th class="p-3 min-w-[150px] whitespace-nowrap text-center">Digital Reading</th>
+                    <th class="p-3 min-w-[150px] whitespace-nowrap text-center">Measure Reading</th>
+                    <th class="p-3 min-w-[130px] whitespace-nowrap text-center">QC Status</th>
+                    <th class="p-3 min-w-[180px] whitespace-nowrap text-center">CORRECTIVE ACTION</th>
+                  </tr>
+                </thead>
+                <tbody id="qcDailyTableBody" class="divide-y divide-slate-100">
+                  <tr class="hover:bg-slate-50/80 transition-colors">
+                    <td class="p-3 font-semibold text-slate-900 whitespace-nowrap" contenteditable="true">EmbryoScope 1</td>
+                    <td class="p-3 text-[#4A9755] font-semibold font-mono text-center whitespace-nowrap" contenteditable="true">37°C</td>
+                    <td class="p-3 text-[#4A9755] font-semibold font-mono text-center whitespace-nowrap" contenteditable="true">37°C</td>
+                    <td class="p-3 text-[#4A9755] font-semibold font-mono text-center whitespace-nowrap" contenteditable="true">36.9°C</td>
+                    <td class="p-3 text-center whitespace-nowrap">
+                      <span class="px-2.5 py-0.5 rounded-full bg-[#EAF7EC] text-[#4A9755] border border-[#74D16F]/50 font-bold inline-block">Within Range</span>
+                    </td>
+                    <td class="p-3 text-center whitespace-nowrap text-slate-500 font-mono text-[11px]" contenteditable="true">—</td>
+                  </tr>
+                  <tr class="hover:bg-slate-50/80 transition-colors">
+                    <td class="p-3 font-semibold text-slate-900 whitespace-nowrap" contenteditable="true">ICSI Scope 1</td>
+                    <td class="p-3 text-[#4A9755] font-semibold font-mono text-center whitespace-nowrap" contenteditable="true">37°C</td>
+                    <td class="p-3 text-[#4A9755] font-semibold font-mono text-center whitespace-nowrap" contenteditable="true">37°C</td>
+                    <td class="p-3 text-[#4A9755] font-semibold font-mono text-center whitespace-nowrap" contenteditable="true">37.1°C</td>
+                    <td class="p-3 text-center whitespace-nowrap">
+                      <span class="px-2.5 py-0.5 rounded-full bg-[#EAF7EC] text-[#4A9755] border border-[#74D16F]/50 font-bold inline-block">Within Range</span>
+                    </td>
+                    <td class="p-3 text-center whitespace-nowrap text-slate-500 font-mono text-[11px]" contenteditable="true">—</td>
+                  </tr>
+                  <tr class="hover:bg-slate-50/80 transition-colors">
+                    <td class="p-3 font-semibold text-slate-900 whitespace-nowrap" contenteditable="true">IVF Refrigerator</td>
+                    <td class="p-3 text-[#4A9755] font-semibold font-mono text-center whitespace-nowrap" contenteditable="true">4°C</td>
+                    <td class="p-3 text-[#4A9755] font-semibold font-mono text-center whitespace-nowrap" contenteditable="true">5°C</td>
+                    <td class="p-3 text-[#4A9755] font-semibold font-mono text-center whitespace-nowrap" contenteditable="true">4°C</td>
+                    <td class="p-3 text-center whitespace-nowrap">
+                      <span class="px-2.5 py-0.5 rounded-full bg-[#EAF7EC] text-[#4A9755] border border-[#74D16F]/50 font-bold inline-block">Within Range</span>
+                    </td>
+                    <td class="p-3 text-center whitespace-nowrap text-slate-500 font-mono text-[11px]" contenteditable="true">—</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- 2. WEEKLY QC CALENDAR VIEW -->
+          <div id="qc-view-weekly" class="hidden bg-white rounded-b-lg border-x border-b border-[#DDD4C0] p-3 space-y-3 shadow-sm">
+            <!-- Weekly Calendar Header & Summary Bar -->
+            <div class="bg-[#FAF8F5] p-3 rounded-lg border border-[#DDD4C0] flex flex-col md:flex-row md:items-center justify-between gap-3">
+              <div class="flex items-center space-x-3">
+                <div class="w-8 h-8 rounded-lg bg-[#EAF7EC] border border-[#74D16F]/40 flex items-center justify-center text-[#4A9755] flex-shrink-0">
+                  <i data-lucide="calendar-range" class="w-4 h-4"></i>
+                </div>
+                <div>
+                  <div class="flex items-center space-x-2">
+                    <span class="text-xs font-bold text-slate-900 uppercase tracking-wide">WEEKLY QC DUTIES CALENDAR</span>
+                    <span id="weeklyQcProgressBadge" class="px-2 py-0.5 rounded-full text-[10px] font-mono font-bold bg-[#EAF7EC] text-[#4A9755] border border-[#74D16F]/40">4 of 5 Duties Completed</span>
+                  </div>
+                  <p class="text-[11px] text-slate-500 font-medium">Week: September 14 – September 20, 2026 • Click any card or cell to edit</p>
+                </div>
+              </div>
+
+              <!-- Action Controls -->
+              <div class="flex items-center space-x-2">
+                <button onclick="addWeeklyDutyCard('MON')" class="px-2.5 py-1.5 text-xs font-semibold rounded-md bg-[#FAF8F5] hover:bg-white border border-[#DDD4C0] text-slate-700 hover:text-slate-900 transition flex items-center space-x-1 shadow-sm">
+                  <i data-lucide="plus" class="w-3.5 h-3.5 text-[#4A9755]"></i>
+                  <span>Add Duty to Monday</span>
+                </button>
+                <button onclick="addWeeklyDutyCard('current')" class="px-3 py-1.5 text-xs font-bold rounded-md bg-[#4A9755] hover:bg-[#3D8046] text-white transition flex items-center space-x-1.5 shadow-sm">
+                  <i data-lucide="check-circle" class="w-3.5 h-3.5 text-[#74D16F]"></i>
+                  <span>Quick Add Duty</span>
+                </button>
+              </div>
+            </div>
+
+            <!-- 7-Day Calendar Grid (Monday through Sunday) -->
+            <div class="overflow-x-auto pb-1">
+              <div class="grid grid-cols-7 gap-2.5 min-w-[1050px]">
+                
+                <!-- MONDAY -->
+                <div class="bg-[#FAF8F5]/60 rounded-lg border border-[#DDD4C0] flex flex-col min-h-[380px] overflow-hidden">
+                  <div class="bg-[#FAF8F5] p-2.5 border-b border-[#DDD4C0] flex items-center justify-between">
+                    <div>
+                      <div class="text-[11px] font-bold text-slate-900 uppercase">MON</div>
+                      <div class="text-[10px] font-mono text-slate-500 font-semibold">Sep 14</div>
+                    </div>
+                    <button onclick="addWeeklyDutyCard('MON')" class="p-1 rounded hover:bg-slate-200/60 text-slate-500 hover:text-[#4A9755] transition" title="Add duty to Monday">
+                      <i data-lucide="plus-circle" class="w-3.5 h-3.5"></i>
+                    </button>
+                  </div>
+                  <div id="weeklyDuties-MON" class="p-2 space-y-2 flex-1 overflow-y-auto">
+                    <!-- Duty Card 1 -->
+                    <div class="bg-white rounded-md border-2 border-[#4A9755] p-2 space-y-1.5 shadow-xs relative group hover:shadow-sm transition">
+                      <div class="flex items-center justify-between">
+                        <span class="text-[9px] font-mono font-bold px-1.5 py-0.5 rounded bg-slate-100 text-slate-700 border border-slate-200" contenteditable="true">Miri Incubator 01</span>
+                        <span class="text-[9px] font-mono font-bold text-[#4A9755] bg-[#EAF7EC] px-1.5 py-0.2 rounded border border-[#74D16F]/50">DONE</span>
+                      </div>
+                      <div class="text-[11px] font-bold text-slate-900 leading-snug" contenteditable="true">CO2 & O2 Gas Concentration Audit</div>
+                      <div class="text-[10px] text-slate-500 font-mono" contenteditable="true">Reading: CO2 6.0%, O2 5.0% (Pass)</div>
+                      <div class="pt-1 border-t border-slate-100 flex items-center justify-between text-[9px] font-mono text-slate-500">
+                        <span contenteditable="true">Tech: LP</span>
+                        <button onclick="this.closest('.group').remove()" class="text-rose-400 hover:text-rose-600 opacity-0 group-hover:opacity-100 transition">Remove</button>
+                      </div>
+                    </div>
+
+                    <!-- Duty Card 2 -->
+                    <div class="bg-white rounded-md border-2 border-[#4A9755] p-2 space-y-1.5 shadow-xs relative group hover:shadow-sm transition">
+                      <div class="flex items-center justify-between">
+                        <span class="text-[9px] font-mono font-bold px-1.5 py-0.5 rounded bg-slate-100 text-slate-700 border border-slate-200" contenteditable="true">Heated Stage 01 & 02</span>
+                        <span class="text-[9px] font-mono font-bold text-[#4A9755] bg-[#EAF7EC] px-1.5 py-0.2 rounded border border-[#74D16F]/50">DONE</span>
+                      </div>
+                      <div class="text-[11px] font-bold text-slate-900 leading-snug" contenteditable="true">Surface Temp Verification</div>
+                      <div class="text-[10px] text-slate-500 font-mono" contenteditable="true">Measured: 37.0°C ± 0.1°C (Pass)</div>
+                      <div class="pt-1 border-t border-slate-100 flex items-center justify-between text-[9px] font-mono text-slate-500">
+                        <span contenteditable="true">Tech: Dr. S. Jenkins</span>
+                        <button onclick="this.closest('.group').remove()" class="text-rose-400 hover:text-rose-600 opacity-0 group-hover:opacity-100 transition">Remove</button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- TUESDAY -->
+                <div class="bg-[#FAF8F5]/60 rounded-lg border border-[#DDD4C0] flex flex-col min-h-[380px] overflow-hidden">
+                  <div class="bg-[#FAF8F5] p-2.5 border-b border-[#DDD4C0] flex items-center justify-between">
+                    <div>
+                      <div class="text-[11px] font-bold text-slate-900 uppercase">TUE</div>
+                      <div class="text-[10px] font-mono text-slate-500 font-semibold">Sep 15</div>
+                    </div>
+                    <button onclick="addWeeklyDutyCard('TUE')" class="p-1 rounded hover:bg-slate-200/60 text-slate-500 hover:text-[#4A9755] transition" title="Add duty to Tuesday">
+                      <i data-lucide="plus-circle" class="w-3.5 h-3.5"></i>
+                    </button>
+                  </div>
+                  <div id="weeklyDuties-TUE" class="p-2 space-y-2 flex-1 overflow-y-auto">
+                    <!-- Duty Card -->
+                    <div class="bg-white rounded-md border-2 border-[#4A9755] p-2 space-y-1.5 shadow-xs relative group hover:shadow-sm transition">
+                      <div class="flex items-center justify-between">
+                        <span class="text-[9px] font-mono font-bold px-1.5 py-0.5 rounded bg-slate-100 text-slate-700 border border-slate-200" contenteditable="true">Whitney Headsets 01 & 02</span>
+                        <span class="text-[9px] font-mono font-bold text-[#4A9755] bg-[#EAF7EC] px-1.5 py-0.2 rounded border border-[#74D16F]/50">DONE</span>
+                      </div>
+                      <div class="text-[11px] font-bold text-slate-900 leading-snug" contenteditable="true">Optical Clarity & Battery Health</div>
+                      <div class="text-[10px] text-slate-500 font-mono" contenteditable="true">99.4% Optical MTF Pass • Cleaned</div>
+                      <div class="pt-1 border-t border-slate-100 flex items-center justify-between text-[9px] font-mono text-slate-500">
+                        <span contenteditable="true">Tech: Alex Rivera</span>
+                        <button onclick="this.closest('.group').remove()" class="text-rose-400 hover:text-rose-600 opacity-0 group-hover:opacity-100 transition">Remove</button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- WEDNESDAY -->
+                <div class="bg-[#FAF8F5]/60 rounded-lg border border-[#DDD4C0] flex flex-col min-h-[380px] overflow-hidden">
+                  <div class="bg-[#FAF8F5] p-2.5 border-b border-[#DDD4C0] flex items-center justify-between">
+                    <div>
+                      <div class="text-[11px] font-bold text-slate-900 uppercase">WED</div>
+                      <div class="text-[10px] font-mono text-slate-500 font-semibold">Sep 16</div>
+                    </div>
+                    <button onclick="addWeeklyDutyCard('WED')" class="p-1 rounded hover:bg-slate-200/60 text-slate-500 hover:text-[#4A9755] transition" title="Add duty to Wednesday">
+                      <i data-lucide="plus-circle" class="w-3.5 h-3.5"></i>
+                    </button>
+                  </div>
+                  <div id="weeklyDuties-WED" class="p-2 space-y-2 flex-1 overflow-y-auto">
+                    <!-- Duty Card -->
+                    <div class="bg-white rounded-md border-2 border-[#4A9755] p-2 space-y-1.5 shadow-xs relative group hover:shadow-sm transition">
+                      <div class="flex items-center justify-between">
+                        <span class="text-[9px] font-mono font-bold px-1.5 py-0.5 rounded bg-slate-100 text-slate-700 border border-slate-200" contenteditable="true">ICSI Rig & Micromanipulator</span>
+                        <span class="text-[9px] font-mono font-bold text-[#4A9755] bg-[#EAF7EC] px-1.5 py-0.2 rounded border border-[#74D16F]/50">DONE</span>
+                      </div>
+                      <div class="text-[11px] font-bold text-slate-900 leading-snug" contenteditable="true">Hydraulic Oil & Joystick Drift Test</div>
+                      <div class="text-[10px] text-slate-500 font-mono" contenteditable="true">Drift: 0.0 µm over 15 min (Stable)</div>
+                      <div class="pt-1 border-t border-slate-100 flex items-center justify-between text-[9px] font-mono text-slate-500">
+                        <span contenteditable="true">Tech: LP</span>
+                        <button onclick="this.closest('.group').remove()" class="text-rose-400 hover:text-rose-600 opacity-0 group-hover:opacity-100 transition">Remove</button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- THURSDAY -->
+                <div class="bg-[#FAF8F5]/60 rounded-lg border border-[#DDD4C0] flex flex-col min-h-[380px] overflow-hidden">
+                  <div class="bg-[#FAF8F5] p-2.5 border-b border-[#DDD4C0] flex items-center justify-between">
+                    <div>
+                      <div class="text-[11px] font-bold text-slate-900 uppercase">THU</div>
+                      <div class="text-[10px] font-mono text-slate-500 font-semibold">Sep 17</div>
+                    </div>
+                    <button onclick="addWeeklyDutyCard('THU')" class="p-1 rounded hover:bg-slate-200/60 text-slate-500 hover:text-[#4A9755] transition" title="Add duty to Thursday">
+                      <i data-lucide="plus-circle" class="w-3.5 h-3.5"></i>
+                    </button>
+                  </div>
+                  <div id="weeklyDuties-THU" class="p-2 space-y-2 flex-1 overflow-y-auto">
+                    <!-- Duty Card (Pending / Scheduled) -->
+                    <div class="bg-white rounded-md border-2 border-amber-300 p-2 space-y-1.5 shadow-xs relative group hover:shadow-sm transition">
+                      <div class="flex items-center justify-between">
+                        <span class="text-[9px] font-mono font-bold px-1.5 py-0.5 rounded bg-slate-100 text-slate-700 border border-slate-200" contenteditable="true">Laminar Airflow Hoods</span>
+                        <span class="text-[9px] font-mono font-bold text-amber-700 bg-amber-50 px-1.5 py-0.2 rounded border border-amber-300">PENDING</span>
+                      </div>
+                      <div class="text-[11px] font-bold text-slate-900 leading-snug" contenteditable="true">HEPA Pre-Filter Check & Surface Clean</div>
+                      <div class="text-[10px] text-slate-500 font-mono" contenteditable="true">Differential pressure check scheduled</div>
+                      <div class="pt-1 border-t border-slate-100 flex items-center justify-between text-[9px] font-mono text-slate-500">
+                        <span contenteditable="true">Tech: LP</span>
+                        <button onclick="this.closest('.group').remove()" class="text-rose-400 hover:text-rose-600 opacity-0 group-hover:opacity-100 transition">Remove</button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- FRIDAY -->
+                <div class="bg-[#FAF8F5]/60 rounded-lg border border-[#DDD4C0] flex flex-col min-h-[380px] overflow-hidden">
+                  <div class="bg-[#FAF8F5] p-2.5 border-b border-[#DDD4C0] flex items-center justify-between">
+                    <div>
+                      <div class="text-[11px] font-bold text-slate-900 uppercase">FRI</div>
+                      <div class="text-[10px] font-mono text-slate-500 font-semibold">Sep 18</div>
+                    </div>
+                    <button onclick="addWeeklyDutyCard('FRI')" class="p-1 rounded hover:bg-slate-200/60 text-slate-500 hover:text-[#4A9755] transition" title="Add duty to Friday">
+                      <i data-lucide="plus-circle" class="w-3.5 h-3.5"></i>
+                    </button>
+                  </div>
+                  <div id="weeklyDuties-FRI" class="p-2 space-y-2 flex-1 overflow-y-auto">
+                    <div class="h-24 border border-dashed border-slate-300 rounded-md flex flex-col items-center justify-center text-center p-2 text-slate-400 hover:bg-white/80 transition cursor-pointer group" onclick="addWeeklyDutyCard('FRI')">
+                      <i data-lucide="plus" class="w-4 h-4 text-slate-400 group-hover:text-[#4A9755]"></i>
+                      <span class="text-[10px] mt-1 font-medium group-hover:text-slate-700">Add Friday Duty</span>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- SATURDAY -->
+                <div class="bg-[#FAF8F5]/40 rounded-lg border border-[#DDD4C0] flex flex-col min-h-[380px] overflow-hidden">
+                  <div class="bg-[#FAF8F5] p-2.5 border-b border-[#DDD4C0] flex items-center justify-between">
+                    <div>
+                      <div class="text-[11px] font-bold text-slate-900 uppercase">SAT</div>
+                      <div class="text-[10px] font-mono text-slate-500 font-semibold">Sep 19</div>
+                    </div>
+                    <button onclick="addWeeklyDutyCard('SAT')" class="p-1 rounded hover:bg-slate-200/60 text-slate-500 hover:text-[#4A9755] transition" title="Add duty to Saturday">
+                      <i data-lucide="plus-circle" class="w-3.5 h-3.5"></i>
+                    </button>
+                  </div>
+                  <div id="weeklyDuties-SAT" class="p-2 space-y-2 flex-1 overflow-y-auto">
+                    <div class="h-24 border border-dashed border-slate-300 rounded-md flex flex-col items-center justify-center text-center p-2 text-slate-400 hover:bg-white/80 transition cursor-pointer group" onclick="addWeeklyDutyCard('SAT')">
+                      <i data-lucide="plus" class="w-4 h-4 text-slate-400 group-hover:text-[#4A9755]"></i>
+                      <span class="text-[10px] mt-1 font-medium group-hover:text-slate-700">Weekend QC</span>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- SUNDAY -->
+                <div class="bg-[#FAF8F5]/40 rounded-lg border border-[#DDD4C0] flex flex-col min-h-[380px] overflow-hidden">
+                  <div class="bg-[#FAF8F5] p-2.5 border-b border-[#DDD4C0] flex items-center justify-between">
+                    <div>
+                      <div class="text-[11px] font-bold text-slate-900 uppercase">SUN</div>
+                      <div class="text-[10px] font-mono text-slate-500 font-semibold">Sep 20</div>
+                    </div>
+                    <button onclick="addWeeklyDutyCard('SUN')" class="p-1 rounded hover:bg-slate-200/60 text-slate-500 hover:text-[#4A9755] transition" title="Add duty to Sunday">
+                      <i data-lucide="plus-circle" class="w-3.5 h-3.5"></i>
+                    </button>
+                  </div>
+                  <div id="weeklyDuties-SUN" class="p-2 space-y-2 flex-1 overflow-y-auto">
+                    <div class="h-24 border border-dashed border-slate-300 rounded-md flex flex-col items-center justify-center text-center p-2 text-slate-400 hover:bg-white/80 transition cursor-pointer group" onclick="addWeeklyDutyCard('SUN')">
+                      <i data-lucide="plus" class="w-4 h-4 text-slate-400 group-hover:text-[#4A9755]"></i>
+                      <span class="text-[10px] mt-1 font-medium group-hover:text-slate-700">Weekend QC</span>
+                    </div>
+                  </div>
+                </div>
+
+              </div>
+            </div>
+          </div>
+
+          <!-- 3. MONTHLY QC CALENDAR VIEW -->
+          <div id="qc-view-monthly" class="hidden bg-white rounded-b-lg border-x border-b border-[#DDD4C0] p-3 space-y-3 shadow-sm">
+            <!-- Monthly Calendar Header & Summary Bar -->
+            <div class="bg-[#FAF8F5] p-3 rounded-lg border border-[#DDD4C0] flex flex-col md:flex-row md:items-center justify-between gap-3">
+              <div class="flex items-center space-x-3">
+                <div class="w-8 h-8 rounded-lg bg-[#EAF7EC] border border-[#74D16F]/40 flex items-center justify-center text-[#4A9755] flex-shrink-0">
+                  <i data-lucide="calendar-days" class="w-4 h-4"></i>
+                </div>
+                <div>
+                  <div class="flex items-center space-x-2">
+                    <span class="text-xs font-bold text-slate-900 uppercase tracking-wide">SEPTEMBER 2026 — MONTHLY QC CALENDAR</span>
+                    <span id="monthlyQcProgressBadge" class="px-2 py-0.5 rounded-full text-[10px] font-mono font-bold bg-[#EAF7EC] text-[#4A9755] border border-[#74D16F]/40">6 of 8 Monthly Tasks Completed</span>
+                  </div>
+                  <p class="text-[11px] text-slate-500 font-medium">Click any task or day cell to add, edit, or remove monthly equipment inspection tasks</p>
+                </div>
+              </div>
+
+              <!-- Action Controls -->
+              <div class="flex items-center space-x-2">
+                <button onclick="addMonthlyDutyCard(14)" class="px-2.5 py-1.5 text-xs font-semibold rounded-md bg-[#FAF8F5] hover:bg-white border border-[#DDD4C0] text-slate-700 hover:text-slate-900 transition flex items-center space-x-1 shadow-sm">
+                  <i data-lucide="plus" class="w-3.5 h-3.5 text-[#4A9755]"></i>
+                  <span>Add Duty to Sep 14</span>
+                </button>
+                <button onclick="addMonthlyDutyCard()" class="px-3 py-1.5 text-xs font-bold rounded-md bg-[#4A9755] hover:bg-[#3D8046] text-white transition flex items-center space-x-1.5 shadow-sm">
+                  <i data-lucide="plus-circle" class="w-3.5 h-3.5 text-[#74D16F]"></i>
+                  <span>Add Monthly Task</span>
+                </button>
+              </div>
+            </div>
+
+            <!-- Full Month Grid for September 2026 (Starts Tuesday Sep 1, Ends Wednesday Sep 30) -->
+            <div class="overflow-x-auto pb-1">
+              <div class="min-w-[1050px]">
+                <!-- Day-of-week Headers (Mon - Sun) -->
+                <div class="grid grid-cols-7 gap-1.5 mb-1.5 text-center">
+                  <div class="p-2 font-bold text-[11px] uppercase tracking-wider text-slate-700 bg-[#FAF8F5] rounded border border-[#DDD4C0]">MON</div>
+                  <div class="p-2 font-bold text-[11px] uppercase tracking-wider text-slate-700 bg-[#FAF8F5] rounded border border-[#DDD4C0]">TUE</div>
+                  <div class="p-2 font-bold text-[11px] uppercase tracking-wider text-slate-700 bg-[#FAF8F5] rounded border border-[#DDD4C0]">WED</div>
+                  <div class="p-2 font-bold text-[11px] uppercase tracking-wider text-slate-700 bg-[#FAF8F5] rounded border border-[#DDD4C0]">THU</div>
+                  <div class="p-2 font-bold text-[11px] uppercase tracking-wider text-slate-700 bg-[#FAF8F5] rounded border border-[#DDD4C0]">FRI</div>
+                  <div class="p-2 font-bold text-[11px] uppercase tracking-wider text-slate-700 bg-[#FAF8F5]/70 rounded border border-[#DDD4C0]">SAT</div>
+                  <div class="p-2 font-bold text-[11px] uppercase tracking-wider text-slate-700 bg-[#FAF8F5]/70 rounded border border-[#DDD4C0]">SUN</div>
+                </div>
+
+                <!-- Month Grid Cells: 5 Weeks -->
+                <div class="grid grid-cols-7 gap-1.5 auto-rows-fr">
+                  
+                  <!-- WEEK 1 -->
+                  <!-- Mon Aug 31 (Prev month padding) -->
+                  <div class="bg-slate-100/60 rounded border border-dashed border-slate-300/80 p-1.5 min-h-[110px] opacity-50 select-none">
+                    <span class="text-[10px] font-mono text-slate-400 font-bold">Aug 31</span>
+                  </div>
+
+                  <!-- Tue Sep 1 -->
+                  <div class="bg-[#FAF8F5]/60 hover:bg-[#FAF8F5] rounded border border-[#DDD4C0] p-1.5 min-h-[110px] flex flex-col justify-between group transition">
+                    <div class="flex items-center justify-between mb-1">
+                      <span class="text-[11px] font-mono font-bold text-slate-800">1</span>
+                      <button onclick="addMonthlyDutyCard(1)" class="opacity-0 group-hover:opacity-100 p-0.5 rounded text-[#4A9755] hover:bg-emerald-50 transition" title="Add duty to Sep 1"><i data-lucide="plus" class="w-3 h-3"></i></button>
+                    </div>
+                    <div id="monthlyDuties-1" class="space-y-1 flex-1">
+                      <div class="bg-white rounded border border-[#4A9755] p-1.5 space-y-0.5 relative group/card shadow-xs">
+                        <div class="flex items-center justify-between">
+                          <span class="text-[8.5px] font-bold text-slate-800 leading-tight" contenteditable="true">LN2 Storage Tanks</span>
+                          <span class="text-[8px] font-mono font-bold text-[#4A9755] bg-[#EAF7EC] px-1 rounded">DONE</span>
+                        </div>
+                        <div class="text-[9px] text-slate-500 truncate" contenteditable="true">Sensor & Evap Rate: 0.18 L/d</div>
+                        <div class="flex items-center justify-between text-[8px] font-mono text-slate-400 pt-0.5">
+                          <span contenteditable="true">Tech: MC</span>
+                          <button onclick="this.closest('.group\\/card').remove()" class="text-rose-400 hover:text-rose-600 opacity-0 group-hover/card:opacity-100">×</button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Wed Sep 2 -->
+                  <div class="bg-[#FAF8F5]/40 hover:bg-[#FAF8F5] rounded border border-[#DDD4C0] p-1.5 min-h-[110px] flex flex-col justify-between group transition">
+                    <div class="flex items-center justify-between mb-1">
+                      <span class="text-[11px] font-mono font-bold text-slate-800">2</span>
+                      <button onclick="addMonthlyDutyCard(2)" class="opacity-0 group-hover:opacity-100 p-0.5 rounded text-[#4A9755] hover:bg-emerald-50 transition"><i data-lucide="plus" class="w-3 h-3"></i></button>
+                    </div>
+                    <div id="monthlyDuties-2" class="space-y-1 flex-1"></div>
+                  </div>
+
+                  <!-- Thu Sep 3 -->
+                  <div class="bg-[#FAF8F5]/40 hover:bg-[#FAF8F5] rounded border border-[#DDD4C0] p-1.5 min-h-[110px] flex flex-col justify-between group transition">
+                    <div class="flex items-center justify-between mb-1">
+                      <span class="text-[11px] font-mono font-bold text-slate-800">3</span>
+                      <button onclick="addMonthlyDutyCard(3)" class="opacity-0 group-hover:opacity-100 p-0.5 rounded text-[#4A9755] hover:bg-emerald-50 transition"><i data-lucide="plus" class="w-3 h-3"></i></button>
+                    </div>
+                    <div id="monthlyDuties-3" class="space-y-1 flex-1"></div>
+                  </div>
+
+                  <!-- Fri Sep 4 -->
+                  <div class="bg-[#FAF8F5]/60 hover:bg-[#FAF8F5] rounded border border-[#DDD4C0] p-1.5 min-h-[110px] flex flex-col justify-between group transition">
+                    <div class="flex items-center justify-between mb-1">
+                      <span class="text-[11px] font-mono font-bold text-slate-800">4</span>
+                      <button onclick="addMonthlyDutyCard(4)" class="opacity-0 group-hover:opacity-100 p-0.5 rounded text-[#4A9755] hover:bg-emerald-50 transition"><i data-lucide="plus" class="w-3 h-3"></i></button>
+                    </div>
+                    <div id="monthlyDuties-4" class="space-y-1 flex-1">
+                      <div class="bg-white rounded border border-[#4A9755] p-1.5 space-y-0.5 relative group/card shadow-xs">
+                        <div class="flex items-center justify-between">
+                          <span class="text-[8.5px] font-bold text-slate-800 leading-tight" contenteditable="true">Class 100 Laminar Hoods</span>
+                          <span class="text-[8px] font-mono font-bold text-[#4A9755] bg-[#EAF7EC] px-1 rounded">DONE</span>
+                        </div>
+                        <div class="text-[9px] text-slate-500 truncate" contenteditable="true">Magnehelic: 0.42 in w.g.</div>
+                        <div class="flex items-center justify-between text-[8px] font-mono text-slate-400 pt-0.5">
+                          <span contenteditable="true">Tech: AR</span>
+                          <button onclick="this.closest('.group\\/card').remove()" class="text-rose-400 hover:text-rose-600 opacity-0 group-hover/card:opacity-100">×</button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Sat Sep 5 -->
+                  <div class="bg-[#FAF8F5]/25 rounded border border-[#DDD4C0] p-1.5 min-h-[110px] flex flex-col justify-between group">
+                    <span class="text-[10px] font-mono font-bold text-slate-400">5</span>
+                    <div id="monthlyDuties-5" class="space-y-1 flex-1"></div>
+                  </div>
+
+                  <!-- Sun Sep 6 -->
+                  <div class="bg-[#FAF8F5]/25 rounded border border-[#DDD4C0] p-1.5 min-h-[110px] flex flex-col justify-between group">
+                    <span class="text-[10px] font-mono font-bold text-slate-400">6</span>
+                    <div id="monthlyDuties-6" class="space-y-1 flex-1"></div>
+                  </div>
+
+                  <!-- WEEK 2 -->
+                  <!-- Mon Sep 7 -->
+                  <div class="bg-[#FAF8F5]/40 hover:bg-[#FAF8F5] rounded border border-[#DDD4C0] p-1.5 min-h-[110px] flex flex-col justify-between group transition">
+                    <div class="flex items-center justify-between mb-1">
+                      <span class="text-[11px] font-mono font-bold text-slate-800">7</span>
+                      <button onclick="addMonthlyDutyCard(7)" class="opacity-0 group-hover:opacity-100 p-0.5 rounded text-[#4A9755] hover:bg-emerald-50 transition"><i data-lucide="plus" class="w-3 h-3"></i></button>
+                    </div>
+                    <div id="monthlyDuties-7" class="space-y-1 flex-1"></div>
+                  </div>
+
+                  <!-- Tue Sep 8 -->
+                  <div class="bg-[#FAF8F5]/40 hover:bg-[#FAF8F5] rounded border border-[#DDD4C0] p-1.5 min-h-[110px] flex flex-col justify-between group transition">
+                    <div class="flex items-center justify-between mb-1">
+                      <span class="text-[11px] font-mono font-bold text-slate-800">8</span>
+                      <button onclick="addMonthlyDutyCard(8)" class="opacity-0 group-hover:opacity-100 p-0.5 rounded text-[#4A9755] hover:bg-emerald-50 transition"><i data-lucide="plus" class="w-3 h-3"></i></button>
+                    </div>
+                    <div id="monthlyDuties-8" class="space-y-1 flex-1"></div>
+                  </div>
+
+                  <!-- Wed Sep 9 -->
+                  <div class="bg-[#FAF8F5]/40 hover:bg-[#FAF8F5] rounded border border-[#DDD4C0] p-1.5 min-h-[110px] flex flex-col justify-between group transition">
+                    <div class="flex items-center justify-between mb-1">
+                      <span class="text-[11px] font-mono font-bold text-slate-800">9</span>
+                      <button onclick="addMonthlyDutyCard(9)" class="opacity-0 group-hover:opacity-100 p-0.5 rounded text-[#4A9755] hover:bg-emerald-50 transition"><i data-lucide="plus" class="w-3 h-3"></i></button>
+                    </div>
+                    <div id="monthlyDuties-9" class="space-y-1 flex-1"></div>
+                  </div>
+
+                  <!-- Thu Sep 10 -->
+                  <div class="bg-[#FAF8F5]/60 hover:bg-[#FAF8F5] rounded border border-[#DDD4C0] p-1.5 min-h-[110px] flex flex-col justify-between group transition">
+                    <div class="flex items-center justify-between mb-1">
+                      <span class="text-[11px] font-mono font-bold text-slate-800">10</span>
+                      <button onclick="addMonthlyDutyCard(10)" class="opacity-0 group-hover:opacity-100 p-0.5 rounded text-[#4A9755] hover:bg-emerald-50 transition"><i data-lucide="plus" class="w-3 h-3"></i></button>
+                    </div>
+                    <div id="monthlyDuties-10" class="space-y-1 flex-1">
+                      <div class="bg-white rounded border border-[#4A9755] p-1.5 space-y-0.5 relative group/card shadow-xs">
+                        <div class="flex items-center justify-between">
+                          <span class="text-[8.5px] font-bold text-slate-800 leading-tight" contenteditable="true">Centrifuges 01 & 02</span>
+                          <span class="text-[8px] font-mono font-bold text-[#4A9755] bg-[#EAF7EC] px-1 rounded">DONE</span>
+                        </div>
+                        <div class="text-[9px] text-slate-500 truncate" contenteditable="true">Tachometer RPM Verification: Pass</div>
+                        <div class="flex items-center justify-between text-[8px] font-mono text-slate-400 pt-0.5">
+                          <span contenteditable="true">Tech: LP</span>
+                          <button onclick="this.closest('.group\\/card').remove()" class="text-rose-400 hover:text-rose-600 opacity-0 group-hover/card:opacity-100">×</button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Fri Sep 11 -->
+                  <div class="bg-[#FAF8F5]/40 hover:bg-[#FAF8F5] rounded border border-[#DDD4C0] p-1.5 min-h-[110px] flex flex-col justify-between group transition">
+                    <div class="flex items-center justify-between mb-1">
+                      <span class="text-[11px] font-mono font-bold text-slate-800">11</span>
+                      <button onclick="addMonthlyDutyCard(11)" class="opacity-0 group-hover:opacity-100 p-0.5 rounded text-[#4A9755] hover:bg-emerald-50 transition"><i data-lucide="plus" class="w-3 h-3"></i></button>
+                    </div>
+                    <div id="monthlyDuties-11" class="space-y-1 flex-1"></div>
+                  </div>
+
+                  <!-- Sat Sep 12 -->
+                  <div class="bg-[#FAF8F5]/25 rounded border border-[#DDD4C0] p-1.5 min-h-[110px] flex flex-col justify-between group">
+                    <span class="text-[10px] font-mono font-bold text-slate-400">12</span>
+                    <div id="monthlyDuties-12" class="space-y-1 flex-1"></div>
+                  </div>
+
+                  <!-- Sun Sep 13 -->
+                  <div class="bg-[#FAF8F5]/25 rounded border border-[#DDD4C0] p-1.5 min-h-[110px] flex flex-col justify-between group">
+                    <span class="text-[10px] font-mono font-bold text-slate-400">13</span>
+                    <div id="monthlyDuties-13" class="space-y-1 flex-1"></div>
+                  </div>
+
+                  <!-- WEEK 3 -->
+                  <!-- Mon Sep 14 (CYCLE START / WHITNEY WITNESS) -->
+                  <div class="bg-[#EAF7EC]/40 hover:bg-[#EAF7EC]/60 rounded border-2 border-[#4A9755]/80 p-1.5 min-h-[110px] flex flex-col justify-between group transition ring-1 ring-[#74D16F]/30">
+                    <div class="flex items-center justify-between mb-1">
+                      <div class="flex items-center space-x-1">
+                        <span class="text-[11px] font-mono font-bold text-[#4A9755]">14</span>
+                        <span class="text-[8px] font-mono px-1 py-0.2 rounded bg-[#4A9755] text-white font-bold">CYCLE</span>
+                      </div>
+                      <button onclick="addMonthlyDutyCard(14)" class="opacity-0 group-hover:opacity-100 p-0.5 rounded text-[#4A9755] hover:bg-emerald-100 transition"><i data-lucide="plus" class="w-3 h-3"></i></button>
+                    </div>
+                    <div id="monthlyDuties-14" class="space-y-1 flex-1">
+                      <div class="bg-white rounded border border-[#4A9755] p-1.5 space-y-0.5 relative group/card shadow-xs">
+                        <div class="flex items-center justify-between">
+                          <span class="text-[8.5px] font-bold text-slate-800 leading-tight" contenteditable="true">Optical Camera Sensor</span>
+                          <span class="text-[8px] font-mono font-bold text-[#4A9755] bg-[#EAF7EC] px-1 rounded">DONE</span>
+                        </div>
+                        <div class="text-[9px] text-slate-500 truncate" contenteditable="true">Line-Pair MTF Target: 100%</div>
+                        <div class="flex items-center justify-between text-[8px] font-mono text-slate-400 pt-0.5">
+                          <span contenteditable="true">Tech: LP</span>
+                          <button onclick="this.closest('.group\\/card').remove()" class="text-rose-400 hover:text-rose-600 opacity-0 group-hover/card:opacity-100">×</button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Tue Sep 15 -->
+                  <div class="bg-[#FAF8F5]/40 hover:bg-[#FAF8F5] rounded border border-[#DDD4C0] p-1.5 min-h-[110px] flex flex-col justify-between group transition">
+                    <div class="flex items-center justify-between mb-1">
+                      <span class="text-[11px] font-mono font-bold text-slate-800">15</span>
+                      <button onclick="addMonthlyDutyCard(15)" class="opacity-0 group-hover:opacity-100 p-0.5 rounded text-[#4A9755] hover:bg-emerald-50 transition"><i data-lucide="plus" class="w-3 h-3"></i></button>
+                    </div>
+                    <div id="monthlyDuties-15" class="space-y-1 flex-1"></div>
+                  </div>
+
+                  <!-- Wed Sep 16 -->
+                  <div class="bg-[#FAF8F5]/40 hover:bg-[#FAF8F5] rounded border border-[#DDD4C0] p-1.5 min-h-[110px] flex flex-col justify-between group transition">
+                    <div class="flex items-center justify-between mb-1">
+                      <span class="text-[11px] font-mono font-bold text-slate-800">16</span>
+                      <button onclick="addMonthlyDutyCard(16)" class="opacity-0 group-hover:opacity-100 p-0.5 rounded text-[#4A9755] hover:bg-emerald-50 transition"><i data-lucide="plus" class="w-3 h-3"></i></button>
+                    </div>
+                    <div id="monthlyDuties-16" class="space-y-1 flex-1"></div>
+                  </div>
+
+                  <!-- Thu Sep 17 -->
+                  <div class="bg-[#FAF8F5]/40 hover:bg-[#FAF8F5] rounded border border-[#DDD4C0] p-1.5 min-h-[110px] flex flex-col justify-between group transition">
+                    <div class="flex items-center justify-between mb-1">
+                      <span class="text-[11px] font-mono font-bold text-slate-800">17</span>
+                      <button onclick="addMonthlyDutyCard(17)" class="opacity-0 group-hover:opacity-100 p-0.5 rounded text-[#4A9755] hover:bg-emerald-50 transition"><i data-lucide="plus" class="w-3 h-3"></i></button>
+                    </div>
+                    <div id="monthlyDuties-17" class="space-y-1 flex-1"></div>
+                  </div>
+
+                  <!-- Fri Sep 18 -->
+                  <div class="bg-[#FAF8F5]/40 hover:bg-[#FAF8F5] rounded border border-[#DDD4C0] p-1.5 min-h-[110px] flex flex-col justify-between group transition">
+                    <div class="flex items-center justify-between mb-1">
+                      <span class="text-[11px] font-mono font-bold text-slate-800">18</span>
+                      <button onclick="addMonthlyDutyCard(18)" class="opacity-0 group-hover:opacity-100 p-0.5 rounded text-[#4A9755] hover:bg-emerald-50 transition"><i data-lucide="plus" class="w-3 h-3"></i></button>
+                    </div>
+                    <div id="monthlyDuties-18" class="space-y-1 flex-1"></div>
+                  </div>
+
+                  <!-- Sat Sep 19 -->
+                  <div class="bg-[#FAF8F5]/25 rounded border border-[#DDD4C0] p-1.5 min-h-[110px] flex flex-col justify-between group">
+                    <span class="text-[10px] font-mono font-bold text-slate-400">19</span>
+                    <div id="monthlyDuties-19" class="space-y-1 flex-1"></div>
+                  </div>
+
+                  <!-- Sun Sep 20 -->
+                  <div class="bg-[#FAF8F5]/25 rounded border border-[#DDD4C0] p-1.5 min-h-[110px] flex flex-col justify-between group">
+                    <span class="text-[10px] font-mono font-bold text-slate-400">20</span>
+                    <div id="monthlyDuties-20" class="space-y-1 flex-1"></div>
+                  </div>
+
+                  <!-- WEEK 4 -->
+                  <!-- Mon Sep 21 -->
+                  <div class="bg-[#FAF8F5]/60 hover:bg-[#FAF8F5] rounded border border-[#DDD4C0] p-1.5 min-h-[110px] flex flex-col justify-between group transition">
+                    <div class="flex items-center justify-between mb-1">
+                      <span class="text-[11px] font-mono font-bold text-slate-800">21</span>
+                      <button onclick="addMonthlyDutyCard(21)" class="opacity-0 group-hover:opacity-100 p-0.5 rounded text-[#4A9755] hover:bg-emerald-50 transition"><i data-lucide="plus" class="w-3 h-3"></i></button>
+                    </div>
+                    <div id="monthlyDuties-21" class="space-y-1 flex-1">
+                      <div class="bg-white rounded border border-[#4A9755] p-1.5 space-y-0.5 relative group/card shadow-xs">
+                        <div class="flex items-center justify-between">
+                          <span class="text-[8.5px] font-bold text-slate-800 leading-tight" contenteditable="true">Cryo Facility Safety</span>
+                          <span class="text-[8px] font-mono font-bold text-[#4A9755] bg-[#EAF7EC] px-1 rounded">DONE</span>
+                        </div>
+                        <div class="text-[9px] text-slate-500 truncate" contenteditable="true">O2 Depletion Alarm Beacon Test</div>
+                        <div class="flex items-center justify-between text-[8px] font-mono text-slate-400 pt-0.5">
+                          <span contenteditable="true">Tech: MC</span>
+                          <button onclick="this.closest('.group\\/card').remove()" class="text-rose-400 hover:text-rose-600 opacity-0 group-hover/card:opacity-100">×</button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Tue Sep 22 -->
+                  <div class="bg-[#FAF8F5]/40 hover:bg-[#FAF8F5] rounded border border-[#DDD4C0] p-1.5 min-h-[110px] flex flex-col justify-between group transition">
+                    <div class="flex items-center justify-between mb-1">
+                      <span class="text-[11px] font-mono font-bold text-slate-800">22</span>
+                      <button onclick="addMonthlyDutyCard(22)" class="opacity-0 group-hover:opacity-100 p-0.5 rounded text-[#4A9755] hover:bg-emerald-50 transition"><i data-lucide="plus" class="w-3 h-3"></i></button>
+                    </div>
+                    <div id="monthlyDuties-22" class="space-y-1 flex-1"></div>
+                  </div>
+
+                  <!-- Wed Sep 23 -->
+                  <div class="bg-[#FAF8F5]/40 hover:bg-[#FAF8F5] rounded border border-[#DDD4C0] p-1.5 min-h-[110px] flex flex-col justify-between group transition">
+                    <div class="flex items-center justify-between mb-1">
+                      <span class="text-[11px] font-mono font-bold text-slate-800">23</span>
+                      <button onclick="addMonthlyDutyCard(23)" class="opacity-0 group-hover:opacity-100 p-0.5 rounded text-[#4A9755] hover:bg-emerald-50 transition"><i data-lucide="plus" class="w-3 h-3"></i></button>
+                    </div>
+                    <div id="monthlyDuties-23" class="space-y-1 flex-1"></div>
+                  </div>
+
+                  <!-- Thu Sep 24 -->
+                  <div class="bg-[#FAF8F5]/40 hover:bg-[#FAF8F5] rounded border border-[#DDD4C0] p-1.5 min-h-[110px] flex flex-col justify-between group transition">
+                    <div class="flex items-center justify-between mb-1">
+                      <span class="text-[11px] font-mono font-bold text-slate-800">24</span>
+                      <button onclick="addMonthlyDutyCard(24)" class="opacity-0 group-hover:opacity-100 p-0.5 rounded text-[#4A9755] hover:bg-emerald-50 transition"><i data-lucide="plus" class="w-3 h-3"></i></button>
+                    </div>
+                    <div id="monthlyDuties-24" class="space-y-1 flex-1"></div>
+                  </div>
+
+                  <!-- Fri Sep 25 -->
+                  <div class="bg-[#FAF8F5]/60 hover:bg-[#FAF8F5] rounded border border-[#DDD4C0] p-1.5 min-h-[110px] flex flex-col justify-between group transition">
+                    <div class="flex items-center justify-between mb-1">
+                      <span class="text-[11px] font-mono font-bold text-slate-800">25</span>
+                      <button onclick="addMonthlyDutyCard(25)" class="opacity-0 group-hover:opacity-100 p-0.5 rounded text-[#4A9755] hover:bg-emerald-50 transition"><i data-lucide="plus" class="w-3 h-3"></i></button>
+                    </div>
+                    <div id="monthlyDuties-25" class="space-y-1 flex-1">
+                      <div class="bg-white rounded border border-[#4A9755] p-1.5 space-y-0.5 relative group/card shadow-xs">
+                        <div class="flex items-center justify-between">
+                          <span class="text-[8.5px] font-bold text-slate-800 leading-tight" contenteditable="true">Emergency Stations</span>
+                          <span class="text-[8px] font-mono font-bold text-[#4A9755] bg-[#EAF7EC] px-1 rounded">DONE</span>
+                        </div>
+                        <div class="text-[9px] text-slate-500 truncate" contenteditable="true">Eyewash & Shower Line Flush (Pass)</div>
+                        <div class="flex items-center justify-between text-[8px] font-mono text-slate-400 pt-0.5">
+                          <span contenteditable="true">Tech: AR</span>
+                          <button onclick="this.closest('.group\\/card').remove()" class="text-rose-400 hover:text-rose-600 opacity-0 group-hover/card:opacity-100">×</button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Sat Sep 26 -->
+                  <div class="bg-[#FAF8F5]/25 rounded border border-[#DDD4C0] p-1.5 min-h-[110px] flex flex-col justify-between group">
+                    <span class="text-[10px] font-mono font-bold text-slate-400">26</span>
+                    <div id="monthlyDuties-26" class="space-y-1 flex-1"></div>
+                  </div>
+
+                  <!-- Sun Sep 27 -->
+                  <div class="bg-[#FAF8F5]/25 rounded border border-[#DDD4C0] p-1.5 min-h-[110px] flex flex-col justify-between group">
+                    <span class="text-[10px] font-mono font-bold text-slate-400">27</span>
+                    <div id="monthlyDuties-27" class="space-y-1 flex-1"></div>
+                  </div>
+
+                  <!-- WEEK 5 -->
+                  <!-- Mon Sep 28 -->
+                  <div class="bg-[#FAF8F5]/60 hover:bg-[#FAF8F5] rounded border border-[#DDD4C0] p-1.5 min-h-[110px] flex flex-col justify-between group transition">
+                    <div class="flex items-center justify-between mb-1">
+                      <span class="text-[11px] font-mono font-bold text-slate-800">28</span>
+                      <button onclick="addMonthlyDutyCard(28)" class="opacity-0 group-hover:opacity-100 p-0.5 rounded text-[#4A9755] hover:bg-emerald-50 transition"><i data-lucide="plus" class="w-3 h-3"></i></button>
+                    </div>
+                    <div id="monthlyDuties-28" class="space-y-1 flex-1">
+                      <div class="bg-white rounded border border-amber-300 p-1.5 space-y-0.5 relative group/card shadow-xs">
+                        <div class="flex items-center justify-between">
+                          <span class="text-[8.5px] font-bold text-slate-800 leading-tight" contenteditable="true">Miri / K-System Gas</span>
+                          <span class="text-[8px] font-mono font-bold text-amber-700 bg-amber-50 px-1 rounded border border-amber-200">PENDING</span>
+                        </div>
+                        <div class="text-[9px] text-slate-500 truncate" contenteditable="true">HEPA In-Line 0.2µm Filter Swap</div>
+                        <div class="flex items-center justify-between text-[8px] font-mono text-slate-400 pt-0.5">
+                          <span contenteditable="true">Tech: LP</span>
+                          <button onclick="this.closest('.group\\/card').remove()" class="text-rose-400 hover:text-rose-600 opacity-0 group-hover/card:opacity-100">×</button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Tue Sep 29 -->
+                  <div class="bg-[#FAF8F5]/40 hover:bg-[#FAF8F5] rounded border border-[#DDD4C0] p-1.5 min-h-[110px] flex flex-col justify-between group transition">
+                    <div class="flex items-center justify-between mb-1">
+                      <span class="text-[11px] font-mono font-bold text-slate-800">29</span>
+                      <button onclick="addMonthlyDutyCard(29)" class="opacity-0 group-hover:opacity-100 p-0.5 rounded text-[#4A9755] hover:bg-emerald-50 transition"><i data-lucide="plus" class="w-3 h-3"></i></button>
+                    </div>
+                    <div id="monthlyDuties-29" class="space-y-1 flex-1"></div>
+                  </div>
+
+                  <!-- Wed Sep 30 -->
+                  <div class="bg-[#FAF8F5]/60 hover:bg-[#FAF8F5] rounded border border-[#DDD4C0] p-1.5 min-h-[110px] flex flex-col justify-between group transition">
+                    <div class="flex items-center justify-between mb-1">
+                      <span class="text-[11px] font-mono font-bold text-slate-800">30</span>
+                      <button onclick="addMonthlyDutyCard(30)" class="opacity-0 group-hover:opacity-100 p-0.5 rounded text-[#4A9755] hover:bg-emerald-50 transition"><i data-lucide="plus" class="w-3 h-3"></i></button>
+                    </div>
+                    <div id="monthlyDuties-30" class="space-y-1 flex-1">
+                      <div class="bg-white rounded border border-amber-300 p-1.5 space-y-0.5 relative group/card shadow-xs">
+                        <div class="flex items-center justify-between">
+                          <span class="text-[8.5px] font-bold text-slate-800 leading-tight" contenteditable="true">Lab Terminal Cleaning</span>
+                          <span class="text-[8px] font-mono font-bold text-amber-700 bg-amber-50 px-1 rounded border border-amber-200">PENDING</span>
+                        </div>
+                        <div class="text-[9px] text-slate-500 truncate" contenteditable="true">Sterile Deep Wipe & Autoclave Log</div>
+                        <div class="flex items-center justify-between text-[8px] font-mono text-slate-400 pt-0.5">
+                          <span contenteditable="true">Tech: LP</span>
+                          <button onclick="this.closest('.group\\/card').remove()" class="text-rose-400 hover:text-rose-600 opacity-0 group-hover/card:opacity-100">×</button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Thu Oct 1 (Next month padding) -->
+                  <div class="bg-slate-100/60 rounded border border-dashed border-slate-300/80 p-1.5 min-h-[110px] opacity-50 select-none">
+                    <span class="text-[10px] font-mono text-slate-400 font-bold">Oct 1</span>
+                  </div>
+
+                  <!-- Fri Oct 2 (Next month padding) -->
+                  <div class="bg-slate-100/60 rounded border border-dashed border-slate-300/80 p-1.5 min-h-[110px] opacity-50 select-none">
+                    <span class="text-[10px] font-mono text-slate-400 font-bold">Oct 2</span>
+                  </div>
+
+                  <!-- Sat Oct 3 (Next month padding) -->
+                  <div class="bg-slate-100/60 rounded border border-dashed border-slate-300/80 p-1.5 min-h-[110px] opacity-50 select-none">
+                    <span class="text-[10px] font-mono text-slate-400 font-bold">Oct 3</span>
+                  </div>
+
+                  <!-- Sun Oct 4 (Next month padding) -->
+                  <div class="bg-slate-100/60 rounded border border-dashed border-slate-300/80 p-1.5 min-h-[110px] opacity-50 select-none">
+                    <span class="text-[10px] font-mono text-slate-400 font-bold">Oct 4</span>
+                  </div>
+
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 4. QUARTERLY QC TABLE -->
+          <div id="qc-view-quarterly" class="hidden bg-white rounded-b-lg border-x border-b border-[#DDD4C0] overflow-hidden shadow-sm">
             <table class="w-full text-xs text-left">
               <thead class="bg-[#FAF8F5] border-b border-[#DDD4C0] font-bold text-slate-700 uppercase">
                 <tr>
-                  <th class="p-3">Time</th>
-                  <th class="p-3">Station</th>
-                  <th class="p-3">Optical Camera Focus</th>
-                  <th class="p-3">RFID Reader</th>
-                  <th class="p-3">Technician</th>
+                  <th class="p-3">Quarter</th>
+                  <th class="p-3">System / Room</th>
+                  <th class="p-3">Quarterly Audit Item</th>
+                  <th class="p-3">Audit Finding / Measurement</th>
+                  <th class="p-3">Lead Auditor</th>
                   <th class="p-3">QC Status</th>
                   <th class="p-3 text-right">Actions</th>
                 </tr>
               </thead>
-              <tbody id="qcTableBody" class="divide-y divide-slate-100">
+              <tbody id="qcQuarterlyTableBody" class="divide-y divide-slate-100">
                 <tr class="hover:bg-slate-50">
-                  <td class="p-3 font-mono font-medium" contenteditable="true">06:15 AM</td>
-                  <td class="p-3 font-semibold" contenteditable="true">Hood 01 (Retrieval)</td>
-                  <td class="p-3 text-[#4A9755] font-semibold" contenteditable="true">Calibrated (100%)</td>
-                  <td class="p-3 text-[#4A9755] font-semibold" contenteditable="true">Pass (Signal: 98dBm)</td>
-                  <td class="p-3" contenteditable="true">Dr. Sarah Jenkins</td>
+                  <td class="p-3 font-mono font-medium" contenteditable="true">Q3 2026</td>
+                  <td class="p-3 font-semibold" contenteditable="true">Cleanroom VOC & Air Quality</td>
+                  <td class="p-3 text-slate-700" contenteditable="true">Particulate Count & VOC Sensor Assay</td>
+                  <td class="p-3 text-[#4A9755] font-semibold" contenteditable="true">ISO Class 5 compliant (<0.02 ppm VOC)</td>
+                  <td class="p-3" contenteditable="true">EnviroAudit Lab</td>
                   <td class="p-3"><span class="px-2 py-0.5 rounded-full bg-[#EAF7EC] text-[#4A9755] border border-[#74D16F]/50 font-bold">VERIFIED</span></td>
                   <td class="p-3 text-right"><button onclick="this.closest('tr').remove()" class="text-rose-500 hover:underline">Remove</button></td>
                 </tr>
                 <tr class="hover:bg-slate-50">
-                  <td class="p-3 font-mono font-medium" contenteditable="true">06:20 AM</td>
-                  <td class="p-3 font-semibold" contenteditable="true">Hood 02 (ICSI Rig)</td>
-                  <td class="p-3 text-[#4A9755] font-semibold" contenteditable="true">Calibrated (100%)</td>
-                  <td class="p-3 text-[#4A9755] font-semibold" contenteditable="true">Pass (Signal: 95dBm)</td>
-                  <td class="p-3" contenteditable="true">M. Chen, HCLD</td>
+                  <td class="p-3 font-mono font-medium" contenteditable="true">Q3 2026</td>
+                  <td class="p-3 font-semibold" contenteditable="true">Optical Witness Calibration Rig</td>
+                  <td class="p-3 text-slate-700" contenteditable="true">High-Resolution Line-Pair Grid Validation</td>
+                  <td class="p-3 text-[#4A9755] font-semibold" contenteditable="true">100% Target Alignment Achieved</td>
+                  <td class="p-3" contenteditable="true">Whitney Engineering</td>
+                  <td class="p-3"><span class="px-2 py-0.5 rounded-full bg-[#EAF7EC] text-[#4A9755] border border-[#74D16F]/50 font-bold">VERIFIED</span></td>
+                  <td class="p-3 text-right"><button onclick="this.closest('tr').remove()" class="text-rose-500 hover:underline">Remove</button></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <!-- 5. YEARLY QC TABLE -->
+          <div id="qc-view-yearly" class="hidden bg-white rounded-b-lg border-x border-b border-[#DDD4C0] overflow-hidden shadow-sm">
+            <table class="w-full text-xs text-left">
+              <thead class="bg-[#FAF8F5] border-b border-[#DDD4C0] font-bold text-slate-700 uppercase">
+                <tr>
+                  <th class="p-3">Year</th>
+                  <th class="p-3">Equipment / Certification</th>
+                  <th class="p-3">Annual Preventative Maintenance</th>
+                  <th class="p-3">Certificate / Calibration Standard</th>
+                  <th class="p-3">Certifying Agency</th>
+                  <th class="p-3">QC Status</th>
+                  <th class="p-3 text-right">Actions</th>
+                </tr>
+              </thead>
+              <tbody id="qcYearlyTableBody" class="divide-y divide-slate-100">
+                <tr class="hover:bg-slate-50">
+                  <td class="p-3 font-mono font-medium" contenteditable="true">2026</td>
+                  <td class="p-3 font-semibold" contenteditable="true">Octax Laser Shot Biopsy Unit</td>
+                  <td class="p-3 text-slate-700" contenteditable="true">Laser Metrology & Beam Power Validation</td>
+                  <td class="p-3 text-[#4A9755] font-semibold" contenteditable="true">Cert #LSR-2026-8801 (Pass)</td>
+                  <td class="p-3" contenteditable="true">Hamilton Thorne Tech</td>
                   <td class="p-3"><span class="px-2 py-0.5 rounded-full bg-[#EAF7EC] text-[#4A9755] border border-[#74D16F]/50 font-bold">VERIFIED</span></td>
                   <td class="p-3 text-right"><button onclick="this.closest('tr').remove()" class="text-rose-500 hover:underline">Remove</button></td>
                 </tr>
                 <tr class="hover:bg-slate-50">
-                  <td class="p-3 font-mono font-medium" contenteditable="true">06:30 AM</td>
-                  <td class="p-3 font-semibold" contenteditable="true">Cryo Nitrogen Station</td>
-                  <td class="p-3 text-[#4A9755] font-semibold" contenteditable="true">Optical QR Sensor OK</td>
-                  <td class="p-3 text-[#4A9755] font-semibold" contenteditable="true">Pass</td>
-                  <td class="p-3" contenteditable="true">Alex Rivera, TS</td>
+                  <td class="p-3 font-mono font-medium" contenteditable="true">2026</td>
+                  <td class="p-3 font-semibold" contenteditable="true">NIST Traceable Thermometers</td>
+                  <td class="p-3 text-slate-700" contenteditable="true">Annual Multi-Point Re-calibration</td>
+                  <td class="p-3 text-[#4A9755] font-semibold" contenteditable="true">Traceable to NIST Standard #9914</td>
+                  <td class="p-3" contenteditable="true">Trescal Calibrations</td>
                   <td class="p-3"><span class="px-2 py-0.5 rounded-full bg-[#EAF7EC] text-[#4A9755] border border-[#74D16F]/50 font-bold">VERIFIED</span></td>
                   <td class="p-3 text-right"><button onclick="this.closest('tr').remove()" class="text-rose-500 hover:underline">Remove</button></td>
                 </tr>
@@ -532,14 +1375,28 @@
 
         <!-- VIEW 3: LOT TRACKING -->
         <div id="view-lot" class="hidden space-y-4">
-          <div class="bg-white p-4 rounded-lg border border-[#DDD4C0] shadow-sm flex items-center justify-between">
+          <div class="bg-white p-4 rounded-lg border border-[#DDD4C0] shadow-sm flex flex-col lg:flex-row lg:items-center justify-between gap-3">
             <div>
-              <h2 class="text-lg font-bold text-slate-900">Lot & Reagent Tracking (IVF Media & Dishes)</h2>
-              <p class="text-xs text-slate-500">Trace media lots, micropipettes, and culture oil associated with optical witnessing sessions.</p>
+              <h2 class="text-lg font-bold text-slate-900 whitespace-nowrap">Lot | COA | Lab Supplies</h2>
             </div>
-            <button onclick="addLotRow()" class="px-3 py-1.5 bg-[#4A9755] hover:bg-[#3D8046] text-white rounded text-xs font-medium transition">
-              + Add Reagent Lot
-            </button>
+            
+            <!-- Grouped on the right side with identical uniform sizing and formatting -->
+            <div class="flex flex-wrap items-center gap-2.5 sm:self-auto">
+              <button onclick="addLotRow()" class="h-9 px-4 bg-[#4A9755] hover:bg-[#3D8046] text-white font-semibold rounded-lg shadow-sm flex items-center justify-center space-x-2 transition text-xs whitespace-nowrap">
+                <i data-lucide="glasses" class="w-4 h-4 text-[#74D16F]"></i>
+                <span>Capture Supply Received</span>
+              </button>
+
+              <button onclick="captureCOA()" class="h-9 px-4 bg-[#4A9755] hover:bg-[#3D8046] text-white font-semibold rounded-lg shadow-sm flex items-center justify-center space-x-2 transition text-xs whitespace-nowrap">
+                <i data-lucide="glasses" class="w-4 h-4 text-[#74D16F]"></i>
+                <span>Capture COA</span>
+              </button>
+
+              <button onclick="captureNewLotInUse()" class="h-9 px-4 bg-[#4A9755] hover:bg-[#3D8046] text-white font-semibold rounded-lg shadow-sm flex items-center justify-center space-x-2 transition text-xs whitespace-nowrap">
+                <i data-lucide="glasses" class="w-4 h-4 text-[#74D16F]"></i>
+                <span>Capture New Lot In Use</span>
+              </button>
+            </div>
           </div>
 
           <div class="bg-white rounded-lg border border-[#DDD4C0] overflow-hidden">
@@ -551,8 +1408,8 @@
                   <th class="p-3">Manufacturer</th>
                   <th class="p-3">Expiration Date</th>
                   <th class="p-3">Opened By</th>
-                  <th class="p-3">Witness Link Status</th>
-                  <th class="p-3 text-right">Action</th>
+                  <th class="p-3">Opened Date</th>
+                  <th class="p-3 text-right">STATUS</th>
                 </tr>
               </thead>
               <tbody id="lotTableBody" class="divide-y divide-slate-100">
@@ -562,8 +1419,10 @@
                   <td class="p-3" contenteditable="true">CooperSurgical</td>
                   <td class="p-3 text-slate-600" contenteditable="true">11/30/2026</td>
                   <td class="p-3" contenteditable="true">S. Jenkins</td>
-                  <td class="p-3"><span class="px-2 py-0.5 rounded-full bg-[#EAF7EC] text-[#4A9755] border border-[#74D16F]/40 font-bold">ACTIVE IN HOOD 01</span></td>
-                  <td class="p-3 text-right"><button onclick="this.closest('tr').remove()" class="text-rose-500 hover:underline">Remove</button></td>
+                  <td class="p-3 font-mono text-slate-700 font-semibold" contenteditable="true">09/21/26</td>
+                  <td class="p-3 text-right">
+                    <span class="px-2.5 py-0.5 rounded-full bg-[#EAF7EC] text-[#4A9755] border border-[#74D16F]/60 font-bold text-[11px] inline-block tracking-wide">In Use</span>
+                  </td>
                 </tr>
                 <tr class="hover:bg-slate-50">
                   <td class="p-3 font-semibold" contenteditable="true">ICSI PVP 7% Solution</td>
@@ -571,8 +1430,14 @@
                   <td class="p-3" contenteditable="true">Vitrolife</td>
                   <td class="p-3 text-slate-600" contenteditable="true">10/15/2026</td>
                   <td class="p-3" contenteditable="true">M. Chen</td>
-                  <td class="p-3"><span class="px-2 py-0.5 rounded-full bg-[#EAF7EC] text-[#4A9755] border border-[#74D16F]/40 font-bold">ACTIVE IN HOOD 02</span></td>
-                  <td class="p-3 text-right"><button onclick="this.closest('tr').remove()" class="text-rose-500 hover:underline">Remove</button></td>
+                  <td class="p-3 font-mono text-slate-700 font-semibold" contenteditable="true">09/21/26</td>
+                  <td class="p-3 text-right">
+                    <div class="inline-flex flex-col items-end">
+                      <span class="px-2.5 py-0.5 rounded-full bg-rose-50 text-rose-600 border border-rose-300 font-bold text-[11px] inline-block tracking-wide whitespace-nowrap">Out of Use</span>
+                      <span class="text-[10px] font-mono text-slate-500 font-medium mt-0.5 whitespace-nowrap">10/07/26</span>
+                      <span class="text-[10px] font-mono text-slate-600 font-semibold whitespace-nowrap">Tech: MC</span>
+                    </div>
+                  </td>
                 </tr>
                 <tr class="hover:bg-slate-50">
                   <td class="p-3 font-semibold" contenteditable="true">Embryo Cryo Straws (Clear)</td>
@@ -580,8 +1445,10 @@
                   <td class="p-3" contenteditable="true">Cryo Bio System</td>
                   <td class="p-3 text-slate-600" contenteditable="true">04/20/2028</td>
                   <td class="p-3" contenteditable="true">A. Rivera</td>
-                  <td class="p-3"><span class="px-2 py-0.5 rounded-full bg-[#EAF7EC] text-[#4A9755] border border-[#74D16F]/40 font-bold">IN USE CRYO</span></td>
-                  <td class="p-3 text-right"><button onclick="this.closest('tr').remove()" class="text-rose-500 hover:underline">Remove</button></td>
+                  <td class="p-3 font-mono text-slate-700 font-semibold" contenteditable="true">09/21/26</td>
+                  <td class="p-3 text-right">
+                    <span class="px-2.5 py-0.5 rounded-full bg-[#EAF7EC] text-[#4A9755] border border-[#74D16F]/60 font-bold text-[11px] inline-block tracking-wide">In Use</span>
+                  </td>
                 </tr>
               </tbody>
             </table>
@@ -592,54 +1459,64 @@
         <div id="view-inventory" class="hidden space-y-4">
           <div class="bg-white p-4 rounded-lg border border-[#DDD4C0] shadow-sm flex items-center justify-between">
             <div>
-              <h2 class="text-lg font-bold text-slate-900">Lab Consumables & Stock Ordering</h2>
-              <p class="text-xs text-slate-500">Optical witness barcodes, RFID petri dishes, and micro-manipulation needles.</p>
+              <h2 class="text-lg font-bold text-slate-900">Lab Consumables | Stock Ordering</h2>
             </div>
-            <button onclick="addInventoryRow()" class="px-3 py-1.5 bg-[#4A9755] hover:bg-[#3D8046] text-white rounded text-xs font-medium transition">
-              + Quick Order Request
+            <button onclick="addInventoryRow()" class="bg-[#4A9755] hover:bg-[#3D8046] text-white font-semibold px-4 py-2 rounded-lg shadow-sm flex items-center space-x-2 transition text-xs sm:text-sm">
+              <i data-lucide="glasses" class="w-4 h-4"></i>
+              <span>Capture Inventory</span>
             </button>
           </div>
 
           <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <div class="bg-white p-4 rounded-lg border border-[#DDD4C0] shadow-sm">
-              <div class="text-xs font-bold text-slate-400 uppercase">Optical RFID Dishes In Stock</div>
-              <div class="text-2xl font-black text-slate-900 mt-1 font-mono" contenteditable="true">480 units</div>
-              <div class="text-xs text-[#4A9755] mt-1 font-medium font-semibold">✓ Sufficient for 3 weeks</div>
+            <div class="bg-[#EAF7EC]/70 p-4 rounded-lg border-2 border-[#4A9755] shadow-sm ring-2 ring-[#74D16F]/30 transition">
+              <div class="text-xs font-bold text-[#2E7D32] uppercase">Falcon® Bacteriological Petri Dishes 60 x 15 mm (351007)</div>
+              <div class="text-2xl font-black text-[#1E5D3A] mt-1 font-mono" contenteditable="true">480 units</div>
+              <div class="text-xs text-[#2E7D32] mt-1 font-semibold flex items-center space-x-1">
+                <span>✓</span>
+                <span>Sufficient for 3 weeks</span>
+              </div>
             </div>
-            <div class="bg-white p-4 rounded-lg border border-[#DDD4C0] shadow-sm">
-              <div class="text-xs font-bold text-slate-400 uppercase">Cryo Straw Barcode Labels</div>
-              <div class="text-2xl font-black text-[#4A9755] mt-1 font-mono" contenteditable="true">95 units</div>
-              <div class="text-xs text-[#4A9755] mt-1 font-medium font-semibold">● Current stock adequate</div>
+            <div class="bg-amber-50/90 p-4 rounded-lg border-2 border-amber-400 shadow-sm ring-2 ring-amber-300/50 transition">
+              <div class="text-xs font-bold text-amber-800 uppercase flex items-center justify-between">
+                <span>Cryolock® Vitrification Device</span>
+                <span class="text-[10px] font-mono px-1.5 py-0.5 rounded bg-amber-200/80 text-amber-900 border border-amber-400/60 font-extrabold tracking-wide">LOW STOCK</span>
+              </div>
+              <div class="text-2xl font-black text-amber-700 mt-1 font-mono" contenteditable="true">60 units</div>
+              <div class="text-xs text-amber-800 mt-1 font-bold flex items-center space-x-1.5">
+                <span class="w-2 h-2 rounded-full bg-amber-500 animate-ping inline-block"></span>
+                <span>⚠ Recommend ordering ASAP</span>
+              </div>
             </div>
-            <div class="bg-white p-4 rounded-lg border border-[#DDD4C0] shadow-sm">
-              <div class="text-xs font-bold text-slate-400 uppercase">Pending Supplier Orders</div>
-              <div class="text-2xl font-black text-slate-900 mt-1 font-mono" contenteditable="true">2 POs</div>
-              <div class="text-xs text-slate-500 mt-1 font-medium">Expected delivery: Monday</div>
+            <div class="bg-rose-50/90 p-4 rounded-lg border-2 border-rose-500 shadow-sm ring-2 ring-rose-400/40 transition">
+              <div class="text-xs font-bold text-rose-900 uppercase flex items-center justify-between">
+                <span>CSCM-NXC</span>
+                <span class="text-[10px] font-mono px-1.5 py-0.5 rounded bg-rose-200/90 text-rose-950 border border-rose-400/70 font-extrabold tracking-wide">EXPIRING SOON</span>
+              </div>
+              <div class="text-2xl font-black text-rose-700 mt-1 font-mono" contenteditable="true">2 bottles</div>
+              <div class="text-xs text-rose-900 mt-1 font-bold flex items-center space-x-1.5">
+                <span class="w-2 h-2 rounded-full bg-rose-500 animate-pulse inline-block"></span>
+                <span>Expiring in 7 days • Retire from active cycle use today</span>
+              </div>
             </div>
           </div>
         </div>
 
         <!-- VIEW 5: CRYOINVENTORY -->
         <div id="view-cryo" class="hidden space-y-4">
-          <div class="bg-white p-4 rounded-lg border border-[#DDD4C0] shadow-sm flex items-center justify-between">
+          <div class="bg-white p-4 rounded-lg border border-[#DDD4C0] shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-3">
             <div>
-              <h2 class="text-lg font-bold text-slate-900">Cryoinventory & Liquid Nitrogen Tank Mapping</h2>
-              <p class="text-xs text-slate-500">Verified locations for vitrified blastocysts, oocytes, and sperm straws with dual optical verification.</p>
-            </div>
-            <div class="flex space-x-2">
-              <span class="px-2.5 py-1 bg-[#EAF7EC] text-[#4A9755] border border-[#74D16F]/40 rounded text-xs font-bold flex items-center space-x-1">
-                <i data-lucide="snowflake" class="w-3.5 h-3.5"></i>
-                <span>Tank #1: -196.2°C</span>
-              </span>
-              <span class="px-2.5 py-1 bg-[#EAF7EC] text-[#4A9755] border border-[#74D16F]/40 rounded text-xs font-bold flex items-center space-x-1">
-                <i data-lucide="snowflake" class="w-3.5 h-3.5"></i>
-                <span>Tank #2: -195.8°C</span>
-              </span>
+              <h2 class="text-lg font-bold text-slate-900">Cryoinventory & Liquid Nitrogen Tank Mapping | Tissue Transport | Discard</h2>
             </div>
           </div>
 
           <div class="bg-white rounded-lg border border-[#DDD4C0] p-4">
-            <h3 class="text-sm font-bold text-slate-800 mb-3 uppercase tracking-wider font-mono">Tank A - Canister Matrix</h3>
+            <div class="flex items-center justify-between mb-3">
+              <h3 class="text-sm font-bold text-slate-800 uppercase tracking-wider font-mono">Tank A - Canister Matrix</h3>
+              <button onclick="captureCryoinventory()" class="px-3.5 py-1.5 bg-[#4A9755] hover:bg-[#3D8046] text-white font-semibold rounded-lg shadow-sm flex items-center space-x-2 transition text-xs whitespace-nowrap">
+                <i data-lucide="glasses" class="w-4 h-4"></i>
+                <span>Capture Cryoinventory</span>
+              </button>
+            </div>
             <div class="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-6 gap-3">
               <div class="p-3 rounded border border-[#74D16F]/40 bg-[#EAF7EC]/50 hover:bg-[#EAF7EC] transition cursor-pointer">
                 <div class="text-[10px] text-[#4A9755] font-bold uppercase">Canister 1</div>
@@ -664,6 +1541,561 @@
                 <div class="text-sm font-bold text-slate-800 mt-1 font-mono">CANE 04-B</div>
                 <div class="text-xs text-slate-500">0 / 5 Goblets filled</div>
                 <div class="mt-2 text-[10px] bg-slate-400 text-white px-1.5 py-0.5 rounded text-center font-bold">EMPTY CANE</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- SECTION: CAPTURED TISSUE TRANSPORT IN AND OUT LOG -->
+          <div class="bg-white rounded-lg border border-[#DDD4C0] shadow-sm overflow-hidden">
+            <!-- Header & Filter Bar -->
+            <div class="bg-[#FAF8F5] p-3.5 border-b border-[#DDD4C0] flex flex-col lg:flex-row lg:items-center justify-between gap-3">
+              <div class="flex items-center space-x-3">
+                <div class="w-8 h-8 rounded-lg bg-[#EAF7EC] border border-[#74D16F]/40 flex items-center justify-center text-[#4A9755] flex-shrink-0">
+                  <i data-lucide="truck" class="w-4 h-4"></i>
+                </div>
+                <div>
+                  <div class="flex items-center space-x-2">
+                    <h3 class="text-xs font-bold text-slate-900 uppercase tracking-wide">Tissue Transport</h3>
+                    <span id="transportCountBadge" class="px-2 py-0.5 rounded-full text-[10px] font-mono font-bold bg-[#EAF7EC] text-[#4A9755] border border-[#74D16F]/40">3 Transports Recorded</span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Filter Tabs & Actions -->
+              <div class="flex flex-wrap items-center gap-3">
+                <div class="flex items-center bg-[#EFEAE1] p-0.5 rounded-lg border border-[#DDD4C0]">
+                  <button id="filterAllTransportsBtn" onclick="filterTransportTable('ALL')" class="px-2.5 py-1 text-xs font-bold rounded-md bg-white text-slate-900 shadow-sm border border-[#DDD4C0]/60 transition">
+                    All Transports
+                  </button>
+                  <button id="filterInboundTransportsBtn" onclick="filterTransportTable('INBOUND')" class="px-2.5 py-1 text-xs font-semibold rounded-md text-slate-600 hover:text-slate-900 hover:bg-white/60 transition flex items-center space-x-1">
+                    <span class="w-2 h-2 rounded-full bg-emerald-500 inline-block"></span>
+                    <span>Transport In</span>
+                  </button>
+                  <button id="filterOutboundTransportsBtn" onclick="filterTransportTable('OUTBOUND')" class="px-2.5 py-1 text-xs font-semibold rounded-md text-slate-600 hover:text-slate-900 hover:bg-white/60 transition flex items-center space-x-1">
+                    <span class="w-2 h-2 rounded-full bg-sky-500 inline-block"></span>
+                    <span>Transport Out</span>
+                  </button>
+                </div>
+
+                <!-- Vertically Stacked Capture Transport In & Out Buttons -->
+                <div class="flex flex-col space-y-1.5">
+                  <button onclick="openTransportModal('INBOUND')" class="w-full px-3 py-1.5 text-xs font-semibold rounded-lg bg-[#4A9755] hover:bg-[#3D8046] text-white transition flex items-center justify-center space-x-2 shadow-sm whitespace-nowrap">
+                    <i data-lucide="glasses" class="w-4 h-4"></i>
+                    <span>Capture Tissue Transport In</span>
+                  </button>
+
+                  <button onclick="openTransportModal('OUTBOUND')" class="w-full px-3 py-1.5 text-xs font-semibold rounded-lg bg-[#4A9755] hover:bg-[#3D8046] text-white transition flex items-center justify-center space-x-2 shadow-sm whitespace-nowrap">
+                    <i data-lucide="glasses" class="w-4 h-4"></i>
+                    <span>Capture Tissue Transport Out</span>
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <!-- Transport Log Table -->
+            <div class="overflow-x-auto w-full">
+              <table class="w-full text-xs text-left border-collapse" id="tissueTransportTable">
+                <thead class="bg-[#FAF8F5]/80 border-b border-[#DDD4C0] font-bold text-slate-700 uppercase tracking-wider text-[11px]">
+                  <tr>
+                    <th class="p-3 min-w-[130px] whitespace-nowrap">Direction / Type</th>
+                    <th class="p-3 min-w-[130px] whitespace-nowrap">Date & Time</th>
+                    <th class="p-3 min-w-[180px] whitespace-nowrap">Patient / MRN</th>
+                    <th class="p-3 min-w-[200px] whitespace-nowrap">Specimen & Straws</th>
+                    <th class="p-3 min-w-[210px] whitespace-nowrap">Shipper / Courier ID</th>
+                    <th class="p-3 min-w-[180px] whitespace-nowrap">Origin / Destination</th>
+                    <th class="p-3 min-w-[140px] whitespace-nowrap text-center">Tank / Cane Slot</th>
+                    <th class="p-3 min-w-[130px] whitespace-nowrap text-center">Shipper Temp</th>
+                    <th class="p-3 min-w-[150px] whitespace-nowrap text-center">Optical Witness</th>
+                    <th class="p-3 min-w-[90px] whitespace-nowrap text-right">Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="tissueTransportTableBody" class="divide-y divide-slate-100">
+                  <!-- Entry 1: Inbound Transport -->
+                  <tr class="hover:bg-slate-50/80 transition-colors transport-row" data-direction="INBOUND">
+                    <td class="p-3 whitespace-nowrap">
+                      <span class="inline-flex items-center space-x-1.5 px-2.5 py-0.5 rounded-full text-[10px] font-mono font-bold bg-[#EAF7EC] text-[#2E7D32] border border-[#74D16F]/60">
+                        <i data-lucide="arrow-down-left" class="w-3 h-3 text-[#4A9755]"></i>
+                        <span>TRANSPORT IN</span>
+                      </span>
+                    </td>
+                    <td class="p-3 font-mono text-slate-700 whitespace-nowrap" contenteditable="true">
+                      <div>09/18/2026</div>
+                      <div class="text-[10px] text-slate-500 font-normal">09:45 AM</div>
+                    </td>
+                    <td class="p-3 whitespace-nowrap" contenteditable="true">
+                      <div class="font-bold text-slate-900">E. Davis</div>
+                      <div class="text-[10px] font-mono text-slate-500">MRN: 92841 • DOB: 03/14/1988</div>
+                    </td>
+                    <td class="p-3 whitespace-nowrap" contenteditable="true">
+                      <div class="font-semibold text-slate-800">4 Vitrified MII Oocytes</div>
+                      <div class="text-[10px] text-slate-500 font-mono">2 Cryolock Straws (Blue)</div>
+                    </td>
+                    <td class="p-3 whitespace-nowrap" contenteditable="true">
+                      <div class="font-mono font-semibold text-slate-900">CryoPort VPR-8819</div>
+                      <div class="text-[10px] text-slate-500 font-mono">FedEx Priority: 7729-1082-9901</div>
+                    </td>
+                    <td class="p-3 whitespace-nowrap" contenteditable="true">
+                      <div class="text-slate-700">From: Boston IVF Fertility Center</div>
+                      <div class="text-[10px] text-slate-500">To: Whitney IVF Main Lab</div>
+                    </td>
+                    <td class="p-3 text-center whitespace-nowrap" contenteditable="true">
+                      <span class="font-mono font-bold text-[#4A9755] bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200">Tank A / Cane 03-B</span>
+                    </td>
+                    <td class="p-3 text-center whitespace-nowrap" contenteditable="true">
+                      <div class="font-mono font-bold text-[#4A9755]">-195.6°C</div>
+                      <div class="text-[10px] text-[#4A9755] font-semibold">Datalogger PASS</div>
+                    </td>
+                    <td class="p-3 text-center whitespace-nowrap">
+                      <div class="inline-flex items-center space-x-1 px-2 py-0.5 bg-[#EAF7EC] border border-[#74D16F]/60 rounded text-[10px] font-bold text-[#4A9755]">
+                        <i data-lucide="check-circle" class="w-3 h-3 text-[#4A9755]"></i>
+                        <span>LP / Whitney</span>
+                      </div>
+                      <div class="text-[9px] font-mono text-slate-500 mt-0.5">Dual Optical Pass</div>
+                    </td>
+                    <td class="p-3 text-right whitespace-nowrap">
+                      <button onclick="removeTransportRow(this)" class="text-rose-500 hover:text-rose-700 text-[11px] font-medium hover:underline">Remove</button>
+                    </td>
+                  </tr>
+
+                  <!-- Entry 2: Outbound Transport -->
+                  <tr class="hover:bg-slate-50/80 transition-colors transport-row" data-direction="OUTBOUND">
+                    <td class="p-3 whitespace-nowrap">
+                      <span class="inline-flex items-center space-x-1.5 px-2.5 py-0.5 rounded-full text-[10px] font-mono font-bold bg-sky-50 text-sky-700 border border-sky-300">
+                        <i data-lucide="arrow-up-right" class="w-3 h-3 text-sky-600"></i>
+                        <span>TRANSPORT OUT</span>
+                      </span>
+                    </td>
+                    <td class="p-3 font-mono text-slate-700 whitespace-nowrap" contenteditable="true">
+                      <div>09/16/2026</div>
+                      <div class="text-[10px] text-slate-500 font-normal">02:15 PM</div>
+                    </td>
+                    <td class="p-3 whitespace-nowrap" contenteditable="true">
+                      <div class="font-bold text-slate-900">Whitney Witness</div>
+                      <div class="text-[10px] font-mono text-slate-500">MRN: 12345 • DOB: 07/21/1990</div>
+                    </td>
+                    <td class="p-3 whitespace-nowrap" contenteditable="true">
+                      <div class="font-semibold text-slate-800">2 Euploid Blastocysts (PGT-A)</div>
+                      <div class="text-[10px] text-slate-500 font-mono">1 Cryo Straw (Clear #STRW-8812)</div>
+                    </td>
+                    <td class="p-3 whitespace-nowrap" contenteditable="true">
+                      <div class="font-mono font-semibold text-slate-900">MVE Vapor Shipper #MV-401</div>
+                      <div class="text-[10px] text-slate-500 font-mono">World Courier Airbill: WC-9904-B</div>
+                    </td>
+                    <td class="p-3 whitespace-nowrap" contenteditable="true">
+                      <div class="text-slate-700">From: Whitney IVF Main Lab</div>
+                      <div class="text-[10px] text-slate-500">To: Pacific Fertility Center (FET)</div>
+                    </td>
+                    <td class="p-3 text-center whitespace-nowrap" contenteditable="true">
+                      <span class="font-mono font-semibold text-slate-700 bg-slate-100 px-2 py-0.5 rounded border border-slate-200">Tank A / Cane 01-A</span>
+                    </td>
+                    <td class="p-3 text-center whitespace-nowrap" contenteditable="true">
+                      <div class="font-mono font-bold text-sky-700">-196.0°C</div>
+                      <div class="text-[10px] text-sky-700 font-semibold">Pre-Charged 4.8h</div>
+                    </td>
+                    <td class="p-3 text-center whitespace-nowrap">
+                      <div class="inline-flex items-center space-x-1 px-2 py-0.5 bg-[#EAF7EC] border border-[#74D16F]/60 rounded text-[10px] font-bold text-[#4A9755]">
+                        <i data-lucide="check-circle" class="w-3 h-3 text-[#4A9755]"></i>
+                        <span>LP / Whitney</span>
+                      </div>
+                      <div class="text-[9px] font-mono text-slate-500 mt-0.5">Dual Optical Pass</div>
+                    </td>
+                    <td class="p-3 text-right whitespace-nowrap">
+                      <button onclick="removeTransportRow(this)" class="text-rose-500 hover:text-rose-700 text-[11px] font-medium hover:underline">Remove</button>
+                    </td>
+                  </tr>
+
+                  <!-- Entry 3: Inbound Transport -->
+                  <tr class="hover:bg-slate-50/80 transition-colors transport-row" data-direction="INBOUND">
+                    <td class="p-3 whitespace-nowrap">
+                      <span class="inline-flex items-center space-x-1.5 px-2.5 py-0.5 rounded-full text-[10px] font-mono font-bold bg-[#EAF7EC] text-[#2E7D32] border border-[#74D16F]/60">
+                        <i data-lucide="arrow-down-left" class="w-3 h-3 text-[#4A9755]"></i>
+                        <span>TRANSPORT IN</span>
+                      </span>
+                    </td>
+                    <td class="p-3 font-mono text-slate-700 whitespace-nowrap" contenteditable="true">
+                      <div>09/12/2026</div>
+                      <div class="text-[10px] text-slate-500 font-normal">11:00 AM</div>
+                    </td>
+                    <td class="p-3 whitespace-nowrap" contenteditable="true">
+                      <div class="font-bold text-slate-900">Lonyl Palao</div>
+                      <div class="text-[10px] font-mono text-slate-500">MRN: 54321 • DOB: 04/01/1990</div>
+                    </td>
+                    <td class="p-3 whitespace-nowrap" contenteditable="true">
+                      <div class="font-semibold text-slate-800">2 Cryopreserved Semen Vials</div>
+                      <div class="text-[10px] text-slate-500 font-mono">1.8 mL Nunc Cryotubes</div>
+                    </td>
+                    <td class="p-3 whitespace-nowrap" contenteditable="true">
+                      <div class="font-mono font-semibold text-slate-900">Chart Dry Shipper #DS-103</div>
+                      <div class="text-[10px] text-slate-500 font-mono">Courier Hand-Carried: HC-440</div>
+                    </td>
+                    <td class="p-3 whitespace-nowrap" contenteditable="true">
+                      <div class="text-slate-700">From: Bay Area Cryobank</div>
+                      <div class="text-[10px] text-slate-500">To: Whitney IVF Main Lab</div>
+                    </td>
+                    <td class="p-3 text-center whitespace-nowrap" contenteditable="true">
+                      <span class="font-mono font-bold text-[#4A9755] bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200">Tank A / Cane 02-A</span>
+                    </td>
+                    <td class="p-3 text-center whitespace-nowrap" contenteditable="true">
+                      <div class="font-mono font-bold text-[#4A9755]">-194.8°C</div>
+                      <div class="text-[10px] text-[#4A9755] font-semibold">Datalogger PASS</div>
+                    </td>
+                    <td class="p-3 text-center whitespace-nowrap">
+                      <div class="inline-flex items-center space-x-1 px-2 py-0.5 bg-[#EAF7EC] border border-[#74D16F]/60 rounded text-[10px] font-bold text-[#4A9755]">
+                        <i data-lucide="check-circle" class="w-3 h-3 text-[#4A9755]"></i>
+                        <span>LP / Whitney</span>
+                      </div>
+                      <div class="text-[9px] font-mono text-slate-500 mt-0.5">Dual Optical Pass</div>
+                    </td>
+                    <td class="p-3 text-right whitespace-nowrap">
+                      <button onclick="removeTransportRow(this)" class="text-rose-500 hover:text-rose-700 text-[11px] font-medium hover:underline">Remove</button>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+
+            <!-- Footer Metrics & Verification Summary -->
+            <div class="bg-[#FAF8F5] px-4 py-3 border-t border-[#DDD4C0] flex flex-wrap items-center justify-between gap-3 text-xs">
+              <div class="flex items-center space-x-4">
+                <span class="flex items-center space-x-1.5 text-slate-700 font-medium">
+                  <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+                  <span><strong>2</strong> Inbound Received</span>
+                </span>
+                <span class="flex items-center space-x-1.5 text-slate-700 font-medium">
+                  <span class="w-2 h-2 rounded-full bg-sky-500"></span>
+                  <span><strong>1</strong> Outbound Dispatched</span>
+                </span>
+                <span class="flex items-center space-x-1.5 text-[#4A9755] font-semibold">
+                  <i data-lucide="shield-check" class="w-3.5 h-3.5"></i>
+                  <span>100% Optical Dual-Witness Verified</span>
+                </span>
+              </div>
+              <div class="text-slate-500 font-mono text-[11px]">
+                Audited & Logged under FDA 21 CFR Part 1271 & CLIA QC Standards
+              </div>
+            </div>
+          </div>
+
+          <!-- SECTION: SPECIMEN DISCARD LOG -->
+          <div class="bg-white rounded-lg border border-[#DDD4C0] shadow-sm overflow-hidden">
+            <!-- Header & Action Bar -->
+            <div class="bg-[#FAF8F5] p-3.5 border-b border-[#DDD4C0] flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+              <div class="flex items-center space-x-3">
+                <div class="w-8 h-8 rounded-lg bg-rose-50 border border-rose-200 flex items-center justify-center text-rose-600 flex-shrink-0">
+                  <i data-lucide="trash-2" class="w-4 h-4"></i>
+                </div>
+                <div>
+                  <div class="flex items-center space-x-2">
+                    <h3 class="text-xs font-bold text-slate-900 uppercase tracking-wide">Specimen Discard</h3>
+                    <span id="discardCountBadge" class="px-2 py-0.5 rounded-full text-[10px] font-mono font-bold bg-rose-50 text-rose-700 border border-rose-200">1 Discard Logged</span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Capture Discard Action Button -->
+              <button onclick="openDiscardModal()" class="px-3.5 py-1.5 bg-[#4A9755] hover:bg-[#3D8046] text-white font-semibold rounded-lg shadow-sm flex items-center justify-center space-x-2 transition text-xs whitespace-nowrap self-start sm:self-auto">
+                <i data-lucide="glasses" class="w-4 h-4"></i>
+                <span>Capture Discard</span>
+              </button>
+            </div>
+
+            <!-- Discard Table -->
+            <div class="overflow-x-auto w-full">
+              <table class="w-full text-xs text-left border-collapse" id="specimenDiscardTable">
+                <thead class="bg-[#FAF8F5]/80 border-b border-[#DDD4C0] font-bold text-slate-700 uppercase tracking-wider text-[11px]">
+                  <tr>
+                    <th class="p-3 min-w-[130px] whitespace-nowrap">Date & Time</th>
+                    <th class="p-3 min-w-[180px] whitespace-nowrap">Patient / MRN</th>
+                    <th class="p-3 min-w-[200px] whitespace-nowrap">Specimen & Straw ID</th>
+                    <th class="p-3 min-w-[190px] whitespace-nowrap">Reason for Discard</th>
+                    <th class="p-3 min-w-[200px] whitespace-nowrap">Consent / Authorization</th>
+                    <th class="p-3 min-w-[150px] whitespace-nowrap text-center">Optical Dual Witness</th>
+                    <th class="p-3 min-w-[80px] whitespace-nowrap text-right">Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="specimenDiscardTableBody" class="divide-y divide-slate-100">
+                  <!-- Row 1: Patient-Directed Discard -->
+                  <tr class="hover:bg-slate-50/80 transition-colors discard-row">
+                    <td class="p-3 font-mono text-slate-700 whitespace-nowrap" contenteditable="true">
+                      <div>09/20/2026</div>
+                      <div class="text-[10px] text-slate-500 font-normal">11:15 AM</div>
+                    </td>
+                    <td class="p-3 whitespace-nowrap" contenteditable="true">
+                      <div class="font-bold text-slate-900">Whitney Witness</div>
+                      <div class="text-[10px] font-mono text-slate-500">MRN: 12345 • DOB: 07/21/1990</div>
+                    </td>
+                    <td class="p-3 whitespace-nowrap" contenteditable="true">
+                      <div class="font-semibold text-slate-800">1 Aneuploid Blastocyst (-16, +21)</div>
+                      <div class="text-[10px] text-slate-500 font-mono">Straw #STRW-8812-C (Clear)</div>
+                    </td>
+                    <td class="p-3 whitespace-nowrap" contenteditable="true">
+                      <span class="px-2 py-0.5 rounded bg-amber-50 text-amber-800 border border-amber-200 text-[10px] font-semibold">Patient Directive / PGT-A Abnormal</span>
+                    </td>
+                    <td class="p-3 whitespace-nowrap" contenteditable="true">
+                      <div class="font-semibold text-slate-800">Notarized Directive #DIR-9201</div>
+                      <div class="text-[10px] text-emerald-700 font-medium">✓ Dual Patient Signatures Verified</div>
+                    </td>
+                    <td class="p-3 text-center whitespace-nowrap">
+                      <div class="inline-flex items-center space-x-1 px-2 py-0.5 bg-[#EAF7EC] border border-[#74D16F]/60 rounded text-[10px] font-bold text-[#4A9755]">
+                        <i data-lucide="check-circle" class="w-3 h-3 text-[#4A9755]"></i>
+                        <span>LP / Whitney</span>
+                      </div>
+                      <div class="text-[9px] font-mono text-slate-500 mt-0.5">Dual Optical Pass</div>
+                    </td>
+                    <td class="p-3 text-right whitespace-nowrap">
+                      <button onclick="removeDiscardRow(this)" class="text-rose-500 hover:text-rose-700 text-[11px] font-medium hover:underline">Remove</button>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+
+            <!-- Footer Compliance Summary -->
+            <div class="bg-[#FAF8F5] px-4 py-3 border-t border-[#DDD4C0] flex flex-wrap items-center justify-between gap-3 text-xs">
+              <div class="flex items-center space-x-4">
+                <span class="flex items-center space-x-1.5 text-slate-700 font-medium">
+                  <span class="w-2 h-2 rounded-full bg-rose-500"></span>
+                  <span><strong>100%</strong> Consent Documents Verified Prior to Discard</span>
+                </span>
+                <span class="flex items-center space-x-1.5 text-[#4A9755] font-semibold">
+                  <i data-lucide="shield-check" class="w-3.5 h-3.5"></i>
+                  <span>Zero Single-Operator Discards Permitted</span>
+                </span>
+              </div>
+              <div class="text-slate-500 font-mono text-[11px]">
+                Complies with ASRM Ethics Committee Guidance & CAP Reproductive Lab Accreditation
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- VIEW 6: AUDIT TRAIL -->
+        <div id="view-audit" class="hidden space-y-4">
+          <!-- Top Banner Card -->
+          <div class="bg-white p-4 rounded-lg border border-[#DDD4C0] shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-3">
+            <div class="space-y-1">
+              <div class="flex items-center space-x-2">
+                <div class="w-8 h-8 rounded-lg bg-[#EAF7EC] border border-[#74D16F]/40 flex items-center justify-center text-[#4A9755]">
+                  <i data-lucide="file-check-2" class="w-4 h-4"></i>
+                </div>
+                <h2 class="text-lg font-bold text-slate-900">Audit Trail & Chain of Custody Log</h2>
+                <span class="px-2 py-0.5 rounded-full text-[10px] font-mono font-bold bg-[#EAF7EC] text-[#4A9755] border border-[#74D16F]/40">FDA 21 CFR Part 11 Compliant</span>
+              </div>
+              <p class="text-xs text-slate-500 font-medium pl-10">Immutable tamper-evident electronic witnessing log, timestamped optical validations, and operator biometric credentials.</p>
+            </div>
+            
+            <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-2">
+              <button onclick="downloadJsonFile()" class="px-3.5 py-2 bg-[#FAF8F5] hover:bg-white border border-[#DDD4C0] text-slate-700 hover:text-slate-900 font-semibold rounded-lg shadow-sm flex items-center justify-center space-x-1.5 text-xs transition whitespace-nowrap">
+                <i data-lucide="download" class="w-3.5 h-3.5 text-[#4A9755]"></i>
+                <span>Export Audit CSV</span>
+              </button>
+              <button onclick="window.print()" class="px-3.5 py-2 bg-[#4A9755] hover:bg-[#3D8046] text-white font-semibold rounded-lg shadow-sm flex items-center justify-center space-x-1.5 text-xs transition whitespace-nowrap">
+                <i data-lucide="printer" class="w-3.5 h-3.5"></i>
+                <span>Generate Audit Report</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Audit Trail Filter Toolbar & Table -->
+          <div class="bg-white rounded-lg border border-[#DDD4C0] shadow-sm overflow-hidden">
+            <div class="bg-[#FAF8F5] p-3 border-b border-[#DDD4C0] flex flex-col md:flex-row md:items-center justify-between gap-3">
+              <!-- Filter Pill Switcher -->
+              <div class="flex flex-wrap items-center space-x-1 bg-[#EFEAE1] p-0.5 rounded-lg border border-[#DDD4C0] text-xs">
+                <button onclick="filterAuditRows('ALL')" id="auditFilterAll" class="px-2.5 py-1 font-bold rounded-md bg-white text-slate-900 shadow-sm transition whitespace-nowrap">All Actions</button>
+                <button onclick="filterAuditRows('PROCEDURE')" id="auditFilterProc" class="px-2.5 py-1 font-medium rounded-md text-slate-600 hover:text-slate-900 transition whitespace-nowrap">Witness Procedures</button>
+                <button onclick="filterAuditRows('TRANSPORT')" id="auditFilterTrans" class="px-2.5 py-1 font-medium rounded-md text-slate-600 hover:text-slate-900 transition whitespace-nowrap">Tissue Transport</button>
+                <button onclick="filterAuditRows('QC')" id="auditFilterQC" class="px-2.5 py-1 font-medium rounded-md text-slate-600 hover:text-slate-900 transition whitespace-nowrap">QC & Calibration</button>
+                <button onclick="filterAuditRows('DISCARD')" id="auditFilterDisc" class="px-2.5 py-1 font-medium rounded-md text-slate-600 hover:text-slate-900 transition whitespace-nowrap">Discards</button>
+              </div>
+
+              <!-- Search in Audit -->
+              <div class="relative w-full md:w-64">
+                <i data-lucide="search" class="w-3.5 h-3.5 text-slate-400 absolute left-2.5 top-1/2 -translate-y-1/2"></i>
+                <input type="text" oninput="searchAuditTrail(this.value)" placeholder="Filter audit trail..." class="w-full pl-8 pr-3 py-1.5 text-xs bg-white border border-[#DDD4C0] rounded-md focus:outline-[#4A9755] focus:ring-1 focus:ring-[#4A9755]">
+              </div>
+            </div>
+
+            <!-- Table -->
+            <div class="overflow-x-auto w-full">
+              <table class="w-full text-xs text-left border-collapse" id="auditTrailTable">
+                <thead class="bg-[#FAF8F5]/80 border-b border-[#DDD4C0] font-bold text-slate-700 uppercase tracking-wider text-[11px]">
+                  <tr>
+                    <th class="p-3 min-w-[150px] whitespace-nowrap">Timestamp (UTC/PST)</th>
+                    <th class="p-3 min-w-[120px] whitespace-nowrap">Category</th>
+                    <th class="p-3 min-w-[190px] whitespace-nowrap">Event / Action</th>
+                    <th class="p-3 min-w-[180px] whitespace-nowrap">Patient / Identifier</th>
+                    <th class="p-3 min-w-[150px] whitespace-nowrap">Device / Station</th>
+                    <th class="p-3 min-w-[140px] whitespace-nowrap text-center">Operator / Witness</th>
+                    <th class="p-3 min-w-[130px] whitespace-nowrap text-center">Cryptographic Hash</th>
+                    <th class="p-3 min-w-[110px] whitespace-nowrap text-center">Status</th>
+                  </tr>
+                </thead>
+                <tbody id="auditTrailBody" class="divide-y divide-slate-100">
+                  <tr class="hover:bg-slate-50 transition-colors audit-row" data-cat="PROCEDURE">
+                    <td class="p-3 font-mono text-slate-700 whitespace-nowrap">
+                      <div>09/14/2026 07:02:14</div>
+                      <div class="text-[10px] text-slate-400">14:02:14 UTC</div>
+                    </td>
+                    <td class="p-3 whitespace-nowrap">
+                      <span class="px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-emerald-50 text-emerald-800 border border-emerald-200">PROCEDURE</span>
+                    </td>
+                    <td class="p-3 whitespace-nowrap">
+                      <div class="font-bold text-slate-900">Egg Retrieval Verified</div>
+                      <div class="text-[10px] text-slate-500">Dual optical scan: Follicular aspirate tubes</div>
+                    </td>
+                    <td class="p-3 whitespace-nowrap">
+                      <div class="font-semibold text-slate-900">Whitney Witness</div>
+                      <div class="text-[10px] font-mono text-slate-500">MRN: 12345 • DOB: 07/21/1990</div>
+                    </td>
+                    <td class="p-3 whitespace-nowrap">
+                      <div class="font-mono text-slate-800 font-semibold">Whitney 1 (Glasses)</div>
+                      <div class="text-[10px] text-slate-500">OR Suite 1 / Hood 01</div>
+                    </td>
+                    <td class="p-3 text-center whitespace-nowrap">
+                      <span class="font-mono font-bold text-slate-800 bg-slate-100 px-2 py-0.5 rounded border border-slate-200">LP / Attending MD</span>
+                    </td>
+                    <td class="p-3 text-center whitespace-nowrap font-mono text-[10px] text-slate-500" title="SHA-256 block hash">
+                      <span class="bg-slate-50 px-1.5 py-0.5 rounded border border-slate-200">a94b8e...14f2</span>
+                    </td>
+                    <td class="p-3 text-center whitespace-nowrap">
+                      <span class="px-2 py-0.5 rounded-full bg-[#EAF7EC] text-[#4A9755] border border-[#74D16F]/50 font-bold inline-block text-[10px]">VERIFIED</span>
+                    </td>
+                  </tr>
+
+                  <tr class="hover:bg-slate-50 transition-colors audit-row" data-cat="PROCEDURE">
+                    <td class="p-3 font-mono text-slate-700 whitespace-nowrap">
+                      <div>09/14/2026 07:05:40</div>
+                      <div class="text-[10px] text-slate-400">14:05:40 UTC</div>
+                    </td>
+                    <td class="p-3 whitespace-nowrap">
+                      <span class="px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-emerald-50 text-emerald-800 border border-emerald-200">PROCEDURE</span>
+                    </td>
+                    <td class="p-3 whitespace-nowrap">
+                      <div class="font-bold text-slate-900">Sperm Collection & Wash Witness</div>
+                      <div class="text-[10px] text-slate-500">Barcode match partner cup #SC-54321</div>
+                    </td>
+                    <td class="p-3 whitespace-nowrap">
+                      <div class="font-semibold text-slate-900">Lonyl Palao</div>
+                      <div class="text-[10px] font-mono text-slate-500">MRN: 54321 • DOB: 04/01/1990</div>
+                    </td>
+                    <td class="p-3 whitespace-nowrap">
+                      <div class="font-mono text-slate-800 font-semibold">Whitney 1 (Glasses)</div>
+                      <div class="text-[10px] text-slate-500">Andrology Hood 01</div>
+                    </td>
+                    <td class="p-3 text-center whitespace-nowrap">
+                      <span class="font-mono font-bold text-slate-800 bg-slate-100 px-2 py-0.5 rounded border border-slate-200">LP / Andrology</span>
+                    </td>
+                    <td class="p-3 text-center whitespace-nowrap font-mono text-[10px] text-slate-500">
+                      <span class="bg-slate-50 px-1.5 py-0.5 rounded border border-slate-200">4c81a2...990d</span>
+                    </td>
+                    <td class="p-3 text-center whitespace-nowrap">
+                      <span class="px-2 py-0.5 rounded-full bg-[#EAF7EC] text-[#4A9755] border border-[#74D16F]/50 font-bold inline-block text-[10px]">VERIFIED</span>
+                    </td>
+                  </tr>
+
+                  <tr class="hover:bg-slate-50 transition-colors audit-row" data-cat="TRANSPORT">
+                    <td class="p-3 font-mono text-slate-700 whitespace-nowrap">
+                      <div>09/18/2026 09:45:12</div>
+                      <div class="text-[10px] text-slate-400">16:45:12 UTC</div>
+                    </td>
+                    <td class="p-3 whitespace-nowrap">
+                      <span class="px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-sky-50 text-sky-800 border border-sky-200">TRANSPORT</span>
+                    </td>
+                    <td class="p-3 whitespace-nowrap">
+                      <div class="font-bold text-slate-900">Inbound Dry Shipper Receipt</div>
+                      <div class="text-[10px] text-slate-500">Datalogger -195.6°C pass • 4 MII oocytes</div>
+                    </td>
+                    <td class="p-3 whitespace-nowrap">
+                      <div class="font-semibold text-slate-900">E. Davis</div>
+                      <div class="text-[10px] font-mono text-slate-500">MRN: 92841 • Boston IVF</div>
+                    </td>
+                    <td class="p-3 whitespace-nowrap">
+                      <div class="font-mono text-slate-800 font-semibold">CryoPort VPR-8819</div>
+                      <div class="text-[10px] text-slate-500">Tank A / Cane 03-B</div>
+                    </td>
+                    <td class="p-3 text-center whitespace-nowrap">
+                      <span class="font-mono font-bold text-slate-800 bg-slate-100 px-2 py-0.5 rounded border border-slate-200">LP / Whitney</span>
+                    </td>
+                    <td class="p-3 text-center whitespace-nowrap font-mono text-[10px] text-slate-500">
+                      <span class="bg-slate-50 px-1.5 py-0.5 rounded border border-slate-200">e3810f...82aa</span>
+                    </td>
+                    <td class="p-3 text-center whitespace-nowrap">
+                      <span class="px-2 py-0.5 rounded-full bg-[#EAF7EC] text-[#4A9755] border border-[#74D16F]/50 font-bold inline-block text-[10px]">VERIFIED</span>
+                    </td>
+                  </tr>
+
+                  <tr class="hover:bg-slate-50 transition-colors audit-row" data-cat="QC">
+                    <td class="p-3 font-mono text-slate-700 whitespace-nowrap">
+                      <div>09/14/2026 06:15:00</div>
+                      <div class="text-[10px] text-slate-400">13:15:00 UTC</div>
+                    </td>
+                    <td class="p-3 whitespace-nowrap">
+                      <span class="px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-amber-50 text-amber-800 border border-amber-200">QC</span>
+                    </td>
+                    <td class="p-3 whitespace-nowrap">
+                      <div class="font-bold text-slate-900">Daily Incubator Calibration</div>
+                      <div class="text-[10px] text-slate-500">EmbryoScope 1: 37°C / 6.0% CO2</div>
+                    </td>
+                    <td class="p-3 whitespace-nowrap">
+                      <div class="font-semibold text-slate-900">Lab Environmental QC</div>
+                      <div class="text-[10px] font-mono text-slate-500">Serial #ES-0012-A</div>
+                    </td>
+                    <td class="p-3 whitespace-nowrap">
+                      <div class="font-mono text-slate-800 font-semibold">NIST Calibrated Probe</div>
+                      <div class="text-[10px] text-slate-500">Main Lab Chamber 1</div>
+                    </td>
+                    <td class="p-3 text-center whitespace-nowrap">
+                      <span class="font-mono font-bold text-slate-800 bg-slate-100 px-2 py-0.5 rounded border border-slate-200">LP</span>
+                    </td>
+                    <td class="p-3 text-center whitespace-nowrap font-mono text-[10px] text-slate-500">
+                      <span class="bg-slate-50 px-1.5 py-0.5 rounded border border-slate-200">77fa21...120c</span>
+                    </td>
+                    <td class="p-3 text-center whitespace-nowrap">
+                      <span class="px-2.5 py-0.5 rounded-full bg-[#EAF7EC] text-[#4A9755] border border-[#74D16F]/50 font-bold inline-block text-[10px]">WITHIN RANGE</span>
+                    </td>
+                  </tr>
+
+                  <tr class="hover:bg-slate-50 transition-colors audit-row" data-cat="DISCARD">
+                    <td class="p-3 font-mono text-slate-700 whitespace-nowrap">
+                      <div>09/20/2026 11:15:30</div>
+                      <div class="text-[10px] text-slate-400">18:15:30 UTC</div>
+                    </td>
+                    <td class="p-3 whitespace-nowrap">
+                      <span class="px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-rose-50 text-rose-800 border border-rose-200">DISCARD</span>
+                    </td>
+                    <td class="p-3 whitespace-nowrap">
+                      <div class="font-bold text-slate-900">Specimen Discard Executed</div>
+                      <div class="text-[10px] text-slate-500">Dual consent verified • Directive #DIR-9201</div>
+                    </td>
+                    <td class="p-3 whitespace-nowrap">
+                      <div class="font-semibold text-slate-900">Whitney Witness</div>
+                      <div class="text-[10px] font-mono text-slate-500">Straw #STRW-8812-C</div>
+                    </td>
+                    <td class="p-3 whitespace-nowrap">
+                      <div class="font-mono text-slate-800 font-semibold">Whitney 1 (Glasses)</div>
+                      <div class="text-[10px] text-slate-500">Tank A / Cane 01-A</div>
+                    </td>
+                    <td class="p-3 text-center whitespace-nowrap">
+                      <span class="font-mono font-bold text-slate-800 bg-slate-100 px-2 py-0.5 rounded border border-slate-200">LP / Whitney</span>
+                    </td>
+                    <td class="p-3 text-center whitespace-nowrap font-mono text-[10px] text-slate-500">
+                      <span class="bg-slate-50 px-1.5 py-0.5 rounded border border-slate-200">bb093c...449e</span>
+                    </td>
+                    <td class="p-3 text-center whitespace-nowrap">
+                      <span class="px-2 py-0.5 rounded-full bg-rose-50 text-rose-700 border border-rose-300 font-bold inline-block text-[10px]">DISCARDED</span>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+
+            <!-- Footer summary -->
+            <div class="bg-[#FAF8F5] px-4 py-3 border-t border-[#DDD4C0] flex flex-wrap items-center justify-between gap-3 text-xs">
+              <div class="text-slate-600 font-medium">
+                Showing 5 recorded transactions • Cryptographic signatures verified against local key vault.
+              </div>
+              <div class="text-[11px] font-mono text-slate-500">
+                Audited & Logged under FDA 21 CFR Part 11 & CAP Electronic Records Standards
               </div>
             </div>
           </div>
@@ -708,14 +2140,14 @@
           <div id="modalCultureDayContainer" class="hidden">
             <label class="block text-slate-600 font-bold mb-1">Culture Stage (Column)</label>
             <select id="modalCultureDay" class="w-full bg-white border border-[#DDD4C0] rounded p-2 text-slate-800 font-semibold focus:outline-[#4A9755]">
-              <option value="DAY 0">DAY 0 (Retrieval / Insem)</option>
-              <option value="DAY 1">DAY 1 (Fert Check 2PN)</option>
-              <option value="DAY 2">DAY 2 (Cleavage Stage)</option>
-              <option value="DAY 3">DAY 3 (Cell Evaluation)</option>
-              <option value="DAY 4">DAY 4 (Morula / Compact)</option>
-              <option value="DAY 5">DAY 5 (Blastocyst / PGT)</option>
-              <option value="DAY 6">DAY 6 (Extended Blast)</option>
-              <option value="DAY 7">DAY 7 (Final Cryo)</option>
+              <option value="DAY 0">DAY 0 (RETRIEVAL / SPERM PREP / INSEM)</option>
+              <option value="DAY 1">DAY 1 (FERT CHECK)</option>
+              <option value="DAY 2">DAY 2</option>
+              <option value="DAY 3">DAY 3</option>
+              <option value="DAY 4">DAY 4</option>
+              <option value="DAY 5">DAY 5 (CHECK/BIOPSY/CRYO)</option>
+              <option value="DAY 6">DAY 6 (CHECK/BIOPSY/CRYO)</option>
+              <option value="DAY 7">DAY 7 (CHECK/BIOPSY/CRYO)</option>
             </select>
           </div>
 
@@ -793,43 +2225,183 @@
   </div>
 
   <!-- MODAL: Share / Export with Co-Founder -->
-  <div id="shareModal" class="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
-    <div class="bg-[#FAF8F5] border border-[#DDD4C0] w-full max-w-xl rounded-xl shadow-2xl overflow-hidden">
+  <!-- MODAL: Capture Tissue Transport In / Out -->
+  <div id="transportModal" class="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+    <div class="bg-[#FAF8F5] border border-[#DDD4C0] w-full max-w-xl rounded-xl shadow-2xl overflow-hidden animate-in fade-in zoom-in-95 duration-150">
       <div class="bg-[#162638] text-white p-4 flex items-center justify-between">
         <div class="flex items-center space-x-2">
-          <i data-lucide="share-2" class="w-5 h-5 text-[#74D16F]"></i>
-          <h3 class="text-sm font-bold uppercase tracking-wider">Share Workspace With Co-Founder</h3>
+          <i data-lucide="truck" class="w-5 h-5 text-[#74D16F]"></i>
+          <h3 id="transportModalTitle" class="text-sm font-bold uppercase tracking-wider">Capture Tissue Transport</h3>
         </div>
-        <button onclick="closeShareModal()" class="text-slate-400 hover:text-white">
+        <button onclick="closeTransportModal()" class="text-slate-400 hover:text-white">
           <i data-lucide="x" class="w-5 h-5"></i>
         </button>
       </div>
 
-      <div class="p-5 space-y-4 text-xs">
-        <p class="text-slate-600 leading-relaxed">
-          Export your current schedule data as JSON to send to your co-founder or load it onto another machine.
-        </p>
-
-        <div>
-          <label class="block font-bold text-slate-700 mb-1">Schedule Configuration JSON</label>
-          <textarea id="exportJsonArea" readonly rows="8" class="w-full font-mono text-[11px] bg-white border border-[#DDD4C0] rounded-lg p-2.5 text-slate-800 focus:outline-[#4A9755] select-all"></textarea>
-        </div>
-
-        <div class="flex items-center justify-between pt-2 border-t border-[#DDD4C0]">
-          <span id="copyFeedback" class="text-[#4A9755] font-semibold">Ready to copy</span>
-          <div class="flex space-x-2">
-            <button onclick="importJsonPrompt()" class="px-3 py-1.5 border border-[#DDD4C0] rounded bg-white hover:bg-slate-50 text-slate-700 font-medium">
-              Import JSON
-            </button>
-            <button onclick="downloadJsonFile()" class="px-3 py-1.5 border border-[#DDD4C0] rounded bg-white hover:bg-slate-50 text-slate-700 font-medium">
-              Download .json
-            </button>
-            <button onclick="copyShareData()" class="px-3 py-1.5 bg-[#4A9755] hover:bg-[#3D8046] text-white font-bold rounded shadow-sm">
-              Copy to Clipboard
-            </button>
+      <form id="transportForm" onsubmit="saveTransportEntry(event)" class="p-5 space-y-4 text-xs">
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block text-slate-600 font-bold mb-1">Transport Direction</label>
+            <select id="transportModalDirection" class="w-full bg-white border border-[#DDD4C0] rounded p-2 text-slate-800 font-semibold focus:outline-[#4A9755]">
+              <option value="INBOUND">TRANSPORT IN (Inbound Receiving)</option>
+              <option value="OUTBOUND">TRANSPORT OUT (Outbound Dispatch)</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-slate-600 font-bold mb-1">Date & Time</label>
+            <input type="text" id="transportModalDateTime" value="09/21/2026 10:30 AM" required class="w-full bg-white border border-[#DDD4C0] rounded p-2 text-slate-800 font-mono focus:outline-[#4A9755]">
           </div>
         </div>
+
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block text-slate-600 font-bold mb-1">Patient Name</label>
+            <input type="text" id="transportModalPatient" placeholder="e.g. Whitney Witness" required class="w-full bg-white border border-[#DDD4C0] rounded p-2 text-slate-800 focus:outline-[#4A9755]">
+          </div>
+          <div>
+            <label class="block text-slate-600 font-bold mb-1">MRN / DOB</label>
+            <input type="text" id="transportModalMrn" placeholder="MRN: 12345 • DOB: 07/21/1990" required class="w-full bg-white border border-[#DDD4C0] rounded p-2 text-slate-800 font-mono focus:outline-[#4A9755]">
+          </div>
+        </div>
+
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block text-slate-600 font-bold mb-1">Specimen Description</label>
+            <input type="text" id="transportModalSpecimen" placeholder="e.g. 5 Vitrified Blastocysts" required class="w-full bg-white border border-[#DDD4C0] rounded p-2 text-slate-800 focus:outline-[#4A9755]">
+          </div>
+          <div>
+            <label class="block text-slate-600 font-bold mb-1">Straws / Goblet IDs</label>
+            <input type="text" id="transportModalStraws" placeholder="e.g. 3 Cryolock Straws (Green)" required class="w-full bg-white border border-[#DDD4C0] rounded p-2 text-slate-800 focus:outline-[#4A9755]">
+          </div>
+        </div>
+
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block text-slate-600 font-bold mb-1">Dry Shipper ID & Courier</label>
+            <input type="text" id="transportModalShipper" placeholder="e.g. CryoPort VPR-9022 / FedEx" required class="w-full bg-white border border-[#DDD4C0] rounded p-2 text-slate-800 focus:outline-[#4A9755]">
+          </div>
+          <div>
+            <label class="block text-slate-600 font-bold mb-1">Origin / Destination Center</label>
+            <input type="text" id="transportModalRoute" placeholder="e.g. From: Seattle Reproductive Medicine" required class="w-full bg-white border border-[#DDD4C0] rounded p-2 text-slate-800 focus:outline-[#4A9755]">
+          </div>
+        </div>
+
+        <div class="grid grid-cols-3 gap-3">
+          <div>
+            <label class="block text-slate-600 font-bold mb-1">Tank & Cane Slot</label>
+            <input type="text" id="transportModalTank" placeholder="Tank A / Cane 02-A" required class="w-full bg-white border border-[#DDD4C0] rounded p-2 text-slate-800 font-mono focus:outline-[#4A9755]">
+          </div>
+          <div>
+            <label class="block text-slate-600 font-bold mb-1">Shipper Vapor Temp</label>
+            <input type="text" id="transportModalTemp" value="-195.8°C" required class="w-full bg-white border border-[#DDD4C0] rounded p-2 text-slate-800 font-mono focus:outline-[#4A9755]">
+          </div>
+          <div>
+            <label class="block text-slate-600 font-bold mb-1">Embryologist Initials</label>
+            <input type="text" id="transportModalTech" value="LP" required class="w-full bg-white border border-[#DDD4C0] rounded p-2 text-slate-800 font-mono focus:outline-[#4A9755]">
+          </div>
+        </div>
+
+        <div class="p-3 bg-[#EAF7EC] rounded-lg border border-[#74D16F]/50 flex items-start space-x-2.5">
+          <i data-lucide="glasses" class="w-4 h-4 text-[#4A9755] mt-0.5 flex-shrink-0"></i>
+          <p class="text-[11px] text-[#2E7D32] leading-snug">
+            <strong>Whitney Optical eWitness Active:</strong> Headset camera records dual visual verification of dry shipper seal, datalogger chart, specimen goblet straws, and LN2 tank assignment.
+          </p>
+        </div>
+
+        <div class="flex items-center justify-end space-x-2 pt-3 border-t border-[#DDD4C0]">
+          <button type="button" onclick="closeTransportModal()" class="px-3 py-1.5 border border-[#DDD4C0] rounded bg-white text-slate-700 hover:bg-slate-100">
+            Cancel
+          </button>
+          <button type="submit" class="px-4 py-1.5 bg-[#4A9755] hover:bg-[#3D8046] text-white font-bold rounded shadow-sm flex items-center space-x-1.5">
+            <i data-lucide="check" class="w-4 h-4"></i>
+            <span>Confirm & Record Transport</span>
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- MODAL: Capture Specimen Discard -->
+  <div id="discardModal" class="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+    <div class="bg-[#FAF8F5] border border-[#DDD4C0] w-full max-w-xl rounded-xl shadow-2xl overflow-hidden animate-in fade-in zoom-in-95 duration-150">
+      <div class="bg-[#162638] text-white p-4 flex items-center justify-between">
+        <div class="flex items-center space-x-2">
+          <i data-lucide="trash-2" class="w-5 h-5 text-rose-400"></i>
+          <h3 class="text-sm font-bold uppercase tracking-wider">Capture Specimen Discard</h3>
+        </div>
+        <button onclick="closeDiscardModal()" class="text-slate-400 hover:text-white">
+          <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
       </div>
+
+      <form id="discardForm" onsubmit="saveDiscardEntry(event)" class="p-5 space-y-4 text-xs">
+        <div>
+          <label class="block text-slate-600 font-bold mb-1">Date & Time</label>
+          <input type="text" id="discardModalDateTime" value="09/21/2026 02:00 PM" required class="w-full bg-white border border-[#DDD4C0] rounded p-2 text-slate-800 font-mono focus:outline-[#4A9755]">
+        </div>
+
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block text-slate-600 font-bold mb-1">Patient Name</label>
+            <input type="text" id="discardModalPatient" placeholder="e.g. Whitney Witness" required class="w-full bg-white border border-[#DDD4C0] rounded p-2 text-slate-800 focus:outline-[#4A9755]">
+          </div>
+          <div>
+            <label class="block text-slate-600 font-bold mb-1">MRN / DOB</label>
+            <input type="text" id="discardModalMrn" placeholder="MRN: 12345 • DOB: 07/21/1990" required class="w-full bg-white border border-[#DDD4C0] rounded p-2 text-slate-800 font-mono focus:outline-[#4A9755]">
+          </div>
+        </div>
+
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block text-slate-600 font-bold mb-1">Specimen Description</label>
+            <input type="text" id="discardModalSpecimen" placeholder="e.g. 1 Aneuploid Blastocyst (PGT-A Abnormal)" required class="w-full bg-white border border-[#DDD4C0] rounded p-2 text-slate-800 focus:outline-[#4A9755]">
+          </div>
+          <div>
+            <label class="block text-slate-600 font-bold mb-1">Straw / Dish / Vial ID</label>
+            <input type="text" id="discardModalStraw" placeholder="e.g. Straw #STRW-8812-C (Clear)" required class="w-full bg-white border border-[#DDD4C0] rounded p-2 text-slate-800 font-mono focus:outline-[#4A9755]">
+          </div>
+        </div>
+
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block text-slate-600 font-bold mb-1">Reason for Discard</label>
+            <select id="discardModalReason" class="w-full bg-white border border-[#DDD4C0] rounded p-2 text-slate-800 font-semibold focus:outline-[#4A9755]">
+              <option value="Patient Directive / PGT-A Abnormal">Patient Directive / PGT-A Abnormal</option>
+              <option value="Patient Consented Discard (Family Complete)">Patient Consented Discard (Family Complete)</option>
+              <option value="Non-viable / Development Arrest">Non-viable / Development Arrest</option>
+              <option value="Degenerate / Failed Fertilization">Degenerate / Failed Fertilization</option>
+              <option value="Abandoned Specimen (Statutory Notice Expired)">Abandoned Specimen (Statutory Notice Expired)</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-slate-600 font-bold mb-1">Consent / Directive Reference</label>
+            <input type="text" id="discardModalConsent" placeholder="e.g. Notarized Directive #DIR-9201" required class="w-full bg-white border border-[#DDD4C0] rounded p-2 text-slate-800 focus:outline-[#4A9755]">
+          </div>
+        </div>
+
+        <div>
+          <label class="block text-slate-600 font-bold mb-1">Lead Embryologist Initials</label>
+          <input type="text" id="discardModalTech" value="LP" required class="w-full bg-white border border-[#DDD4C0] rounded p-2 text-slate-800 font-mono focus:outline-[#4A9755]">
+        </div>
+
+        <!-- Optical Verification Banner -->
+        <div class="p-3 bg-rose-50/70 rounded-lg border border-rose-200 flex items-start space-x-2.5">
+          <i data-lucide="glasses" class="w-4 h-4 text-rose-600 mt-0.5 flex-shrink-0"></i>
+          <p class="text-[11px] text-rose-900 leading-snug">
+            <strong>Whitney Optical eWitness Dual Verification Required:</strong> Camera records specimen barcode, removal from LN2 canister slot, warm thaw dissolution, and embryologist verification to prevent any accidental specimen destruction.
+          </p>
+        </div>
+
+        <div class="flex items-center justify-end space-x-2 pt-3 border-t border-[#DDD4C0]">
+          <button type="button" onclick="closeDiscardModal()" class="px-3 py-1.5 border border-[#DDD4C0] rounded bg-white text-slate-700 hover:bg-slate-100">
+            Cancel
+          </button>
+          <button type="submit" class="px-4 py-1.5 bg-[#4A9755] hover:bg-[#3D8046] text-white font-bold rounded shadow-sm flex items-center space-x-1.5">
+            <i data-lucide="check" class="w-4 h-4"></i>
+            <span>Confirm & Record Discard</span>
+          </button>
+        </div>
+      </form>
     </div>
   </div>
 
@@ -1229,6 +2801,7 @@
     let globalEditMode = false;
     let currentScheduleMode = 'WEEK'; // 'WEEK' or 'DAY'
     let currentActiveDay = 'MON1';
+    let currentQCTab = 'daily';
 
     function initApp() {
       populateTimeOptions();
@@ -1597,7 +3170,7 @@
     }
 
     function switchTab(tabKey) {
-      const tabs = ['schedule', 'qc', 'lot', 'inventory', 'cryo'];
+      const tabs = ['schedule', 'qc', 'lot', 'inventory', 'cryo', 'audit'];
       tabs.forEach(t => {
         const btn = document.getElementById(`tab-${t}`);
         const view = document.getElementById(`view-${t}`);
@@ -1611,6 +3184,84 @@
           view.classList.add('hidden');
         }
       });
+      lucide.createIcons();
+    }
+
+    function filterAuditRows(cat) {
+      const rows = document.querySelectorAll('#auditTrailBody .audit-row');
+      const btnAll = document.getElementById('auditFilterAll');
+      const btnProc = document.getElementById('auditFilterProc');
+      const btnTrans = document.getElementById('auditFilterTrans');
+      const btnQC = document.getElementById('auditFilterQC');
+      const btnDisc = document.getElementById('auditFilterDisc');
+
+      [btnAll, btnProc, btnTrans, btnQC, btnDisc].forEach(b => {
+        if (b) b.className = "px-2.5 py-1 font-medium rounded-md text-slate-600 hover:text-slate-900 transition";
+      });
+
+      const activeBtnMap = {
+        'ALL': btnAll,
+        'PROCEDURE': btnProc,
+        'TRANSPORT': btnTrans,
+        'QC': btnQC,
+        'DISCARD': btnDisc
+      };
+      if (activeBtnMap[cat]) {
+        activeBtnMap[cat].className = "px-2.5 py-1 font-bold rounded-md bg-white text-slate-900 shadow-sm transition";
+      }
+
+      rows.forEach(r => {
+        if (cat === 'ALL' || r.dataset.cat === cat) {
+          r.classList.remove('hidden');
+        } else {
+          r.classList.add('hidden');
+        }
+      });
+    }
+
+    function searchAuditTrail(query) {
+      const q = (query || '').toLowerCase().trim();
+      const rows = document.querySelectorAll('#auditTrailBody .audit-row');
+      rows.forEach(r => {
+        if (!q || r.textContent.toLowerCase().includes(q)) {
+          r.classList.remove('hidden');
+        } else {
+          r.classList.add('hidden');
+        }
+      });
+    }
+
+    // Switch between Daily, Weekly, Monthly, Quarterly, Yearly QC tabs
+    function switchQCTab(qcTab) {
+      currentQCTab = qcTab;
+      const subTabs = ['daily', 'weekly', 'monthly', 'quarterly', 'yearly'];
+      const titleMap = {
+        daily: 'QC REPORT',
+        weekly: 'QC REPORT',
+        monthly: 'QC REPORT',
+        quarterly: 'QC REPORT',
+        yearly: 'QC REPORT'
+      };
+
+      const titleEl = document.getElementById('qcHeadingTitle');
+      const btnLabel = document.getElementById('qcCaptureBtnLabel');
+      if (titleEl) titleEl.textContent = titleMap[qcTab] || 'QC REPORT';
+      if (btnLabel) btnLabel.textContent = 'Capture QC';
+
+      subTabs.forEach(t => {
+        const btn = document.getElementById(`qc-tab-${t}`);
+        const view = document.getElementById(`qc-view-${t}`);
+        if (!btn || !view) return;
+
+        if (t === qcTab) {
+          btn.className = "px-4 py-2 text-xs sm:text-sm font-semibold border-t-2 border-r-2 border-l-2 border-[#DDD4C0] rounded-t-lg transition bg-[#FAF8F5] text-[#1A365D] border-b-transparent shadow-sm";
+          view.classList.remove('hidden');
+        } else {
+          btn.className = "px-4 py-2 text-xs sm:text-sm font-medium border-t-2 border-r-2 border-l-2 border-transparent hover:border-[#DDD4C0] rounded-t-lg transition text-slate-700 hover:text-slate-900 bg-[#E8E2D6] hover:bg-[#FAF8F5]";
+          view.classList.add('hidden');
+        }
+      });
+
       lucide.createIcons();
     }
 
@@ -1885,19 +3536,102 @@
     }
 
     function addQCRow() {
-      const tbody = document.getElementById('qcTableBody');
-      const tr = document.createElement('tr');
-      tr.className = 'hover:bg-slate-50';
-      tr.innerHTML = `
-        <td class="p-3 font-mono font-medium" contenteditable="true">07:00 AM</td>
-        <td class="p-3 font-semibold" contenteditable="true">Hood 03 (Biopsy)</td>
-        <td class="p-3 text-[#4A9755] font-semibold" contenteditable="true">Calibrated (100%)</td>
-        <td class="p-3 text-[#4A9755] font-semibold" contenteditable="true">Pass (Signal: 99dBm)</td>
-        <td class="p-3" contenteditable="true">New Embryologist</td>
-        <td class="p-3"><span class="px-2 py-0.5 rounded-full bg-[#EAF7EC] text-[#4A9755] border border-[#74D16F]/50 font-bold">VERIFIED</span></td>
-        <td class="p-3 text-right"><button onclick="this.closest('tr').remove()" class="text-rose-500 hover:underline">Remove</button></td>
+      if (currentQCTab === 'daily') {
+        const tbody = document.getElementById('qcDailyTableBody');
+        const tr = document.createElement('tr');
+        tr.className = 'hover:bg-slate-50/80 transition-colors';
+        tr.innerHTML = `
+          <td class="p-3 font-semibold text-slate-900 whitespace-nowrap" contenteditable="true">Hood 03 (Biopsy)</td>
+          <td class="p-3 text-[#4A9755] font-semibold font-mono text-center whitespace-nowrap" contenteditable="true">37°C</td>
+          <td class="p-3 text-[#4A9755] font-semibold font-mono text-center whitespace-nowrap" contenteditable="true">37°C</td>
+          <td class="p-3 text-[#4A9755] font-semibold font-mono text-center whitespace-nowrap" contenteditable="true">37.0°C</td>
+          <td class="p-3 text-center whitespace-nowrap"><span class="px-2.5 py-0.5 rounded-full bg-[#EAF7EC] text-[#4A9755] border border-[#74D16F]/50 font-bold inline-block">Within Range</span></td>
+          <td class="p-3 text-center whitespace-nowrap text-slate-500 font-mono text-[11px]" contenteditable="true">—</td>
+        `;
+        tbody.prepend(tr);
+      } else if (currentQCTab === 'weekly') {
+        addWeeklyDutyCard('MON');
+      } else if (currentQCTab === 'monthly') {
+        addMonthlyDutyCard(14);
+      } else if (currentQCTab === 'quarterly') {
+        const tbody = document.getElementById('qcQuarterlyTableBody');
+        const tr = document.createElement('tr');
+        tr.className = 'hover:bg-slate-50';
+        tr.innerHTML = `
+          <td class="p-3 font-mono font-medium" contenteditable="true">Q4 2026</td>
+          <td class="p-3 font-semibold" contenteditable="true">HVAC & Lab Environment</td>
+          <td class="p-3 text-slate-700" contenteditable="true">Quarterly Airborne Microbial Sampling</td>
+          <td class="p-3 text-[#4A9755] font-semibold" contenteditable="true">Zero Colony Forming Units</td>
+          <td class="p-3" contenteditable="true">QA Team</td>
+          <td class="p-3"><span class="px-2 py-0.5 rounded-full bg-[#EAF7EC] text-[#4A9755] border border-[#74D16F]/50 font-bold">VERIFIED</span></td>
+          <td class="p-3 text-right"><button onclick="this.closest('tr').remove()" class="text-rose-500 hover:underline">Remove</button></td>
+        `;
+        tbody.prepend(tr);
+      } else if (currentQCTab === 'yearly') {
+        const tbody = document.getElementById('qcYearlyTableBody');
+        const tr = document.createElement('tr');
+        tr.className = 'hover:bg-slate-50';
+        tr.innerHTML = `
+          <td class="p-3 font-mono font-medium" contenteditable="true">2027</td>
+          <td class="p-3 font-semibold" contenteditable="true">Micro-manipulator Servicing</td>
+          <td class="p-3 text-slate-700" contenteditable="true">Hydraulic Oil Replenishment & Motor Alignment</td>
+          <td class="p-3 text-[#4A9755] font-semibold" contenteditable="true">Cert #MM-2027-0104</td>
+          <td class="p-3" contenteditable="true">Narishige Service Eng</td>
+          <td class="p-3"><span class="px-2 py-0.5 rounded-full bg-[#EAF7EC] text-[#4A9755] border border-[#74D16F]/50 font-bold">VERIFIED</span></td>
+          <td class="p-3 text-right"><button onclick="this.closest('tr').remove()" class="text-rose-500 hover:underline">Remove</button></td>
+        `;
+        tbody.prepend(tr);
+      }
+    }
+
+    // Helper to add interactive, editable weekly duty cards directly into the weekly calendar view
+    function addWeeklyDutyCard(targetDay = 'MON') {
+      const validDay = (targetDay === 'current' || !targetDay) ? 'MON' : targetDay;
+      const container = document.getElementById(`weeklyDuties-${validDay}`);
+      if (!container) return;
+
+      const card = document.createElement('div');
+      card.className = 'bg-white rounded-md border-2 border-[#4A9755] p-2 space-y-1.5 shadow-xs relative group hover:shadow-sm transition animate-in fade-in zoom-in-95 duration-150';
+      card.innerHTML = `
+        <div class="flex items-center justify-between">
+          <span class="text-[9px] font-mono font-bold px-1.5 py-0.5 rounded bg-slate-100 text-slate-700 border border-slate-200" contenteditable="true">Incubator / Hood Station</span>
+          <span class="text-[9px] font-mono font-bold text-[#4A9755] bg-[#EAF7EC] px-1.5 py-0.2 rounded border border-[#74D16F]/50">DONE</span>
+        </div>
+        <div class="text-[11px] font-bold text-slate-900 leading-snug" contenteditable="true">Weekly Calibration Duty</div>
+        <div class="text-[10px] text-slate-500 font-mono" contenteditable="true">Reading / Verification: Pass</div>
+        <div class="pt-1 border-t border-slate-100 flex items-center justify-between text-[9px] font-mono text-slate-500">
+          <span contenteditable="true">Tech: LP</span>
+          <button onclick="this.closest('.group').remove()" class="text-rose-400 hover:text-rose-600 opacity-0 group-hover:opacity-100 transition">Remove</button>
+        </div>
       `;
-      tbody.prepend(tr);
+      container.prepend(card);
+      lucide.createIcons();
+    }
+
+    // Helper to add interactive, editable monthly duty cards directly into the monthly calendar view
+    function addMonthlyDutyCard(targetDay = 14) {
+      let dayNum = Number(targetDay);
+      if (!dayNum || dayNum < 1 || dayNum > 30) {
+        dayNum = 14;
+      }
+      const container = document.getElementById(`monthlyDuties-${dayNum}`);
+      if (!container) return;
+
+      const card = document.createElement('div');
+      card.className = 'bg-white rounded border border-[#4A9755] p-1.5 space-y-0.5 relative group/card shadow-xs animate-in fade-in zoom-in-95 duration-150';
+      card.innerHTML = `
+        <div class="flex items-center justify-between">
+          <span class="text-[8.5px] font-bold text-slate-800 leading-tight" contenteditable="true">Monthly Inspection Task</span>
+          <span class="text-[8px] font-mono font-bold text-[#4A9755] bg-[#EAF7EC] px-1 rounded">DONE</span>
+        </div>
+        <div class="text-[9px] text-slate-500 truncate" contenteditable="true">Calibration / Verification: In Spec</div>
+        <div class="flex items-center justify-between text-[8px] font-mono text-slate-400 pt-0.5">
+          <span contenteditable="true">Tech: LP</span>
+          <button onclick="this.closest('.group\\/card').remove()" class="text-rose-400 hover:text-rose-600 opacity-0 group-hover/card:opacity-100">×</button>
+        </div>
+      `;
+      container.prepend(card);
+      lucide.createIcons();
     }
 
     function addLotRow() {
@@ -1910,16 +3644,338 @@
         <td class="p-3" contenteditable="true">Origio</td>
         <td class="p-3 text-slate-600" contenteditable="true">12/31/2027</td>
         <td class="p-3" contenteditable="true">Dr. Jenkins</td>
-        <td class="p-3"><span class="px-2 py-0.5 rounded-full bg-[#EAF7EC] text-[#4A9755] border border-[#74D16F]/40 font-bold">LOGGED</span></td>
-        <td class="p-3 text-right"><button onclick="this.closest('tr').remove()" class="text-rose-500 hover:underline">Remove</button></td>
+        <td class="p-3 font-mono text-slate-700 font-semibold" contenteditable="true">09/21/26</td>
+        <td class="p-3 text-right">
+          <span class="px-2.5 py-0.5 rounded-full bg-[#EAF7EC] text-[#4A9755] border border-[#74D16F]/60 font-bold text-[11px] inline-block tracking-wide">In Use</span>
+        </td>
       `;
       tbody.prepend(tr);
+    }
+
+    function captureCOA() {
+      const coaLot = prompt("Optical Witness: Scan or enter Reagent Lot for COA OCR capture:", "LOT-2026-9844A");
+      if (coaLot) {
+        alert("Certificate of Analysis (COA) captured & linked via Whitney glasses for Lot: " + coaLot);
+      }
+    }
+
+    function captureNewLotInUse() {
+      const lotName = prompt("Optical Witness: Scan barcode / QR of new Lot placed into active service:", "CSCM-NXC-LOT-4412");
+      if (lotName) {
+        const tbody = document.getElementById('lotTableBody');
+        const tr = document.createElement('tr');
+        tr.className = 'hover:bg-slate-50';
+        tr.innerHTML = `
+          <td class="p-3 font-semibold" contenteditable="true">Continuous Single Culture Media (CSCM-NXC)</td>
+          <td class="p-3 font-mono font-bold text-[#4A9755]" contenteditable="true">${escapeHtml(lotName)}</td>
+          <td class="p-3" contenteditable="true">Fujifilm Irvine</td>
+          <td class="p-3 text-slate-600" contenteditable="true">12/15/2026</td>
+          <td class="p-3" contenteditable="true">LP</td>
+          <td class="p-3 font-mono text-slate-700 font-semibold" contenteditable="true">10/07/26</td>
+          <td class="p-3 text-right">
+            <span class="px-2.5 py-0.5 rounded-full bg-[#EAF7EC] text-[#4A9755] border border-[#74D16F]/60 font-bold text-[11px] inline-block tracking-wide">In Use</span>
+          </td>
+        `;
+        tbody.prepend(tr);
+        lucide.createIcons();
+      }
     }
 
     function addInventoryRow() {
       const newPo = prompt("Enter order item name (e.g., RFID Petri Dishes):");
       if (newPo) {
         console.log("Order logged:", newPo);
+      }
+    }
+
+    function captureCryoinventory() {
+      // Optical capture initiation for Cryoinventory canister matrix
+      const defaultCane = 'CANE 03-B';
+      const toast = document.createElement('div');
+      toast.className = 'fixed bottom-5 right-5 z-50 bg-[#162638] text-white px-4 py-3 rounded-xl border border-[#74D16F]/50 shadow-2xl flex items-center space-x-3 text-xs animate-in fade-in slide-in-from-bottom-3 duration-200';
+      toast.innerHTML = `
+        <div class="w-8 h-8 rounded-lg bg-[#EAF7EC] text-[#4A9755] flex items-center justify-center flex-shrink-0">
+          <i data-lucide="glasses" class="w-4 h-4"></i>
+        </div>
+        <div>
+          <div class="font-bold text-white flex items-center space-x-1.5">
+            <span>Whitney Optical eWitness Activated</span>
+            <span class="w-2 h-2 rounded-full bg-[#74D16F] animate-pulse"></span>
+          </div>
+          <div class="text-slate-300 text-[11px] mt-0.5">Canister barcode & goblet position captured for <strong>${defaultCane}</strong>.</div>
+        </div>
+      `;
+      document.body.appendChild(toast);
+      lucide.createIcons();
+      setTimeout(() => {
+        toast.classList.add('opacity-0', 'transition-opacity');
+        setTimeout(() => toast.remove(), 400);
+      }, 3500);
+    }
+
+    function captureTissueTransportIn() {
+      openTransportModal('INBOUND');
+    }
+
+    function captureTissueTransportOut() {
+      openTransportModal('OUTBOUND');
+    }
+
+    function openTransportModal(direction = 'INBOUND') {
+      const modal = document.getElementById('transportModal');
+      const title = document.getElementById('transportModalTitle');
+      const dirSelect = document.getElementById('transportModalDirection');
+      const routeInput = document.getElementById('transportModalRoute');
+      const dateTimeInput = document.getElementById('transportModalDateTime');
+
+      const now = new Date();
+      const monthStr = String(now.getMonth() + 1).padStart(2, '0');
+      const dayStr = String(now.getDate()).padStart(2, '0');
+      const yearStr = now.getFullYear();
+      let hours = now.getHours();
+      const ampm = hours >= 12 ? 'PM' : 'AM';
+      hours = hours % 12;
+      hours = hours ? hours : 12;
+      const minStr = String(now.getMinutes()).padStart(2, '0');
+      if (dateTimeInput) {
+        dateTimeInput.value = `${monthStr}/${dayStr}/${yearStr} ${String(hours).padStart(2, '0')}:${minStr} ${ampm}`;
+      }
+
+      if (dirSelect) dirSelect.value = direction;
+
+      if (direction === 'INBOUND') {
+        if (title) title.textContent = 'Capture Tissue Transport In (Receiving)';
+        if (routeInput) routeInput.placeholder = 'From: Origin Fertility Center (Receiving into Whitney)';
+      } else {
+        if (title) title.textContent = 'Capture Tissue Transport Out (Dispatch)';
+        if (routeInput) routeInput.placeholder = 'To: Destination Lab / Clinic (Departing Whitney)';
+      }
+
+      if (modal) modal.classList.remove('hidden');
+      lucide.createIcons();
+    }
+
+    function closeTransportModal() {
+      const modal = document.getElementById('transportModal');
+      if (modal) modal.classList.add('hidden');
+    }
+
+    function saveTransportEntry(e) {
+      e.preventDefault();
+      const direction = document.getElementById('transportModalDirection').value;
+      const dateTime = document.getElementById('transportModalDateTime').value;
+      const patient = document.getElementById('transportModalPatient').value.trim() || 'Whitney Witness';
+      const mrn = document.getElementById('transportModalMrn').value.trim() || 'MRN: 12345';
+      const specimen = document.getElementById('transportModalSpecimen').value.trim() || 'Vitrified Blastocysts';
+      const straws = document.getElementById('transportModalStraws').value.trim() || 'Cryolock Straws';
+      const shipper = document.getElementById('transportModalShipper').value.trim() || 'CryoPort Dry Shipper';
+      const route = document.getElementById('transportModalRoute').value.trim() || 'Partner Lab';
+      const tank = document.getElementById('transportModalTank').value.trim() || 'Tank A / Cane 01-A';
+      const temp = document.getElementById('transportModalTemp').value.trim() || '-195.8°C';
+      const tech = document.getElementById('transportModalTech').value.trim() || 'LP';
+
+      const tbody = document.getElementById('tissueTransportTableBody');
+      if (!tbody) return;
+
+      const isInbound = direction === 'INBOUND';
+      const badgeHtml = isInbound ? `
+        <span class="inline-flex items-center space-x-1.5 px-2.5 py-0.5 rounded-full text-[10px] font-mono font-bold bg-[#EAF7EC] text-[#2E7D32] border border-[#74D16F]/60">
+          <i data-lucide="arrow-down-left" class="w-3 h-3 text-[#4A9755]"></i>
+          <span>TRANSPORT IN</span>
+        </span>
+      ` : `
+        <span class="inline-flex items-center space-x-1.5 px-2.5 py-0.5 rounded-full text-[10px] font-mono font-bold bg-sky-50 text-sky-700 border border-sky-300">
+          <i data-lucide="arrow-up-right" class="w-3 h-3 text-sky-600"></i>
+          <span>TRANSPORT OUT</span>
+        </span>
+      `;
+
+      const tr = document.createElement('tr');
+      tr.className = 'hover:bg-slate-50/80 transition-colors transport-row animate-in fade-in duration-200';
+      tr.dataset.direction = direction;
+      tr.innerHTML = `
+        <td class="p-3 whitespace-nowrap">${badgeHtml}</td>
+        <td class="p-3 font-mono text-slate-700 whitespace-nowrap" contenteditable="true">
+          <div>${escapeHtml(dateTime)}</div>
+        </td>
+        <td class="p-3 whitespace-nowrap" contenteditable="true">
+          <div class="font-bold text-slate-900">${escapeHtml(patient)}</div>
+          <div class="text-[10px] font-mono text-slate-500">${escapeHtml(mrn)}</div>
+        </td>
+        <td class="p-3 whitespace-nowrap" contenteditable="true">
+          <div class="font-semibold text-slate-800">${escapeHtml(specimen)}</div>
+          <div class="text-[10px] text-slate-500 font-mono">${escapeHtml(straws)}</div>
+        </td>
+        <td class="p-3 whitespace-nowrap" contenteditable="true">
+          <div class="font-mono font-semibold text-slate-900">${escapeHtml(shipper)}</div>
+        </td>
+        <td class="p-3 whitespace-nowrap" contenteditable="true">
+          <div class="text-slate-700">${escapeHtml(route)}</div>
+        </td>
+        <td class="p-3 text-center whitespace-nowrap" contenteditable="true">
+          <span class="font-mono font-bold text-[#4A9755] bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200">${escapeHtml(tank)}</span>
+        </td>
+        <td class="p-3 text-center whitespace-nowrap" contenteditable="true">
+          <div class="font-mono font-bold text-[#4A9755]">${escapeHtml(temp)}</div>
+          <div class="text-[10px] text-[#4A9755] font-semibold">PASS</div>
+        </td>
+        <td class="p-3 text-center whitespace-nowrap">
+          <div class="inline-flex items-center space-x-1 px-2 py-0.5 bg-[#EAF7EC] border border-[#74D16F]/60 rounded text-[10px] font-bold text-[#4A9755]">
+            <i data-lucide="check-circle" class="w-3 h-3 text-[#4A9755]"></i>
+            <span>${escapeHtml(tech)} / Whitney</span>
+          </div>
+          <div class="text-[9px] font-mono text-slate-500 mt-0.5">Dual Optical Pass</div>
+        </td>
+        <td class="p-3 text-right whitespace-nowrap">
+          <button onclick="removeTransportRow(this)" class="text-rose-500 hover:text-rose-700 text-[11px] font-medium hover:underline">Remove</button>
+        </td>
+      `;
+
+      tbody.prepend(tr);
+      updateTransportCount();
+      closeTransportModal();
+      lucide.createIcons();
+    }
+
+    function removeTransportRow(btn) {
+      const row = btn.closest('tr');
+      if (row) {
+        row.remove();
+        updateTransportCount();
+      }
+    }
+
+    function updateTransportCount() {
+      const rows = document.querySelectorAll('#tissueTransportTableBody .transport-row');
+      const badge = document.getElementById('transportCountBadge');
+      if (badge) {
+        badge.textContent = `${rows.length} Transports Recorded`;
+      }
+    }
+
+    function filterTransportTable(filterType) {
+      const rows = document.querySelectorAll('#tissueTransportTableBody .transport-row');
+      const btnAll = document.getElementById('filterAllTransportsBtn');
+      const btnIn = document.getElementById('filterInboundTransportsBtn');
+      const btnOut = document.getElementById('filterOutboundTransportsBtn');
+
+      [btnAll, btnIn, btnOut].forEach(b => {
+        if (b) {
+          b.className = "px-2.5 py-1 text-xs font-semibold rounded-md text-slate-600 hover:text-slate-900 hover:bg-white/60 transition flex items-center space-x-1";
+        }
+      });
+
+      if (filterType === 'ALL') {
+        if (btnAll) btnAll.className = "px-2.5 py-1 text-xs font-bold rounded-md bg-white text-slate-900 shadow-sm border border-[#DDD4C0]/60 transition";
+        rows.forEach(r => r.classList.remove('hidden'));
+      } else if (filterType === 'INBOUND') {
+        if (btnIn) btnIn.className = "px-2.5 py-1 text-xs font-bold rounded-md bg-white text-slate-900 shadow-sm border border-[#DDD4C0]/60 transition flex items-center space-x-1";
+        rows.forEach(r => {
+          if (r.dataset.direction === 'INBOUND') r.classList.remove('hidden');
+          else r.classList.add('hidden');
+        });
+      } else if (filterType === 'OUTBOUND') {
+        if (btnOut) btnOut.className = "px-2.5 py-1 text-xs font-bold rounded-md bg-white text-slate-900 shadow-sm border border-[#DDD4C0]/60 transition flex items-center space-x-1";
+        rows.forEach(r => {
+          if (r.dataset.direction === 'OUTBOUND') r.classList.remove('hidden');
+          else r.classList.add('hidden');
+        });
+      }
+    }
+
+    // Modal handlers for Specimen Discard
+    function openDiscardModal() {
+      const modal = document.getElementById('discardModal');
+      const dateTimeInput = document.getElementById('discardModalDateTime');
+
+      const now = new Date();
+      const monthStr = String(now.getMonth() + 1).padStart(2, '0');
+      const dayStr = String(now.getDate()).padStart(2, '0');
+      const yearStr = now.getFullYear();
+      let hours = now.getHours();
+      const ampm = hours >= 12 ? 'PM' : 'AM';
+      hours = hours % 12;
+      hours = hours ? hours : 12;
+      const minStr = String(now.getMinutes()).padStart(2, '0');
+      if (dateTimeInput) {
+        dateTimeInput.value = `${monthStr}/${dayStr}/${yearStr} ${String(hours).padStart(2, '0')}:${minStr} ${ampm}`;
+      }
+
+      if (modal) modal.classList.remove('hidden');
+      lucide.createIcons();
+    }
+
+    function closeDiscardModal() {
+      const modal = document.getElementById('discardModal');
+      if (modal) modal.classList.add('hidden');
+    }
+
+    function saveDiscardEntry(e) {
+      e.preventDefault();
+      const dateTime = document.getElementById('discardModalDateTime').value;
+      const patient = document.getElementById('discardModalPatient').value.trim() || 'Whitney Witness';
+      const mrn = document.getElementById('discardModalMrn').value.trim() || 'MRN: 12345';
+      const specimen = document.getElementById('discardModalSpecimen').value.trim() || 'Aneuploid Blastocyst';
+      const straw = document.getElementById('discardModalStraw').value.trim() || 'Straw #STRW-8812-C';
+      const reason = document.getElementById('discardModalReason').value;
+      const consent = document.getElementById('discardModalConsent').value.trim() || 'Notarized Directive #DIR-9201';
+      const tech = document.getElementById('discardModalTech').value.trim() || 'LP';
+
+      const tbody = document.getElementById('specimenDiscardTableBody');
+      if (!tbody) return;
+
+      const tr = document.createElement('tr');
+      tr.className = 'hover:bg-slate-50/80 transition-colors discard-row animate-in fade-in duration-200';
+      tr.innerHTML = `
+        <td class="p-3 font-mono text-slate-700 whitespace-nowrap" contenteditable="true">
+          <div>${escapeHtml(dateTime)}</div>
+        </td>
+        <td class="p-3 whitespace-nowrap" contenteditable="true">
+          <div class="font-bold text-slate-900">${escapeHtml(patient)}</div>
+          <div class="text-[10px] font-mono text-slate-500">${escapeHtml(mrn)}</div>
+        </td>
+        <td class="p-3 whitespace-nowrap" contenteditable="true">
+          <div class="font-semibold text-slate-800">${escapeHtml(specimen)}</div>
+          <div class="text-[10px] text-slate-500 font-mono">${escapeHtml(straw)}</div>
+        </td>
+        <td class="p-3 whitespace-nowrap" contenteditable="true">
+          <span class="px-2 py-0.5 rounded bg-amber-50 text-amber-800 border border-amber-200 text-[10px] font-semibold">${escapeHtml(reason)}</span>
+        </td>
+        <td class="p-3 whitespace-nowrap" contenteditable="true">
+          <div class="font-semibold text-slate-800">${escapeHtml(consent)}</div>
+          <div class="text-[10px] text-emerald-700 font-medium">✓ Dual Patient Signatures Verified</div>
+        </td>
+        <td class="p-3 text-center whitespace-nowrap">
+          <div class="inline-flex items-center space-x-1 px-2 py-0.5 bg-[#EAF7EC] border border-[#74D16F]/60 rounded text-[10px] font-bold text-[#4A9755]">
+            <i data-lucide="check-circle" class="w-3 h-3 text-[#4A9755]"></i>
+            <span>${escapeHtml(tech)} / Whitney</span>
+          </div>
+          <div class="text-[9px] font-mono text-slate-500 mt-0.5">Dual Optical Pass</div>
+        </td>
+        <td class="p-3 text-right whitespace-nowrap">
+          <button onclick="removeDiscardRow(this)" class="text-rose-500 hover:text-rose-700 text-[11px] font-medium hover:underline">Remove</button>
+        </td>
+      `;
+
+      tbody.prepend(tr);
+      updateDiscardCount();
+      closeDiscardModal();
+      lucide.createIcons();
+    }
+
+    function removeDiscardRow(btn) {
+      const row = btn.closest('tr');
+      if (row) {
+        row.remove();
+        updateDiscardCount();
+      }
+    }
+
+    function updateDiscardCount() {
+      const rows = document.querySelectorAll('#specimenDiscardTableBody .discard-row');
+      const badge = document.getElementById('discardCountBadge');
+      if (badge) {
+        badge.textContent = `${rows.length} Discards Logged`;
       }
     }
 
@@ -1931,6 +3987,286 @@
         .replace(/>/g, '&gt;')
         .replace(/"/g, '&quot;')
         .replace(/'/g, '&#39;');
+    }
+
+    // Global Search functionality for Lot, Patient, MRN, DOB, and Stations
+    function handleGlobalSearch(query) {
+      const q = (query || '').trim().toLowerCase();
+      const dropdown = document.getElementById('searchResultsDropdown');
+      const resultsList = document.getElementById('searchResultsList');
+      const clearBtn = document.getElementById('clearSearchBtn');
+
+      if (!q) {
+        if (clearBtn) clearBtn.classList.add('hidden');
+        if (dropdown) dropdown.classList.add('hidden');
+        resetScheduleHighlights();
+        return;
+      }
+
+      if (clearBtn) clearBtn.classList.remove('hidden');
+
+      const matches = [];
+
+      // 1. Search in Schedule (Patients, MRNs, DOBs, Procedures, Stations)
+      Object.keys(scheduleData).forEach(cellKey => {
+        const events = scheduleData[cellKey];
+        if (Array.isArray(events)) {
+          events.forEach(ev => {
+            const matchPatient = (ev.patient || '').toLowerCase().includes(q);
+            const matchMrn = (ev.mrn || '').toLowerCase().includes(q);
+            const matchDob = (ev.dob || '').toLowerCase().includes(q);
+            const matchProc = (ev.procedure || '').toLowerCase().includes(q);
+            const matchStation = (ev.station || '').toLowerCase().includes(q);
+            const matchPartner = ev.partner && (
+              (ev.partner.name || '').toLowerCase().includes(q) ||
+              (ev.partner.mrn || '').toLowerCase().includes(q)
+            );
+
+            if (matchPatient || matchMrn || matchDob || matchProc || matchStation || matchPartner) {
+              matches.push({
+                type: 'Schedule / Patient',
+                title: ev.patient,
+                subtitle: `MRN: ${ev.mrn} | DOB: ${ev.dob} | ${ev.procedure}`,
+                badge: ev.stage || 'Schedule',
+                badgeColor: 'bg-emerald-900/60 text-[#74D16F] border-[#74D16F]/40',
+                action: () => {
+                  switchTab('schedule');
+                  openEditEventModal(cellKey, ev.id);
+                  dropdown.classList.add('hidden');
+                }
+              });
+            }
+          });
+        }
+      });
+
+      // 2. Search in Reagents / Lot Tracking
+      const lotRows = [
+        { item: 'Global Total LP Media', lot: 'LOT-2026-9844A', mfg: 'CooperSurgical', exp: '11/30/2026' },
+        { item: 'ICSI PVP 7% Solution', lot: 'PVP-7731-X', mfg: 'Vitrolife', exp: '10/15/2026' },
+        { item: 'Embryo Cryo Straws (Clear)', lot: 'STRW-8812-B', mfg: 'Cryo Bio System', exp: '04/20/2028' },
+        { item: 'ICSI Injection Pipette', lot: 'LOT-PIP-4820', mfg: 'Origio', exp: '12/31/2027' }
+      ];
+
+      lotRows.forEach(lot => {
+        if (lot.lot.toLowerCase().includes(q) || lot.item.toLowerCase().includes(q) || lot.mfg.toLowerCase().includes(q)) {
+          matches.push({
+            type: 'Lot Tracking',
+            title: lot.item,
+            subtitle: `Lot: ${lot.lot} | Exp: ${lot.exp} (${lot.mfg})`,
+            badge: 'LOT',
+            badgeColor: 'bg-amber-900/50 text-amber-300 border-amber-600/40',
+            action: () => {
+              switchTab('lot');
+              dropdown.classList.add('hidden');
+            }
+          });
+        }
+      });
+
+      // 3. Search in Cryoinventory
+      const cryoItems = [
+        { canister: 'CANE 01-A', tank: 'Tank A - Canister 1', status: '4/5 Goblets filled' },
+        { canister: 'CANE 02-A', tank: 'Tank A - Canister 2', status: '5/5 Goblets filled' },
+        { canister: 'CANE 03-B', tank: 'Tank A - Canister 3', status: '2/5 Goblets filled' }
+      ];
+
+      cryoItems.forEach(cryo => {
+        if (cryo.canister.toLowerCase().includes(q) || cryo.tank.toLowerCase().includes(q)) {
+          matches.push({
+            type: 'Cryoinventory',
+            title: cryo.canister,
+            subtitle: `${cryo.tank} • ${cryo.status}`,
+            badge: 'LN2',
+            badgeColor: 'bg-cyan-900/50 text-cyan-300 border-cyan-500/40',
+            action: () => {
+              switchTab('cryo');
+              dropdown.classList.add('hidden');
+            }
+          });
+        }
+      });
+
+      // Render Results
+      resultsList.innerHTML = '';
+      if (matches.length === 0) {
+        resultsList.innerHTML = `
+          <div class="p-3 text-center text-slate-400">
+            <p class="font-medium">No results found</p>
+            <p class="text-[10px] text-slate-500 mt-0.5">Try searching for "Whitney", "12345", or "LOT"</p>
+          </div>
+        `;
+      } else {
+        matches.slice(0, 8).forEach((item, index) => {
+          const div = document.createElement('div');
+          div.className = "p-2 rounded hover:bg-slate-800/80 cursor-pointer transition flex items-start justify-between space-x-2";
+          div.onclick = item.action;
+          div.innerHTML = `
+            <div class="min-w-0 flex-1">
+              <div class="flex items-center space-x-1.5">
+                <span class="font-bold text-white truncate">${escapeHtml(item.title)}</span>
+                <span class="text-[9px] font-mono px-1 py-0.2 rounded border ${item.badgeColor}">${escapeHtml(item.badge)}</span>
+              </div>
+              <div class="text-[10.5px] text-slate-400 truncate mt-0.5">${escapeHtml(item.subtitle)}</div>
+            </div>
+            <i data-lucide="chevron-right" class="w-3.5 h-3.5 text-slate-500 mt-1 flex-shrink-0"></i>
+          `;
+          resultsList.appendChild(div);
+        });
+      }
+
+      dropdown.classList.remove('hidden');
+      highlightScheduleMatches(q);
+      lucide.createIcons();
+    }
+
+    function clearGlobalSearch() {
+      const input = document.getElementById('globalSearchInput');
+      if (input) input.value = '';
+      const clearBtn = document.getElementById('clearSearchBtn');
+      if (clearBtn) clearBtn.classList.add('hidden');
+      const dropdown = document.getElementById('searchResultsDropdown');
+      if (dropdown) dropdown.classList.add('hidden');
+      resetScheduleHighlights();
+    }
+
+    function highlightScheduleMatches(q) {
+      if (!q) {
+        resetScheduleHighlights();
+        return;
+      }
+      const cards = document.querySelectorAll('.group\\/card');
+      cards.forEach(card => {
+        const text = card.textContent.toLowerCase();
+        if (text.includes(q)) {
+          card.classList.remove('opacity-25', 'grayscale');
+          card.classList.add('ring-2', 'ring-[#74D16F]', 'scale-[1.02]');
+        } else {
+          card.classList.add('opacity-25', 'grayscale');
+          card.classList.remove('ring-2', 'ring-[#74D16F]', 'scale-[1.02]');
+        }
+      });
+    }
+
+    function resetScheduleHighlights() {
+      const cards = document.querySelectorAll('.group\\/card');
+      cards.forEach(card => {
+        card.classList.remove('opacity-25', 'grayscale', 'ring-2', 'ring-[#74D16F]', 'scale-[1.02]');
+      });
+    }
+
+    // Close search dropdown when clicking outside
+    document.addEventListener('click', function(e) {
+      const searchBox = document.getElementById('globalSearchInput');
+      const dropdown = document.getElementById('searchResultsDropdown');
+      if (dropdown && !dropdown.contains(e.target) && e.target !== searchBox) {
+        dropdown.classList.add('hidden');
+      }
+
+      const askInput = document.getElementById('askWhitneyInput');
+      const askDropdown = document.getElementById('askWhitneyDropdown');
+      if (askDropdown && !askDropdown.contains(e.target) && e.target !== askInput) {
+        askDropdown.classList.add('hidden');
+      }
+    });
+
+    // Ask Whitney AI Functions
+    function handleAskWhitneyKey(event) {
+      if (event.key === 'Enter') {
+        event.preventDefault();
+        submitAskWhitney();
+      }
+    }
+
+    function submitAskWhitney() {
+      const input = document.getElementById('askWhitneyInput');
+      const val = (input ? input.value : '').trim();
+      if (!val) return;
+      runQuickAiQuery(val);
+    }
+
+    function closeAskWhitney() {
+      const dd = document.getElementById('askWhitneyDropdown');
+      if (dd) dd.classList.add('hidden');
+    }
+
+    function runQuickAiQuery(promptText) {
+      const input = document.getElementById('askWhitneyInput');
+      if (input) input.value = promptText;
+
+      const dropdown = document.getElementById('askWhitneyDropdown');
+      const responseArea = document.getElementById('askWhitneyResponseArea');
+      if (!dropdown || !responseArea) return;
+
+      dropdown.classList.remove('hidden');
+
+      // Animated Loading State
+      responseArea.innerHTML = `
+        <div class="flex items-center space-x-2 text-[#74D16F] py-2">
+          <i data-lucide="sparkles" class="w-4 h-4 animate-spin"></i>
+          <span class="text-[11px] font-mono">Whitney AI analyzing lab telemetry...</span>
+        </div>
+      `;
+      lucide.createIcons();
+
+      setTimeout(() => {
+        let answer = "";
+        const lower = promptText.toLowerCase();
+
+        if (lower.includes('retrieval') || lower.includes('day 0') || lower.includes('whitney witness')) {
+          answer = `
+            <div class="space-y-1.5 text-[11px] text-slate-200">
+              <div class="text-[#74D16F] font-bold flex items-center space-x-1">
+                <i data-lucide="check-circle" class="w-3.5 h-3.5"></i>
+                <span>VERIFIED & WITNESSED</span>
+              </div>
+              <p>Patient <strong>Whitney Witness</strong> (MRN: 12345) had Egg Retrieval completed on <strong>Sep 14, 07:00</strong>. Optically dual-witnessed by <strong>LP & Whitney 1</strong>.</p>
+              <div class="p-1.5 rounded bg-slate-800/80 font-mono text-[10px] text-slate-300 border border-slate-700">
+                Partner match: Lonyl Palao (MRN: 54321) confirmed at 07:00.
+              </div>
+            </div>
+          `;
+        } else if (lower.includes('davis') || lower.includes('stored') || lower.includes('tank')) {
+          answer = `
+            <div class="space-y-1.5 text-[11px] text-slate-200">
+              <div class="text-sky-400 font-bold flex items-center space-x-1">
+                <i data-lucide="snowflake" class="w-3.5 h-3.5"></i>
+                <span>CRYO LOCATION FOUND</span>
+              </div>
+              <p>Specimens for <strong>E. Davis</strong> (MRN: 92841) are stored in <strong>Tank A / Cane 03-B</strong> (4 Vitrified MII Oocytes, 2 Cryolock Blue straws). Inbound transport passed at -195.6°C.</p>
+            </div>
+          `;
+        } else if (lower.includes('qc') || lower.includes('monthly') || lower.includes('duty')) {
+          answer = `
+            <div class="space-y-1.5 text-[11px] text-slate-200">
+              <div class="text-amber-400 font-bold flex items-center space-x-1">
+                <i data-lucide="calendar" class="w-3.5 h-3.5"></i>
+                <span>MONTHLY QC STATUS</span>
+              </div>
+              <p>September 2026: <strong>6 of 8 duties completed</strong>. Pending tasks: Miri Gas HEPA Filter swap (Sep 28) and Lab Terminal Deep Cleaning (Sep 30).</p>
+            </div>
+          `;
+        } else {
+          answer = `
+            <div class="space-y-1.5 text-[11px] text-slate-200">
+              <div class="text-[#74D16F] font-bold flex items-center space-x-1">
+                <i data-lucide="check" class="w-3.5 h-3.5"></i>
+                <span>OPTICAL WITNESS TELEMETRY</span>
+              </div>
+              <p>Query received: "<em>${escapeHtml(promptText)}</em>". Headset Whitney 1 is active with operator LP. Optical alignment is 100% MTF verified across all chambers.</p>
+            </div>
+          `;
+        }
+
+        responseArea.innerHTML = `
+          ${answer}
+          <div class="pt-2 border-t border-slate-800 flex items-center justify-between text-[10px] text-slate-400">
+            <span>Powered by Whitney Vision AI</span>
+            <button onclick="closeAskWhitney()" class="text-[#74D16F] hover:underline font-semibold">Done</button>
+          </div>
+        `;
+        lucide.createIcons();
+      }, 550);
     }
 
     window.onload = function() {
