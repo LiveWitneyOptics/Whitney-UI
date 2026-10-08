@@ -1419,9 +1419,17 @@
                 </tr>
               </thead>
               <tbody id="lotTableBody" class="divide-y divide-slate-100">
-                <tr class="hover:bg-slate-50">
-                  <td class="p-3 font-semibold" contenteditable="true">Global Total LP Media</td>
-                  <td class="p-3 font-mono font-bold text-[#4A9755]" contenteditable="true">LOT-2026-9844A</td>
+                <tr class="hover:bg-slate-50 transition-colors">
+                  <td class="p-3 font-semibold cursor-pointer group" onclick="openLotAuditTrailModal('LOT-2026-9844A')">
+                    <div class="flex items-center space-x-1.5 text-slate-900 group-hover:text-[#4A9755] transition">
+                      <span class="underline decoration-dotted decoration-[#74D16F] underline-offset-4 group-hover:decoration-solid font-bold">Global Total LP Media</span>
+                      <span class="px-1.5 py-0.5 rounded bg-[#EAF7EC] text-[#2E7D32] border border-[#74D16F]/50 text-[9px] font-mono font-bold flex items-center space-x-0.5 opacity-90 group-hover:opacity-100">
+                        <i data-lucide="file-check-2" class="w-2.5 h-2.5 text-[#4A9755]"></i>
+                        <span>Audit</span>
+                      </span>
+                    </div>
+                  </td>
+                  <td class="p-3 font-mono font-bold text-[#4A9755] cursor-pointer hover:underline" onclick="openLotAuditTrailModal('LOT-2026-9844A')" contenteditable="true">LOT-2026-9844A</td>
                   <td class="p-3" contenteditable="true">CooperSurgical</td>
                   <td class="p-3 text-slate-600" contenteditable="true">11/30/2026</td>
                   <td class="p-3" contenteditable="true">S. Jenkins</td>
@@ -1430,9 +1438,17 @@
                     <span class="px-2.5 py-0.5 rounded-full bg-[#EAF7EC] text-[#4A9755] border border-[#74D16F]/60 font-bold text-[11px] inline-block tracking-wide">In Use</span>
                   </td>
                 </tr>
-                <tr class="hover:bg-slate-50">
-                  <td class="p-3 font-semibold" contenteditable="true">ICSI PVP 7% Solution</td>
-                  <td class="p-3 font-mono font-bold text-[#4A9755]" contenteditable="true">PVP-7731-X</td>
+                <tr class="hover:bg-slate-50 transition-colors">
+                  <td class="p-3 font-semibold cursor-pointer group" onclick="openLotAuditTrailModal('PVP-7731-X')">
+                    <div class="flex items-center space-x-1.5 text-slate-900 group-hover:text-[#4A9755] transition">
+                      <span class="underline decoration-dotted decoration-[#74D16F] underline-offset-4 group-hover:decoration-solid font-bold">ICSI PVP 7% Solution</span>
+                      <span class="px-1.5 py-0.5 rounded bg-[#EAF7EC] text-[#2E7D32] border border-[#74D16F]/50 text-[9px] font-mono font-bold flex items-center space-x-0.5 opacity-90 group-hover:opacity-100">
+                        <i data-lucide="file-check-2" class="w-2.5 h-2.5 text-[#4A9755]"></i>
+                        <span>Audit</span>
+                      </span>
+                    </div>
+                  </td>
+                  <td class="p-3 font-mono font-bold text-[#4A9755] cursor-pointer hover:underline" onclick="openLotAuditTrailModal('PVP-7731-X')" contenteditable="true">PVP-7731-X</td>
                   <td class="p-3" contenteditable="true">Vitrolife</td>
                   <td class="p-3 text-slate-600" contenteditable="true">10/15/2026</td>
                   <td class="p-3" contenteditable="true">M. Chen</td>
@@ -1445,9 +1461,17 @@
                     </div>
                   </td>
                 </tr>
-                <tr class="hover:bg-slate-50">
-                  <td class="p-3 font-semibold" contenteditable="true">Embryo Cryo Straws (Clear)</td>
-                  <td class="p-3 font-mono font-bold text-[#4A9755]" contenteditable="true">STRW-8812-B</td>
+                <tr class="hover:bg-slate-50 transition-colors">
+                  <td class="p-3 font-semibold cursor-pointer group" onclick="openLotAuditTrailModal('STRW-8812-B')">
+                    <div class="flex items-center space-x-1.5 text-slate-900 group-hover:text-[#4A9755] transition">
+                      <span class="underline decoration-dotted decoration-[#74D16F] underline-offset-4 group-hover:decoration-solid font-bold">Embryo Cryo Straws (Clear)</span>
+                      <span class="px-1.5 py-0.5 rounded bg-[#EAF7EC] text-[#2E7D32] border border-[#74D16F]/50 text-[9px] font-mono font-bold flex items-center space-x-0.5 opacity-90 group-hover:opacity-100">
+                        <i data-lucide="file-check-2" class="w-2.5 h-2.5 text-[#4A9755]"></i>
+                        <span>Audit</span>
+                      </span>
+                    </div>
+                  </td>
+                  <td class="p-3 font-mono font-bold text-[#4A9755] cursor-pointer hover:underline" onclick="openLotAuditTrailModal('STRW-8812-B')" contenteditable="true">STRW-8812-B</td>
                   <td class="p-3" contenteditable="true">Cryo Bio System</td>
                   <td class="p-3 text-slate-600" contenteditable="true">04/20/2028</td>
                   <td class="p-3" contenteditable="true">A. Rivera</td>
@@ -2183,15 +2207,9 @@
           </select>
         </div>
 
-        <div class="grid grid-cols-2 gap-3">
-          <div>
-            <label class="block text-slate-600 font-bold mb-1">Patient Name / Initials</label>
-            <input type="text" id="modalPatient" placeholder="e.g., E. Davis (MRN-928)" required class="w-full bg-white border border-[#DDD4C0] rounded p-2 text-slate-800 focus:outline-[#4A9755]">
-          </div>
-          <div>
-            <label class="block text-slate-600 font-bold mb-1">Station / Hood ID</label>
-            <input type="text" id="modalStation" placeholder="e.g., Hood 02 - ICSI" required class="w-full bg-white border border-[#DDD4C0] rounded p-2 text-slate-800 focus:outline-[#4A9755]">
-          </div>
+        <div>
+          <label class="block text-slate-600 font-bold mb-1">Patient Name / Initials</label>
+          <input type="text" id="modalPatient" placeholder="e.g., E. Davis (MRN-928)" required class="w-full bg-white border border-[#DDD4C0] rounded p-2 text-slate-800 focus:outline-[#4A9755]">
         </div>
 
         <div class="grid grid-cols-2 gap-3">
@@ -2216,9 +2234,15 @@
         </div>
 
         <div class="flex items-center justify-between pt-3 border-t border-[#DDD4C0]">
-          <button type="button" id="deleteEventBtn" onclick="deleteCurrentEvent()" class="text-rose-600 hover:text-rose-800 font-bold hidden">
-            Delete Procedure
-          </button>
+          <div class="flex items-center space-x-2">
+            <button type="button" id="entryAuditTrailBtn" onclick="openEntryAuditTrailModal()" class="px-3 py-1.5 rounded-lg bg-[#EAF7EC] hover:bg-[#d8f0dc] border border-[#74D16F]/60 text-[#2E7D32] font-bold text-xs flex items-center space-x-1.5 shadow-xs transition" title="View complete optical witnessing audit trail up to this point">
+              <i data-lucide="file-check-2" class="w-3.5 h-3.5 text-[#4A9755]"></i>
+              <span>Audit Trail</span>
+            </button>
+            <button type="button" id="deleteEventBtn" onclick="deleteCurrentEvent()" class="text-rose-600 hover:text-rose-800 font-bold hidden text-xs">
+              Delete Procedure
+            </button>
+          </div>
           <div class="flex space-x-2 ml-auto">
             <button type="button" onclick="closeEventModal()" class="px-3 py-1.5 border border-[#DDD4C0] rounded bg-white text-slate-700 hover:bg-slate-100">
               Cancel
@@ -2229,6 +2253,188 @@
           </div>
         </div>
       </form>
+    </div>
+  </div>
+
+  <!-- MODAL: Entry Specific Audit Trail Timeline -->
+  <div id="patientAuditModal" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+    <div class="bg-[#FAF8F5] border border-[#DDD4C0] w-full max-w-2xl rounded-xl shadow-2xl overflow-hidden animate-in fade-in zoom-in-95 duration-150 flex flex-col max-h-[90vh]">
+      <div class="bg-[#162638] text-white p-4 flex items-center justify-between flex-shrink-0">
+        <div class="flex items-center space-x-3">
+          <div class="w-8 h-8 rounded-lg bg-[#EAF7EC] border border-[#74D16F]/40 flex items-center justify-center text-[#4A9755]">
+            <i data-lucide="shield-check" class="w-4 h-4"></i>
+          </div>
+          <div>
+            <div class="flex items-center space-x-2">
+              <h3 id="patientAuditModalTitle" class="text-sm font-bold uppercase tracking-wider text-white">Patient Audit Trail</h3>
+              <span class="px-2 py-0.5 rounded-full text-[10px] font-mono font-bold bg-[#EAF7EC] text-[#4A9755] border border-[#74D16F]/40">FDA 21 CFR Part 11</span>
+            </div>
+            <p id="patientAuditModalSubtitle" class="text-[11px] text-slate-400 font-medium">Chain of custody & optical witnessing milestones up to this point</p>
+          </div>
+        </div>
+        <button onclick="closePatientAuditModal()" class="text-slate-400 hover:text-white">
+          <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+      </div>
+
+      <div class="p-4 overflow-y-auto space-y-3.5 flex-1 text-xs">
+        <!-- Patient Summary Card -->
+        <div id="patientAuditHeaderCard" class="bg-white p-3 rounded-lg border border-[#DDD4C0] flex items-center justify-between">
+          <div>
+            <div class="text-sm font-bold text-slate-900" id="auditPatientName">Whitney Witness</div>
+            <div class="text-[11px] font-mono text-slate-500" id="auditPatientDemographics">MRN: 12345 • DOB: 07/21/1990</div>
+          </div>
+          <div class="text-right">
+            <span class="inline-flex items-center space-x-1 px-2.5 py-1 rounded bg-[#EAF7EC] border border-[#74D16F]/60 text-[#2E7D32] font-bold text-[11px]">
+              <!-- Whitney double checkmark logo -->
+              <svg class="w-4 h-3.5 mr-1" viewBox="0 0 100 80" fill="none">
+                <path d="M12 40 L38 66 L68 14" stroke="#4A9755" stroke-width="16" stroke-linecap="round" stroke-linejoin="round" />
+                <path d="M38 40 L64 66 L94 14" stroke="#74D16F" stroke-width="16" stroke-linecap="round" stroke-linejoin="round" />
+              </svg>
+              <span>Optically Verified by Whitney</span>
+            </span>
+          </div>
+        </div>
+
+        <!-- Chronological Milestones Table -->
+        <div class="bg-white rounded-lg border border-[#DDD4C0] overflow-hidden shadow-xs">
+          <table class="w-full text-xs text-left border-collapse">
+            <thead class="bg-[#FAF8F5] border-b border-[#DDD4C0] font-bold text-slate-700 uppercase tracking-wider text-[10.5px]">
+              <tr>
+                <th class="p-2.5 min-w-[125px]">Date & Time Point</th>
+                <th class="p-2.5 min-w-[150px]">Procedure Milestone</th>
+                <th class="p-2.5 min-w-[70px] text-center">Tech</th>
+                <th class="p-2.5 min-w-[160px] text-center">Whitney Verification</th>
+                <th class="p-2.5 min-w-[120px]">Notes / Barcode</th>
+              </tr>
+            </thead>
+            <tbody id="patientAuditTimelineBody" class="divide-y divide-slate-100">
+              <!-- Dynamically populated by renderPatientAuditTrail() -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="bg-[#FAF8F5] px-4 py-3 border-t border-[#DDD4C0] flex items-center justify-between flex-shrink-0 text-xs">
+        <div class="text-slate-500 font-mono text-[11px] flex items-center space-x-1">
+          <i data-lucide="lock" class="w-3.5 h-3.5 text-[#4A9755]"></i>
+          <span>Tamper-evident optical log sealed with cryptographic witness hashes</span>
+        </div>
+        <div class="flex items-center space-x-2">
+          <button type="button" onclick="window.print()" class="px-3 py-1.5 border border-[#DDD4C0] rounded bg-white hover:bg-slate-50 text-slate-700 font-semibold flex items-center space-x-1.5 shadow-xs">
+            <i data-lucide="printer" class="w-3.5 h-3.5"></i>
+            <span>Print Report</span>
+          </button>
+          <button type="button" onclick="closePatientAuditModal()" class="px-4 py-1.5 bg-[#4A9755] hover:bg-[#3D8046] text-white font-bold rounded shadow-sm">
+            Close
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: Lot Usage Audit Trail (Patients Witnessed in In-Use Range) -->
+  <div id="lotAuditModal" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+    <div class="bg-[#FAF8F5] border border-[#DDD4C0] w-full max-w-3xl rounded-xl shadow-2xl overflow-hidden animate-in fade-in zoom-in-95 duration-150 flex flex-col max-h-[90vh]">
+      <div class="bg-[#162638] text-white p-4 flex items-center justify-between flex-shrink-0">
+        <div class="flex items-center space-x-3">
+          <div class="w-8 h-8 rounded-lg bg-[#EAF7EC] border border-[#74D16F]/40 flex items-center justify-center text-[#4A9755]">
+            <i data-lucide="barcode" class="w-4 h-4"></i>
+          </div>
+          <div>
+            <div class="flex items-center space-x-2">
+              <h3 id="lotAuditModalTitle" class="text-sm font-bold uppercase tracking-wider text-white">Reagent Lot Audit Trail</h3>
+              <span class="px-2 py-0.5 rounded-full text-[10px] font-mono font-bold bg-[#EAF7EC] text-[#4A9755] border border-[#74D16F]/40">FDA 21 CFR Part 11</span>
+            </div>
+            <p id="lotAuditModalSubtitle" class="text-[11px] text-slate-400 font-medium">Patients & witness sessions documented during active lot in-use window</p>
+          </div>
+        </div>
+        <button onclick="closeLotAuditModal()" class="text-slate-400 hover:text-white">
+          <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+      </div>
+
+      <div class="p-4 overflow-y-auto space-y-4 flex-1 text-xs">
+        <!-- Lot Metadata & Active Date Range Banner -->
+        <div class="bg-white p-3.5 rounded-lg border border-[#DDD4C0] space-y-3 shadow-xs">
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-2.5 border-b border-slate-100">
+            <div>
+              <div class="text-base font-bold text-slate-900" id="lotAuditItemName">Global Total LP Media</div>
+              <div class="flex items-center space-x-2 mt-0.5">
+                <span class="font-mono text-xs font-bold text-[#4A9755]" id="lotAuditLotNumber">LOT-2026-9844A</span>
+                <span class="text-slate-300">•</span>
+                <span class="text-slate-600 text-xs" id="lotAuditManufacturer">CooperSurgical</span>
+              </div>
+            </div>
+            <div class="text-left sm:text-right" id="lotAuditStatusBadgeContainer">
+              <!-- Dynamically populated status badge -->
+            </div>
+          </div>
+
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-2.5 text-[11px]">
+            <div class="bg-[#FAF8F5] p-2.5 rounded border border-[#DDD4C0]/70">
+              <div class="text-slate-500 font-semibold uppercase text-[10px]">In-Use Date Range</div>
+              <div class="font-mono font-bold text-slate-800 mt-0.5" id="lotAuditDateRange">09/21/2026 – Present (Active)</div>
+            </div>
+            <div class="bg-[#FAF8F5] p-2.5 rounded border border-[#DDD4C0]/70">
+              <div class="text-slate-500 font-semibold uppercase text-[10px]">Opened By / Verified</div>
+              <div class="font-mono font-bold text-slate-800 mt-0.5" id="lotAuditOpenedBy">S. Jenkins • 09/21/2026</div>
+            </div>
+            <div class="bg-[#FAF8F5] p-2.5 rounded border border-[#DDD4C0]/70">
+              <div class="text-slate-500 font-semibold uppercase text-[10px]">Lot Expiration Date</div>
+              <div class="font-mono font-bold text-slate-800 mt-0.5" id="lotAuditExpirationDate">11/30/2026</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Linked Patients within In-Use Range -->
+        <div class="space-y-1.5">
+          <div class="flex items-center justify-between">
+            <h4 class="text-xs font-bold text-slate-800 uppercase tracking-wide flex items-center space-x-1.5">
+              <i data-lucide="users" class="w-3.5 h-3.5 text-[#4A9755]"></i>
+              <span>Patients Within In-Use Window (<span id="lotAuditPatientCount">3</span> Cycles)</span>
+            </h4>
+            <span class="text-[11px] text-slate-500 font-mono">100% Optically Dual-Witness Verified</span>
+          </div>
+
+          <div class="bg-white rounded-lg border border-[#DDD4C0] overflow-hidden shadow-xs">
+            <div class="overflow-x-auto w-full">
+              <table class="w-full text-xs text-left border-collapse">
+                <thead class="bg-[#FAF8F5] border-b border-[#DDD4C0] font-bold text-slate-700 uppercase tracking-wider text-[10.5px]">
+                  <tr>
+                    <th class="p-2.5 min-w-[130px]">Date & Time Point</th>
+                    <th class="p-2.5 min-w-[170px]">Patient / MRN</th>
+                    <th class="p-2.5 min-w-[150px]">Procedure Milestone</th>
+                    <th class="p-2.5 min-w-[140px]">Dish / Barcode ID</th>
+                    <th class="p-2.5 min-w-[65px] text-center">Tech</th>
+                    <th class="p-2.5 min-w-[160px] text-center">Optical Witness</th>
+                    <th class="p-2.5 min-w-[90px] text-right">Patient Log</th>
+                  </tr>
+                </thead>
+                <tbody id="lotAuditPatientsTableBody" class="divide-y divide-slate-100">
+                  <!-- Dynamically populated by renderLotAuditTrail() -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="bg-[#FAF8F5] px-4 py-3 border-t border-[#DDD4C0] flex items-center justify-between flex-shrink-0 text-xs">
+        <div class="text-slate-500 font-mono text-[11px] flex items-center space-x-1.5">
+          <i data-lucide="shield-check" class="w-3.5 h-3.5 text-[#4A9755]"></i>
+          <span>Reagent traceability validated under CLIA / CAP QC & 21 CFR Part 11</span>
+        </div>
+        <div class="flex items-center space-x-2">
+          <button type="button" onclick="window.print()" class="px-3 py-1.5 border border-[#DDD4C0] rounded bg-white hover:bg-slate-50 text-slate-700 font-semibold flex items-center space-x-1.5 shadow-xs">
+            <i data-lucide="printer" class="w-3.5 h-3.5"></i>
+            <span>Print Lot Log</span>
+          </button>
+          <button type="button" onclick="closeLotAuditModal()" class="px-4 py-1.5 bg-[#4A9755] hover:bg-[#3D8046] text-white font-bold rounded shadow-sm">
+            Close
+          </button>
+        </div>
+      </div>
     </div>
   </div>
 
@@ -3294,9 +3500,9 @@
       document.getElementById('editEventId').value = '';
       document.getElementById('modalDay').value = day || currentActiveDay || 'MON1';
       document.getElementById('modalTime').value = time;
-      document.getElementById('modalProcedure').value = 'Oocyte Retrieval';
+      document.getElementById('modalProcedure').value = 'Egg Retrieval';
       document.getElementById('modalPatient').value = 'Whitney Witness';
-      document.getElementById('modalStation').value = 'Hood 01 (Retrieval)';
+      if (document.getElementById('modalStation')) document.getElementById('modalStation').value = 'Hood 01 (Retrieval)';
       document.getElementById('modalWitness').value = 'Dr. S. Jenkins';
       document.getElementById('modalStatus').value = 'SCHEDULED';
       document.getElementById('modalNotes').value = '';
@@ -3336,7 +3542,7 @@
 
       document.getElementById('modalProcedure').value = ev.procedure;
       document.getElementById('modalPatient').value = ev.patient;
-      document.getElementById('modalStation').value = ev.station;
+      if (document.getElementById('modalStation')) document.getElementById('modalStation').value = ev.station;
       document.getElementById('modalWitness').value = ev.witness;
       document.getElementById('modalStatus').value = ev.status;
       document.getElementById('modalNotes').value = ev.timingNote || ev.notes || '';
@@ -3347,6 +3553,193 @@
 
     function closeEventModal() {
       document.getElementById('eventModal').classList.add('hidden');
+    }
+
+    // Opens the entry-specific Audit Trail showing all chronological points, tech, procedure, and Whitney verification double checks
+    function openEntryAuditTrailModal() {
+      const patientInput = document.getElementById('modalPatient');
+      const patientName = patientInput ? patientInput.value.trim() : 'Whitney Witness';
+      const cellKey = document.getElementById('editCellKey').value;
+      const eventId = document.getElementById('editEventId').value;
+      
+      let currentEvent = null;
+      if (cellKey && scheduleData[cellKey]) {
+        currentEvent = scheduleData[cellKey].find(e => e.id === eventId);
+      }
+
+      renderPatientAuditTrail(patientName, currentEvent);
+      document.getElementById('patientAuditModal').classList.remove('hidden');
+      lucide.createIcons();
+    }
+
+    function closePatientAuditModal() {
+      document.getElementById('patientAuditModal').classList.add('hidden');
+    }
+
+    function renderPatientAuditTrail(targetPatient, currentEvent) {
+      const titleEl = document.getElementById('patientAuditModalTitle');
+      const subTitleEl = document.getElementById('patientAuditModalSubtitle');
+      const nameEl = document.getElementById('auditPatientName');
+      const demoEl = document.getElementById('auditPatientDemographics');
+      const tbody = document.getElementById('patientAuditTimelineBody');
+      if (!tbody) return;
+
+      const pName = targetPatient || (currentEvent ? currentEvent.patient : 'Whitney Witness');
+      const mrn = (currentEvent && currentEvent.mrn) ? currentEvent.mrn : (pName.toLowerCase().includes('lonyl') ? '54321' : '12345');
+      const dob = (currentEvent && currentEvent.dob) ? currentEvent.dob : (pName.toLowerCase().includes('lonyl') ? '04/01/1990' : '07/21/1990');
+
+      if (titleEl) titleEl.textContent = `Audit Trail: ${pName}`;
+      if (subTitleEl) subTitleEl.textContent = `Chain of custody & optical witnessing milestones for MRN: ${mrn}`;
+      if (nameEl) nameEl.textContent = pName;
+      if (demoEl) demoEl.textContent = `MRN: ${mrn} • DOB: ${dob}`;
+
+      // Whitney Double Checkmark SVG Logo: Two rounded overlapping checkmarks in #4A9755 & #74D16F
+      const whitneyDoubleCheckSvg = `
+        <svg class="w-4 h-3.5 inline-block mr-1 align-middle" viewBox="0 0 100 80" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M12 40 L38 66 L68 14" stroke="#4A9755" stroke-width="16" stroke-linecap="round" stroke-linejoin="round" />
+          <path d="M38 40 L64 66 L94 14" stroke="#74D16F" stroke-width="16" stroke-linecap="round" stroke-linejoin="round" />
+        </svg>
+      `;
+
+      // Define default chronological sequence for Whitney Witness cycle
+      const cycleSequence = [
+        {
+          date: '09/14/2026',
+          time: '07:00 AM',
+          procedure: 'Egg Retrieval',
+          stage: 'Day 0',
+          tech: 'LP',
+          status: 'VERIFIED',
+          notes: 'Follicular aspirate verified; Dish #DISH-9821'
+        },
+        {
+          date: '09/14/2026',
+          time: '07:00 AM',
+          procedure: 'Sperm Processing (Partner Match)',
+          stage: 'Andrology',
+          tech: 'LP',
+          status: 'VERIFIED',
+          notes: 'Partner Lonyl Palao (MRN: 54321) cup barcode match'
+        },
+        {
+          date: '09/14/2026',
+          time: '09:30 AM',
+          procedure: 'Denudation',
+          stage: 'Day 0',
+          tech: 'LP',
+          status: 'IN_PROGRESS',
+          notes: '2.0 – 4.0h post-OPU; Strip dish validated'
+        },
+        {
+          date: '09/14/2026',
+          time: '11:30 AM',
+          procedure: 'ICSI',
+          stage: 'Day 0',
+          tech: 'LP',
+          status: 'SCHEDULED',
+          notes: '1.0 – 2.0h post-stripping; ICSI Rig 02'
+        },
+        {
+          date: '09/16/2026',
+          time: '07:00 AM',
+          procedure: 'Undisturbed Incubator Culture',
+          stage: 'Day 2',
+          tech: 'Auto',
+          status: 'IN_PROGRESS',
+          notes: 'Miri Incubator Chamber 03'
+        },
+        {
+          date: '09/17/2026',
+          time: '07:00 AM',
+          procedure: 'Undisturbed Incubator Culture',
+          stage: 'Day 3',
+          tech: 'Auto',
+          status: 'IN_PROGRESS',
+          notes: 'Miri Incubator Chamber 03'
+        },
+        {
+          date: '09/18/2026',
+          time: '07:00 AM',
+          procedure: 'Undisturbed Incubator Culture',
+          stage: 'Day 4',
+          tech: 'Auto',
+          status: 'IN_PROGRESS',
+          notes: 'Miri Incubator Chamber 03'
+        },
+        {
+          date: '09/19/2026',
+          time: '08:00 AM',
+          procedure: 'Day 5 Check & Biopsy',
+          stage: 'Day 5',
+          tech: 'LP',
+          status: 'SCHEDULED',
+          notes: 'Laser Biopsy Hood 02 (PGT-A)'
+        },
+        {
+          date: '09/20/2026',
+          time: '08:00 AM',
+          procedure: 'Day 6 Check & Vitrification',
+          stage: 'Day 6',
+          tech: 'LP',
+          status: 'SCHEDULED',
+          notes: 'Hood 03 / Cryo Rig'
+        },
+        {
+          date: '09/21/2026',
+          time: '08:30 AM',
+          procedure: 'Day 7 Check (Final Cryo)',
+          stage: 'Day 7',
+          tech: 'LP',
+          status: 'SCHEDULED',
+          notes: 'Final cryopreservation straw #STRW-8812'
+        }
+      ];
+
+      tbody.innerHTML = '';
+      cycleSequence.forEach(point => {
+        const tr = document.createElement('tr');
+        tr.className = 'hover:bg-slate-50/80 transition-colors';
+
+        const isVerified = point.status === 'VERIFIED';
+        const isInProgress = point.status === 'IN_PROGRESS';
+
+        const statusBadge = isVerified ? `
+          <div class="inline-flex items-center space-x-1 px-2.5 py-0.5 rounded-full bg-[#EAF7EC] text-[#2E7D32] border border-[#74D16F]/60 font-bold text-[10.5px]">
+            ${whitneyDoubleCheckSvg}
+            <span>VERIFIED BY WHITNEY</span>
+          </div>
+        ` : isInProgress ? `
+          <div class="inline-flex items-center space-x-1 px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-300 font-bold text-[10.5px]">
+            <i data-lucide="glasses" class="w-3 h-3 text-[#4A9755]"></i>
+            <span>IN PROGRESS</span>
+          </div>
+        ` : `
+          <span class="px-2 py-0.5 rounded-full bg-slate-100 text-slate-500 border border-slate-200 font-semibold text-[10px]">
+            PENDING WITNESS
+          </span>
+        `;
+
+        tr.innerHTML = `
+          <td class="p-2.5 font-mono text-slate-800 whitespace-nowrap">
+            <div class="font-bold">${point.date}</div>
+            <div class="text-[10px] text-slate-500 font-semibold">${point.time}</div>
+          </td>
+          <td class="p-2.5 whitespace-nowrap">
+            <div class="font-bold text-slate-900">${escapeHtml(point.procedure)}</div>
+            <div class="text-[10px] font-mono text-slate-500">${point.stage}</div>
+          </td>
+          <td class="p-2.5 text-center font-mono font-bold text-slate-800 whitespace-nowrap">
+            <span class="px-1.5 py-0.5 rounded bg-slate-100 border border-slate-200 text-[10px]">${point.tech}</span>
+          </td>
+          <td class="p-2.5 text-center whitespace-nowrap">
+            ${statusBadge}
+          </td>
+          <td class="p-2.5 text-slate-600 font-mono text-[10.5px]">
+            ${escapeHtml(point.notes)}
+          </td>
+        `;
+        tbody.appendChild(tr);
+      });
     }
 
     function saveScheduleEvent(e) {
@@ -3373,7 +3766,7 @@
         mrn: '12345',
         procedure: document.getElementById('modalProcedure').value,
         stage: cDay,
-        station: document.getElementById('modalStation').value.trim(),
+        station: document.getElementById('modalStation') ? document.getElementById('modalStation').value.trim() : (oldCellKey && scheduleData[oldCellKey] ? (scheduleData[oldCellKey].find(it => it.id === eventId)?.station || '') : ''),
         witness: document.getElementById('modalWitness').value.trim(),
         status: document.getElementById('modalStatus').value,
         borderColor: 'yellow',
@@ -3660,10 +4053,19 @@
     function addLotRow() {
       const tbody = document.getElementById('lotTableBody');
       const tr = document.createElement('tr');
-      tr.className = 'hover:bg-slate-50';
+      const randomLot = 'LOT-PIP-' + Math.floor(1000 + Math.random()*9000);
+      tr.className = 'hover:bg-slate-50 transition-colors';
       tr.innerHTML = `
-        <td class="p-3 font-semibold" contenteditable="true">ICSI Injection Pipette</td>
-        <td class="p-3 font-mono font-bold text-[#4A9755]" contenteditable="true">LOT-PIP-${Math.floor(1000 + Math.random()*9000)}</td>
+        <td class="p-3 font-semibold cursor-pointer group" onclick="openLotAuditTrailModal('${randomLot}')">
+          <div class="flex items-center space-x-1.5 text-slate-900 group-hover:text-[#4A9755] transition">
+            <span class="underline decoration-dotted decoration-[#74D16F] underline-offset-4 group-hover:decoration-solid font-bold">ICSI Injection Pipette</span>
+            <span class="px-1.5 py-0.5 rounded bg-[#EAF7EC] text-[#2E7D32] border border-[#74D16F]/50 text-[9px] font-mono font-bold flex items-center space-x-0.5 opacity-90 group-hover:opacity-100">
+              <i data-lucide="file-check-2" class="w-2.5 h-2.5 text-[#4A9755]"></i>
+              <span>Audit</span>
+            </span>
+          </div>
+        </td>
+        <td class="p-3 font-mono font-bold text-[#4A9755] cursor-pointer hover:underline" onclick="openLotAuditTrailModal('${randomLot}')" contenteditable="true">${randomLot}</td>
         <td class="p-3" contenteditable="true">Origio</td>
         <td class="p-3 text-slate-600" contenteditable="true">12/31/2027</td>
         <td class="p-3" contenteditable="true">Dr. Jenkins</td>
@@ -3673,6 +4075,7 @@
         </td>
       `;
       tbody.prepend(tr);
+      lucide.createIcons();
     }
 
     function captureCOA() {
@@ -3687,10 +4090,18 @@
       if (lotName) {
         const tbody = document.getElementById('lotTableBody');
         const tr = document.createElement('tr');
-        tr.className = 'hover:bg-slate-50';
+        tr.className = 'hover:bg-slate-50 transition-colors';
         tr.innerHTML = `
-          <td class="p-3 font-semibold" contenteditable="true">Continuous Single Culture Media (CSCM-NXC)</td>
-          <td class="p-3 font-mono font-bold text-[#4A9755]" contenteditable="true">${escapeHtml(lotName)}</td>
+          <td class="p-3 font-semibold cursor-pointer group" onclick="openLotAuditTrailModal('${escapeHtml(lotName)}')">
+            <div class="flex items-center space-x-1.5 text-slate-900 group-hover:text-[#4A9755] transition">
+              <span class="underline decoration-dotted decoration-[#74D16F] underline-offset-4 group-hover:decoration-solid font-bold">Continuous Single Culture Media (CSCM-NXC)</span>
+              <span class="px-1.5 py-0.5 rounded bg-[#EAF7EC] text-[#2E7D32] border border-[#74D16F]/50 text-[9px] font-mono font-bold flex items-center space-x-0.5 opacity-90 group-hover:opacity-100">
+                <i data-lucide="file-check-2" class="w-2.5 h-2.5 text-[#4A9755]"></i>
+                <span>Audit</span>
+              </span>
+            </div>
+          </td>
+          <td class="p-3 font-mono font-bold text-[#4A9755] cursor-pointer hover:underline" onclick="openLotAuditTrailModal('${escapeHtml(lotName)}')" contenteditable="true">${escapeHtml(lotName)}</td>
           <td class="p-3" contenteditable="true">Fujifilm Irvine</td>
           <td class="p-3 text-slate-600" contenteditable="true">12/15/2026</td>
           <td class="p-3" contenteditable="true">LP</td>
@@ -3702,6 +4113,282 @@
         tbody.prepend(tr);
         lucide.createIcons();
       }
+    }
+
+    // Comprehensive Lot In-Use Audit Trail Database & Modal Controller
+    const LOT_AUDIT_DATABASE = {
+      'LOT-2026-9844A': {
+        item: 'Global Total LP Media',
+        lot: 'LOT-2026-9844A',
+        manufacturer: 'CooperSurgical',
+        exp: '11/30/2026',
+        openedBy: 'S. Jenkins',
+        openedDate: '09/21/2026',
+        closedDate: null,
+        status: 'IN_USE',
+        patients: [
+          {
+            date: '09/21/2026',
+            time: '08:30 AM',
+            patient: 'Whitney Witness',
+            mrn: '12345',
+            dob: '07/21/1990',
+            procedure: 'Day 7 Check (Final Cryo / Culture Wash)',
+            dishBarcode: '#DISH-9821-LP',
+            tech: 'LP',
+            verified: true
+          },
+          {
+            date: '09/22/2026',
+            time: '08:15 AM',
+            patient: 'Sarah Jenkins',
+            mrn: '67890',
+            dob: '11/04/1989',
+            procedure: 'Day 0 Oocyte Rinse & Culture Plate Prep',
+            dishBarcode: '#DISH-9941-A',
+            tech: 'LP',
+            verified: true
+          },
+          {
+            date: '09/24/2026',
+            time: '07:45 AM',
+            patient: 'Elena Rostova',
+            mrn: '44109',
+            dob: '05/18/1992',
+            procedure: 'Day 1 Fertilization Assessment Wash',
+            dishBarcode: '#DISH-10042',
+            tech: 'MC',
+            verified: true
+          },
+          {
+            date: '09/26/2026',
+            time: '10:00 AM',
+            patient: 'Michael Chang',
+            mrn: '31084',
+            dob: '02/12/1987',
+            procedure: 'Embryo Thaw Media Equilibrium',
+            dishBarcode: '#THAW-3108-B',
+            tech: 'LP',
+            verified: true
+          }
+        ]
+      },
+      'PVP-7731-X': {
+        item: 'ICSI PVP 7% Solution',
+        lot: 'PVP-7731-X',
+        manufacturer: 'Vitrolife',
+        exp: '10/15/2026',
+        openedBy: 'M. Chen',
+        openedDate: '09/21/2026',
+        closedDate: '10/07/2026',
+        status: 'OUT_OF_USE',
+        closedTech: 'MC',
+        patients: [
+          {
+            date: '09/21/2026',
+            time: '11:30 AM',
+            patient: 'Whitney Witness',
+            mrn: '12345',
+            dob: '07/21/1990',
+            procedure: 'ICSI Injection Well Drop (Partner SC-54321)',
+            dishBarcode: '#ICSI-12345-DROP1',
+            tech: 'LP',
+            verified: true
+          },
+          {
+            date: '09/24/2026',
+            time: '01:15 PM',
+            patient: 'Amanda Vance',
+            mrn: '78120',
+            dob: '08/30/1991',
+            procedure: 'ICSI Sperm Immobilization & Injection',
+            dishBarcode: '#ICSI-78120-DROP2',
+            tech: 'MC',
+            verified: true
+          },
+          {
+            date: '10/02/2026',
+            time: '11:00 AM',
+            patient: 'Rachel Adams',
+            mrn: '89012',
+            dob: '12/03/1986',
+            procedure: 'ICSI Microinjection',
+            dishBarcode: '#ICSI-89012-DROP1',
+            tech: 'LP',
+            verified: true
+          },
+          {
+            date: '10/06/2026',
+            time: '02:30 PM',
+            patient: 'Jessica Miller',
+            mrn: '51239',
+            dob: '09/14/1993',
+            procedure: 'ICSI Drop Prep (Final Lot Utilization)',
+            dishBarcode: '#ICSI-51239-DROP1',
+            tech: 'MC',
+            verified: true
+          }
+        ]
+      },
+      'STRW-8812-B': {
+        item: 'Embryo Cryo Straws (Clear)',
+        lot: 'STRW-8812-B',
+        manufacturer: 'Cryo Bio System',
+        exp: '04/20/2028',
+        openedBy: 'A. Rivera',
+        openedDate: '09/21/2026',
+        closedDate: null,
+        status: 'IN_USE',
+        patients: [
+          {
+            date: '09/21/2026',
+            time: '08:30 AM',
+            patient: 'Whitney Witness',
+            mrn: '12345',
+            dob: '07/21/1990',
+            procedure: 'Day 7 Blastocyst Vitrification (#STRW-8812-B)',
+            dishBarcode: '#STRW-8812-B-01',
+            tech: 'LP',
+            verified: true
+          },
+          {
+            date: '09/23/2026',
+            time: '03:00 PM',
+            patient: 'Chloe Bennett',
+            mrn: '33412',
+            dob: '06/27/1988',
+            procedure: 'Day 5 Blastocyst Vitrification Straw Load',
+            dishBarcode: '#STRW-8812-B-02',
+            tech: 'AR',
+            verified: true
+          },
+          {
+            date: '09/28/2026',
+            time: '09:30 AM',
+            patient: 'Hannah Morales',
+            mrn: '66201',
+            dob: '10/19/1994',
+            procedure: 'Day 6 Embryo Cryopreservation Loading',
+            dishBarcode: '#STRW-8812-B-03',
+            tech: 'LP',
+            verified: true
+          }
+        ]
+      }
+    };
+
+    function openLotAuditTrailModal(lotNumber) {
+      const lotInfo = LOT_AUDIT_DATABASE[lotNumber] || {
+        item: 'Reagent / Consumable Item',
+        lot: lotNumber,
+        manufacturer: 'Lab Supplier',
+        exp: '12/31/2027',
+        openedBy: 'LP',
+        openedDate: '09/21/2026',
+        closedDate: null,
+        status: 'IN_USE',
+        patients: [
+          {
+            date: '09/21/2026',
+            time: '08:30 AM',
+            patient: 'Whitney Witness',
+            mrn: '12345',
+            dob: '07/21/1990',
+            procedure: 'Active Cycle Reagent Utilization',
+            dishBarcode: `#LOT-${lotNumber}-01`,
+            tech: 'LP',
+            verified: true
+          }
+        ]
+      };
+
+      document.getElementById('lotAuditItemName').textContent = lotInfo.item;
+      document.getElementById('lotAuditLotNumber').textContent = lotInfo.lot;
+      document.getElementById('lotAuditManufacturer').textContent = lotInfo.manufacturer;
+      document.getElementById('lotAuditExpirationDate').textContent = lotInfo.exp;
+      document.getElementById('lotAuditOpenedBy').textContent = `${lotInfo.openedBy} • ${lotInfo.openedDate}`;
+
+      const dateRangeEl = document.getElementById('lotAuditDateRange');
+      const statusBadgeContainer = document.getElementById('lotAuditStatusBadgeContainer');
+
+      if (lotInfo.closedDate) {
+        dateRangeEl.innerHTML = `<span class="text-slate-800">${lotInfo.openedDate} – ${lotInfo.closedDate}</span> <span class="text-rose-600 font-bold block text-[10px]">Closed (${lotInfo.closedTech || 'MC'})</span>`;
+        statusBadgeContainer.innerHTML = `
+          <div class="inline-flex flex-col items-end">
+            <span class="px-2.5 py-0.5 rounded-full bg-rose-50 text-rose-600 border border-rose-300 font-bold text-[11px] inline-block tracking-wide">Out of Use</span>
+            <span class="text-[10px] font-mono text-slate-500 font-medium mt-0.5">Retired: ${lotInfo.closedDate}</span>
+          </div>
+        `;
+      } else {
+        dateRangeEl.innerHTML = `<span class="text-slate-800">${lotInfo.openedDate} – Present</span> <span class="text-[#4A9755] font-bold block text-[10px]">Currently In Active Use</span>`;
+        statusBadgeContainer.innerHTML = `
+          <span class="px-2.5 py-0.5 rounded-full bg-[#EAF7EC] text-[#4A9755] border border-[#74D16F]/60 font-bold text-[11px] inline-block tracking-wide">In Use</span>
+        `;
+      }
+
+      document.getElementById('lotAuditPatientCount').textContent = lotInfo.patients.length;
+
+      const tbody = document.getElementById('lotAuditPatientsTableBody');
+      tbody.innerHTML = '';
+
+      const whitneyDoubleCheckSvg = `
+        <svg class="w-4 h-3.5 inline-block mr-1 align-middle" viewBox="0 0 100 80" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M12 40 L38 66 L68 14" stroke="#4A9755" stroke-width="16" stroke-linecap="round" stroke-linejoin="round" />
+          <path d="M38 40 L64 66 L94 14" stroke="#74D16F" stroke-width="16" stroke-linecap="round" stroke-linejoin="round" />
+        </svg>
+      `;
+
+      lotInfo.patients.forEach(pt => {
+        const tr = document.createElement('tr');
+        tr.className = 'hover:bg-slate-50/80 transition-colors';
+        tr.innerHTML = `
+          <td class="p-2.5 font-mono text-slate-800 whitespace-nowrap">
+            <div class="font-bold">${pt.date}</div>
+            <div class="text-[10px] text-slate-500 font-semibold">${pt.time}</div>
+          </td>
+          <td class="p-2.5 whitespace-nowrap">
+            <div class="font-bold text-slate-900">${escapeHtml(pt.patient)}</div>
+            <div class="text-[10px] font-mono text-slate-500">MRN: ${escapeHtml(pt.mrn)} • DOB: ${escapeHtml(pt.dob)}</div>
+          </td>
+          <td class="p-2.5 whitespace-nowrap">
+            <div class="font-semibold text-slate-800">${escapeHtml(pt.procedure)}</div>
+          </td>
+          <td class="p-2.5 whitespace-nowrap font-mono text-[10.5px] text-slate-600">
+            <span class="bg-slate-100 px-1.5 py-0.5 rounded border border-slate-200 text-slate-800 font-bold">${escapeHtml(pt.dishBarcode)}</span>
+          </td>
+          <td class="p-2.5 text-center font-mono font-bold text-slate-800 whitespace-nowrap">
+            <span class="px-1.5 py-0.5 rounded bg-slate-100 border border-slate-200 text-[10px]">${escapeHtml(pt.tech)}</span>
+          </td>
+          <td class="p-2.5 text-center whitespace-nowrap">
+            <div class="inline-flex items-center space-x-1 px-2.5 py-0.5 rounded-full bg-[#EAF7EC] text-[#2E7D32] border border-[#74D16F]/60 font-bold text-[10.5px]">
+              ${whitneyDoubleCheckSvg}
+              <span>VERIFIED BY WHITNEY</span>
+            </div>
+          </td>
+          <td class="p-2.5 text-right whitespace-nowrap">
+            <button onclick="drillDownPatientAudit('${escapeHtml(pt.patient)}', '${escapeHtml(pt.mrn)}', '${escapeHtml(pt.dob)}')" class="px-2 py-1 rounded bg-white hover:bg-[#EAF7EC] border border-[#DDD4C0] hover:border-[#74D16F] text-[#2E7D32] font-bold text-[10.5px] transition shadow-xs flex items-center space-x-1 ml-auto">
+              <span>View Log</span>
+              <i data-lucide="chevron-right" class="w-3 h-3 text-[#4A9755]"></i>
+            </button>
+          </td>
+        `;
+        tbody.appendChild(tr);
+      });
+
+      document.getElementById('lotAuditModal').classList.remove('hidden');
+      lucide.createIcons();
+    }
+
+    function closeLotAuditModal() {
+      document.getElementById('lotAuditModal').classList.add('hidden');
+    }
+
+    // Direct transition from Lot Audit to the selected patient's full audit trail timeline
+    function drillDownPatientAudit(patientName, mrn, dob) {
+      closeLotAuditModal();
+      renderPatientAuditTrail(patientName, { patient: patientName, mrn: mrn, dob: dob });
+      document.getElementById('patientAuditModal').classList.remove('hidden');
+      lucide.createIcons();
     }
 
     function addInventoryRow() {
