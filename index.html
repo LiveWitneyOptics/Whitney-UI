@@ -495,8 +495,14 @@
                   <tr class="bg-[#FAF8F5] border-b border-[#DDD4C0] text-slate-700 font-bold uppercase tracking-wider text-[11px]">
                     <th class="w-24 p-2.5 border-r border-[#DDD4C0] text-center bg-[#F4EFE6] text-slate-800">TIME</th>
                     <th class="p-2.5 border-r border-[#DDD4C0] min-w-[125px] text-center bg-[#FAF8F5]">
+                      <div class="font-bold text-slate-800">FET</div>
+                    </th>
+                    <th class="p-2.5 border-r border-[#DDD4C0] min-w-[125px] text-center bg-[#FAF8F5]">
+                      <div class="font-bold text-slate-800">ANDROLOGY</div>
+                    </th>
+                    <th class="p-2.5 border-r border-[#DDD4C0] min-w-[125px] text-center bg-[#FAF8F5]">
                       <div class="font-bold text-slate-800">DAY 0</div>
-                      <div class="text-[10px] text-slate-500 font-normal">RETRIEVAL / SPERM PREP / INSEM</div>
+                      <div class="text-[10px] text-slate-500 font-normal">RETRIEVAL &amp; INSEM | EGG CRYO</div>
                     </th>
                     <th class="p-2.5 border-r border-[#DDD4C0] min-w-[125px] text-center bg-[#FAF8F5]">
                       <div class="font-bold text-slate-800">DAY 1</div>
@@ -2140,7 +2146,9 @@
           <div id="modalCultureDayContainer" class="hidden">
             <label class="block text-slate-600 font-bold mb-1">Culture Stage (Column)</label>
             <select id="modalCultureDay" class="w-full bg-white border border-[#DDD4C0] rounded p-2 text-slate-800 font-semibold focus:outline-[#4A9755]">
-              <option value="DAY 0">DAY 0 (RETRIEVAL / SPERM PREP / INSEM)</option>
+              <option value="FET">FET</option>
+              <option value="ANDROLOGY">ANDROLOGY</option>
+              <option value="DAY 0">DAY 0 (RETRIEVAL &amp; INSEM | EGG CRYO)</option>
               <option value="DAY 1">DAY 1 (FERT CHECK)</option>
               <option value="DAY 2">DAY 2</option>
               <option value="DAY 3">DAY 3</option>
@@ -2163,7 +2171,7 @@
           <label class="block text-slate-600 font-bold mb-1">Witness Procedure Type</label>
           <select id="modalProcedure" class="w-full bg-white border border-[#DDD4C0] rounded p-2 text-slate-800 font-semibold focus:outline-[#4A9755]">
             <option value="Egg Retrieval">Egg Retrieval</option>
-            <option value="Sperm Collection">Sperm Collection (Partner)</option>
+            <option value="Sperm Processing">Sperm Processing</option>
             <option value="Denudation">Denudation / Dish-to-Dish Transfer</option>
             <option value="ICSI">ICSI</option>
             <option value="Fertilization Check">Fertilization Check</option>
@@ -2407,7 +2415,7 @@
 
   <script>
     const DAYS = ['MON1', 'TUE', 'WED', 'THU', 'FRI', 'SAT', 'SUN', 'MON2'];
-    const CULTURE_DAYS = ['DAY 0', 'DAY 1', 'DAY 2', 'DAY 3', 'DAY 4', 'DAY 5', 'DAY 6', 'DAY 7'];
+    const CULTURE_DAYS = ['FET', 'ANDROLOGY', 'DAY 0', 'DAY 1', 'DAY 2', 'DAY 3', 'DAY 4', 'DAY 5', 'DAY 6', 'DAY 7'];
     const DAY_DETAILS = {
       'MON1': { name: 'Monday', date: 'Sep 14', label: 'MON Sep 14', full: 'Monday, September 14, 2026' },
       'TUE':  { name: 'Tuesday', date: 'Sep 15', label: 'TUE Sep 15', full: 'Tuesday, September 15, 2026' },
@@ -2455,17 +2463,17 @@
           borderColor: 'yellow'
         }
       },
-      // Mon 09/14/2026 - Day 0: Lonyl Palao (Sperm Collection - Partner) - WITNESSED BY LP & WHITNEY
+      // Mon 09/14/2026 - Andrology: Lonyl Palao (Sperm Processing) - WITNESSED BY LP & WHITNEY
       {
         weekKey: 'MON1_07:00',
-        dayKey: 'DAYVIEW_MON1_DAY0_07:00',
+        dayKey: 'DAYVIEW_MON1_ANDROLOGY_07:00',
         event: {
           id: 'lonyl-d0-sperm-collection',
           patient: 'Lonyl Palao',
           dob: '04/01/1990',
           mrn: '54321',
-          procedure: 'Sperm Collection',
-          stage: 'Day 0',
+          procedure: 'Sperm Processing',
+          stage: 'Andrology',
           timingNote: 'Partner Collection / Andrology Wash',
           operator: 'Andrology Lab',
           station: 'Andrology Hood 01',
@@ -2748,24 +2756,36 @@
                   mrn: '54321'
                 };
               }
+              // Ensure Lonyl Palao is updated to Sperm Processing
+              if (ev.id === 'lonyl-d0-sperm-collection' || (ev.patient === 'Lonyl Palao' && (ev.procedure === 'Sperm Collection' || !ev.procedure))) {
+                ev.procedure = 'Sperm Processing';
+              }
             });
           }
         });
 
-        // Ensure partner Lonyl Palao is added into the 07:00 slot
+        // Move Lonyl Palao from Day 0 column into the Andrology column at 07:00
+        if (scheduleData['DAYVIEW_MON1_DAY0_07:00']) {
+          scheduleData['DAYVIEW_MON1_DAY0_07:00'] = scheduleData['DAYVIEW_MON1_DAY0_07:00'].filter(
+            ev => ev.id !== 'lonyl-d0-sperm-collection' && ev.patient !== 'Lonyl Palao'
+          );
+        }
+
         const lonylEvent = DEFAULT_WHITNEY_EVENTS.find(e => e.event.id === 'lonyl-d0-sperm-collection');
         if (lonylEvent) {
-          ['MON1_07:00', 'DAYVIEW_MON1_DAY0_07:00'].forEach(key => {
-            if (!scheduleData[key]) scheduleData[key] = [];
-            const existingLonyl = scheduleData[key].find(ev => ev.id === 'lonyl-d0-sperm-collection' || ev.patient === 'Lonyl Palao');
-            if (existingLonyl) {
-              existingLonyl.stage = 'Day 0';
-              existingLonyl.isWitnessed = true;
-              existingLonyl.tech = 'LP';
-            } else {
-              scheduleData[key].push({ ...lonylEvent.event });
-            }
-          });
+          if (!scheduleData['DAYVIEW_MON1_ANDROLOGY_07:00']) {
+            scheduleData['DAYVIEW_MON1_ANDROLOGY_07:00'] = [];
+          }
+          const existingInAndrology = scheduleData['DAYVIEW_MON1_ANDROLOGY_07:00'].some(
+            ev => ev.id === 'lonyl-d0-sperm-collection' || ev.patient === 'Lonyl Palao'
+          );
+          if (!existingInAndrology) {
+            scheduleData['DAYVIEW_MON1_ANDROLOGY_07:00'].push({ ...lonylEvent.event, procedure: 'Sperm Processing' });
+          } else {
+            scheduleData['DAYVIEW_MON1_ANDROLOGY_07:00'].forEach(ev => {
+              if (ev.patient === 'Lonyl Palao') ev.procedure = 'Sperm Processing';
+            });
+          }
         }
       } else {
         loadDefaultWhitneyCohort();
@@ -3109,11 +3129,14 @@
       document.getElementById('modalCultureDay').value = cultureDay || 'DAY 0';
       
       const procSelect = document.getElementById('modalProcedure');
-      if (cultureDay === 'DAY 0') procSelect.value = 'Oocyte Retrieval';
+      if (cultureDay === 'FET') procSelect.value = 'Thaw & Transfer (FET)';
+      else if (cultureDay === 'ANDROLOGY') procSelect.value = 'Sperm Processing';
+      else if (cultureDay === 'DAY 0') procSelect.value = 'Egg Retrieval';
       else if (cultureDay === 'DAY 1') procSelect.value = 'Fertilization Check';
       else if (cultureDay === 'DAY 2' || cultureDay === 'DAY 3' || cultureDay === 'DAY 4') procSelect.value = 'Undisturbed Incubator Culture';
-      else if (cultureDay === 'DAY 5') procSelect.value = 'Embryo Biopsy (PGT)';
-      else if (cultureDay === 'DAY 6' || cultureDay === 'DAY 7') procSelect.value = 'Embryo Vitrification';
+      else if (cultureDay === 'DAY 5') procSelect.value = 'Day 5 Check & Biopsy';
+      else if (cultureDay === 'DAY 6') procSelect.value = 'Day 6 Check & Vitrification';
+      else if (cultureDay === 'DAY 7') procSelect.value = 'Day 7 Check (Final Cryo)';
     }
 
     // Render Weekly schedule grid across all 8 cycle days (Sep 14 to Sep 21)
