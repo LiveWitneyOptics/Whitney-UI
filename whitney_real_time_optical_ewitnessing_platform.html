@@ -1,0 +1,1942 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Whitney | Real-Time Optical eWitnessing</title>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Google Fonts: Plus Jakarta Sans for Live Witness Optics typography -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              navy: '#0F2027',
+              deep: '#1A365D',
+              greenDark: '#4A9755',
+              greenLight: '#74D16F',
+              greenHover: '#3D8046',
+              greenSoft: '#EAF7EC',
+              sand: '#F7F4EE',
+              sandLight: '#FAF8F5',
+              sandBorder: '#E2DACB',
+              sandDark: '#DDD4C0',
+              creamHover: '#EBE4D5'
+            }
+          },
+          fontFamily: {
+            sans: ['Inter', 'system-ui', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'sans-serif'],
+            mono: ['JetBrains Mono', 'Menlo', 'Consolas', 'monospace']
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    /* Custom scrollbars */
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #F1EFEA;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #C9BFA8;
+      border-radius: 4px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #A89B80;
+    }
+    .schedule-cell {
+      min-height: 44px;
+      transition: background-color 0.15s ease;
+    }
+    .schedule-cell:hover .cell-add-btn {
+      opacity: 1;
+    }
+    .cream-tab-active {
+      background-color: #FAF8F5 !important;
+      border-bottom-color: transparent !important;
+      font-weight: 600;
+      color: #1A365D !important;
+      box-shadow: 0 -2px 6px rgba(0,0,0,0.03);
+    }
+    [contenteditable="true"]:focus {
+      outline: 2px solid #4A9755;
+      background-color: #F0FDF4;
+      border-radius: 3px;
+      padding: 1px 4px;
+    }
+
+    /* Diagonal green slash overlay for completed / witnessed cards */
+    .witnessed-slash-overlay {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      z-index: 5;
+      width: 100%;
+      height: 100%;
+    }
+
+    /* Flashing bright green glow animation matching active Whitney headset */
+    @keyframes glasses-pulse-glow {
+      0%, 100% {
+        opacity: 1;
+        filter: drop-shadow(0 0 2px #74D16F) drop-shadow(0 0 6px #74D16F);
+        transform: scale(1);
+      }
+      50% {
+        opacity: 0.55;
+        filter: drop-shadow(0 0 1px #4A9755);
+        transform: scale(0.96);
+      }
+    }
+    .animate-glasses-glow {
+      animation: glasses-pulse-glow 1.2s ease-in-out infinite;
+    }
+  </style>
+</head>
+<body class="bg-[#F4F1EA] text-slate-800 font-sans antialiased min-h-screen flex flex-col selection:bg-emerald-100 selection:text-emerald-900">
+
+  <header class="bg-[#0D1B2A] text-white border-b border-slate-700 sticky top-0 z-40 shadow-sm">
+    <div class="px-4 py-2.5 flex items-center justify-between">
+      <!-- Left: Logo & Medical Branding -->
+      <div class="flex items-center space-x-3.5">
+        <div class="relative group cursor-pointer" onclick="promptLogoUpdate()" title="Whitney Vector Logo">
+          <div id="brandLogoContainer" class="w-10 h-10 rounded-xl bg-[#142938] border border-[#74D16F]/40 p-1 flex items-center justify-center shadow-lg shadow-black/40 overflow-hidden relative">
+            <img id="customLogoImg" src="" alt="Whitney Logo" class="w-full h-full object-contain hidden" onerror="handleLogoFallback()">
+            
+            <!-- Authentic 08.26.26 Whitney Vector Logo: Two thick, rounded overlapping checkmarks in #4A9755 and #74D16F -->
+            <svg id="defaultLogoSvg" class="w-8 h-8 transition-transform group-hover:scale-105" viewBox="0 0 100 80" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <!-- Left / Back Checkmark: Deeper Green #4A9755 -->
+              <path d="M12 40 L38 66 L68 14" stroke="#4A9755" stroke-width="14" stroke-linecap="round" stroke-linejoin="round" />
+              <!-- Right / Front Checkmark: Lighter Spring Green #74D16F -->
+              <path d="M38 40 L64 66 L94 14" stroke="#74D16F" stroke-width="14" stroke-linecap="round" stroke-linejoin="round" />
+            </svg>
+
+            <!-- Hover edit cue -->
+            <div class="absolute inset-0 bg-slate-900/75 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity rounded-xl">
+              <i data-lucide="camera" class="w-4 h-4 text-[#74D16F]"></i>
+            </div>
+          </div>
+          <input type="file" id="logoFileInput" accept="image/*" class="hidden" onchange="loadUploadedLogo(event)">
+        </div>
+
+        <div>
+          <div class="flex items-center space-x-2">
+            <span class="text-xl font-bold tracking-tight text-white" style="font-family: 'Plus Jakarta Sans', sans-serif; letter-spacing: -0.02em;">Whitney</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right: livewitnessoptics.com link & actions -->
+      <div class="flex items-center space-x-3">
+        <button id="toggleEditModeBtn" onclick="toggleGlobalEditMode()" class="px-2.5 py-1 text-xs font-medium rounded border border-[#74D16F]/40 bg-[#74D16F]/10 text-[#74D16F] hover:bg-[#74D16F]/20 transition flex items-center space-x-1.5" title="Toggle quick editable text directly on screen">
+          <i data-lucide="edit-3" class="w-3.5 h-3.5"></i>
+          <span id="editModeLabel">Edit Mode: OFF</span>
+        </button>
+
+        <button onclick="openShareModal()" class="px-2.5 py-1 text-xs font-medium rounded border border-[#74D16F]/40 bg-[#74D16F]/10 text-[#74D16F] hover:bg-[#74D16F]/20 transition flex items-center space-x-1.5">
+          <i data-lucide="share-2" class="w-3.5 h-3.5"></i>
+          <span>Share / Export</span>
+        </button>
+
+        <!-- livewitnessoptics.com domain badge -->
+        <a href="https://livewitnessoptics.com" target="_blank" rel="noopener noreferrer" 
+           class="flex items-center space-x-1.5 px-3 py-1 rounded-md text-xs font-mono font-semibold bg-white/10 hover:bg-white/20 text-[#74D16F] border border-[#74D16F]/30 transition shadow-inner">
+          <i data-lucide="globe" class="w-3.5 h-3.5 text-[#74D16F]"></i>
+          <span>LIVEWITNESSOPTICS.COM</span>
+          <i data-lucide="external-link" class="w-3 h-3 text-slate-400"></i>
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <div class="flex flex-1 overflow-hidden">
+    <!-- Left Sidebar: HOME, SETTINGS, HELP, VERSION -->
+    <aside class="w-56 bg-[#162638] text-slate-300 flex-shrink-0 flex flex-col justify-between border-r border-slate-700/60 p-3 select-none">
+      <div class="space-y-6">
+        <!-- Workstation context badge (fixed spacing and typography) -->
+        <div class="bg-slate-800/80 p-3 rounded-lg border border-slate-700/80 space-y-1">
+          <div class="flex items-center space-x-1.5 text-[10px] uppercase font-bold text-slate-400 tracking-wider">
+            <i data-lucide="glasses" class="w-3.5 h-3.5 text-[#74D16F]"></i>
+            <span>Device In Use</span>
+          </div>
+          <div class="text-xs font-semibold text-white flex items-center justify-between pt-1">
+            <span>Whitney 1: IN USE: LP</span>
+            <span class="w-2.5 h-2.5 rounded-full bg-[#74D16F] shadow-[0_0_8px_#74D16F]" title="Connected"></span>
+          </div>
+        </div>
+
+        <!-- Sidebar Navigation -->
+        <nav class="space-y-1">
+          <div class="px-2 pb-1 text-[10px] font-bold text-slate-400 uppercase tracking-wider">Navigation</div>
+          
+          <button onclick="switchTab('schedule')" class="w-full flex items-center space-x-3 px-3 py-2 text-sm rounded-md transition text-[#74D16F] bg-slate-800/90 font-medium">
+            <i data-lucide="calendar" class="w-4 h-4 text-[#74D16F]"></i>
+            <span>Witness Schedule</span>
+          </button>
+
+          <button onclick="switchTab('schedule')" class="w-full flex items-center space-x-3 px-3 py-2 text-sm rounded-md transition text-slate-300 hover:text-white hover:bg-slate-800/50">
+            <i data-lucide="layout-dashboard" class="w-4 h-4"></i>
+            <span>Home</span>
+          </button>
+
+          <button onclick="switchTab('schedule')" class="w-full flex items-center space-x-3 px-3 py-2 text-sm rounded-md transition text-slate-300 hover:text-white hover:bg-slate-800/50">
+            <i data-lucide="settings" class="w-4 h-4"></i>
+            <span>Settings</span>
+          </button>
+
+          <button onclick="switchTab('schedule')" class="w-full flex items-center space-x-3 px-3 py-2 text-sm rounded-md transition text-slate-300 hover:text-white hover:bg-slate-800/50">
+            <i data-lucide="help-circle" class="w-4 h-4"></i>
+            <span>Help</span>
+          </button>
+
+          <button onclick="switchTab('schedule')" class="w-full flex items-center space-x-3 px-3 py-2 text-sm rounded-md transition text-slate-300 hover:text-white hover:bg-slate-800/50">
+            <i data-lucide="file-check-2" class="w-4 h-4"></i>
+            <span>Audit Trail</span>
+          </button>
+        </nav>
+      </div>
+
+      <!-- Footer Version info: VERSION: 0001 -->
+      <div class="pt-4 border-t border-slate-700/60 text-center">
+        <div class="font-mono text-xs font-bold tracking-widest text-[#74D16F]">VERSION: 0001</div>
+      </div>
+    </aside>
+
+    <main class="flex-1 flex flex-col min-w-0 bg-[#F7F4EE] overflow-hidden">
+      
+      <!-- Tan / Cream Tab Header Bar -->
+      <div class="bg-[#EFEAE1] border-b border-[#DDD4C0] px-4 pt-3 flex flex-wrap items-end justify-between gap-2 shadow-sm">
+        
+        <!-- Tabs as drawn in sketch -->
+        <div class="flex flex-wrap items-end space-x-1 -mb-px">
+          <!-- 1. WITNESS SCHEDULE -->
+          <button id="tab-schedule" onclick="switchTab('schedule')" 
+                  class="px-4 py-2 text-xs sm:text-sm font-semibold border-t-2 border-r-2 border-l-2 border-[#DDD4C0] rounded-t-lg transition cream-tab-active bg-[#FAF8F5]">
+            <span class="flex items-center space-x-2">
+              <i data-lucide="clock" class="w-3.5 h-3.5 text-[#4A9755]"></i>
+              <span class="uppercase tracking-wide">Witness Schedule</span>
+            </span>
+          </button>
+
+          <!-- 2. QC -->
+          <button id="tab-qc" onclick="switchTab('qc')" 
+                  class="px-3.5 py-2 text-xs sm:text-sm font-medium border-t-2 border-r-2 border-l-2 border-transparent hover:border-[#DDD4C0] rounded-t-lg text-slate-700 hover:text-slate-900 bg-[#E8E2D6] hover:bg-[#FAF8F5] transition">
+            <span class="flex items-center space-x-1.5">
+              <i data-lucide="check-square" class="w-3.5 h-3.5 text-slate-500"></i>
+              <span class="uppercase tracking-wide">QC</span>
+            </span>
+          </button>
+
+          <!-- 3. LOT TRACKING -->
+          <button id="tab-lot" onclick="switchTab('lot')" 
+                  class="px-3.5 py-2 text-xs sm:text-sm font-medium border-t-2 border-r-2 border-l-2 border-transparent hover:border-[#DDD4C0] rounded-t-lg text-slate-700 hover:text-slate-900 bg-[#E8E2D6] hover:bg-[#FAF8F5] transition">
+            <span class="flex items-center space-x-1.5">
+              <i data-lucide="barcode" class="w-3.5 h-3.5 text-slate-500"></i>
+              <span class="uppercase tracking-wide">Lot Tracking</span>
+            </span>
+          </button>
+
+          <!-- 4. INVENTORY / ORDERING -->
+          <button id="tab-inventory" onclick="switchTab('inventory')" 
+                  class="px-3.5 py-2 text-xs sm:text-sm font-medium border-t-2 border-r-2 border-l-2 border-transparent hover:border-[#DDD4C0] rounded-t-lg text-slate-700 hover:text-slate-900 bg-[#E8E2D6] hover:bg-[#FAF8F5] transition">
+            <span class="flex items-center space-x-1.5">
+              <i data-lucide="package" class="w-3.5 h-3.5 text-slate-500"></i>
+              <span class="uppercase tracking-wide">Inventory / Ordering</span>
+            </span>
+          </button>
+
+          <!-- 5. CRYOINVENTORY -->
+          <button id="tab-cryo" onclick="switchTab('cryo')" 
+                  class="px-3.5 py-2 text-xs sm:text-sm font-medium border-t-2 border-r-2 border-l-2 border-transparent hover:border-[#DDD4C0] rounded-t-lg text-slate-700 hover:text-slate-900 bg-[#E8E2D6] hover:bg-[#FAF8F5] transition">
+            <span class="flex items-center space-x-1.5">
+              <i data-lucide="snowflake" class="w-3.5 h-3.5 text-[#4A9755]"></i>
+              <span class="uppercase tracking-wide">Cryoinventory</span>
+            </span>
+          </button>
+        </div>
+      </div>
+
+      <div class="flex-1 overflow-y-auto p-4 space-y-4">
+
+        <!-- VIEW 1: WITNESS SCHEDULE -->
+        <div id="view-schedule" class="space-y-3">
+          
+          <!-- Banner: Dynamic WEEKLY / DAILY VIEW with centered Capture Procedure button -->
+          <div class="bg-white p-3 rounded-lg border border-[#DDD4C0] shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-3">
+            <!-- Left: Title, View Switcher & Dates -->
+            <div class="flex items-center space-x-3 min-w-[280px]">
+              <div id="viewTitleContainer" class="space-y-1">
+                <!-- View Mode Segmented Switcher -->
+                <div class="flex items-center bg-[#F4EFE6] p-0.5 rounded-lg border border-[#DDD4C0]">
+                  <button id="toggleWeekViewBtn" onclick="switchToWeeklyView()" class="px-2.5 py-1 text-xs font-bold rounded-md bg-white text-slate-900 shadow-sm border border-[#DDD4C0]/60 transition flex items-center space-x-1.5 whitespace-nowrap">
+                    <i data-lucide="calendar" class="w-3.5 h-3.5 text-[#4A9755]"></i>
+                    <span>Weekly View</span>
+                  </button>
+                  <button id="toggleDailyViewBtn" onclick="switchToDailyView(currentActiveDay || 'MON1')" class="px-2.5 py-1 text-xs font-semibold rounded-md text-slate-600 hover:text-slate-900 hover:bg-white/60 transition flex items-center space-x-1.5 whitespace-nowrap">
+                    <i data-lucide="calendar-days" class="w-3.5 h-3.5 text-[#4A9755]"></i>
+                    <span class="whitespace-nowrap">Daily View (Day 0 - 7)</span>
+                  </button>
+                </div>
+                <p id="scheduleSubHeading" class="text-xs text-slate-500 font-medium">September 14 – September 21, 2026</p>
+              </div>
+            </div>
+
+            <!-- Center: Centered Capture Procedure Button in brand green -->
+            <div class="flex items-center justify-center flex-1">
+              <button onclick="openNewEventModal(currentActiveDay || 'MON1', '08:00')" class="bg-[#4A9755] hover:bg-[#3D8046] text-white font-semibold px-4 py-2 rounded-lg shadow-sm flex items-center space-x-2 transition text-xs sm:text-sm">
+                <i data-lucide="glasses" class="w-4 h-4"></i>
+                <span>Capture Procedure</span>
+              </button>
+            </div>
+
+            <!-- Right: Date & Day Navigation Controls -->
+            <div class="flex items-center flex-wrap justify-end gap-2 text-xs min-w-[220px]">
+              <div id="dayNavControls" class="hidden items-center space-x-1">
+                <button onclick="navigateDay(-1)" class="p-1 rounded bg-[#FAF8F5] border border-[#DDD4C0] hover:bg-white text-slate-600" title="Previous Day">
+                  <i data-lucide="chevron-left" class="w-4 h-4"></i>
+                </button>
+                <span id="dayNavLabel" class="px-2 font-mono font-bold text-slate-800 text-xs">MON Sep 14</span>
+                <button onclick="navigateDay(1)" class="p-1 rounded bg-[#FAF8F5] border border-[#DDD4C0] hover:bg-white text-slate-600" title="Next Day">
+                  <i data-lucide="chevron-right" class="w-4 h-4"></i>
+                </button>
+              </div>
+
+              <div id="weekNavControls" class="flex items-center space-x-1">
+                <button onclick="changeWeek(-1)" class="p-1 rounded bg-[#FAF8F5] border border-[#DDD4C0] hover:bg-white text-slate-600">
+                  <i data-lucide="chevron-left" class="w-4 h-4"></i>
+                </button>
+                <span class="px-2 font-mono font-semibold text-slate-800">September 2026</span>
+                <button onclick="changeWeek(1)" class="p-1 rounded bg-[#FAF8F5] border border-[#DDD4C0] hover:bg-white text-slate-600">
+                  <i data-lucide="chevron-right" class="w-4 h-4"></i>
+                </button>
+              </div>
+
+            </div>
+          </div>
+
+          <!-- Weekly Schedule Grid View -->
+          <div id="weeklyGridContainer" class="bg-white rounded-lg border border-[#DDD4C0] shadow-sm overflow-x-auto">
+            <table class="w-full border-collapse text-left text-xs" id="scheduleTable">
+              <thead>
+                <tr class="bg-[#FAF8F5] border-b border-[#DDD4C0] text-slate-700 font-bold uppercase tracking-wider text-[11px]">
+                  <th class="w-24 p-2.5 border-r border-[#DDD4C0] text-center bg-[#F4EFE6] text-slate-800">TIME</th>
+                  <th onclick="switchToDailyView('MON1')" class="p-2.5 border-r border-[#DDD4C0] min-w-[135px] text-center cursor-pointer hover:bg-[#EAF7EC] hover:text-[#4A9755] transition group" title="Click to view Monday schedule">
+                    <div class="flex items-center justify-center space-x-1">
+                      <span>MON</span>
+                      <i data-lucide="arrow-right-circle" class="w-3 h-3 text-[#4A9755] opacity-60 group-hover:opacity-100 transition"></i>
+                    </div>
+                    <div class="text-[10px] text-slate-500 group-hover:text-[#4A9755] font-semibold">Sep 14</div>
+                  </th>
+                  <th onclick="switchToDailyView('TUE')" class="p-2.5 border-r border-[#DDD4C0] min-w-[135px] text-center cursor-pointer hover:bg-[#EAF7EC] hover:text-[#4A9755] transition group" title="Click to view Tuesday schedule">
+                    <div class="flex items-center justify-center space-x-1">
+                      <span>TUE</span>
+                      <i data-lucide="arrow-right-circle" class="w-3 h-3 text-[#4A9755] opacity-60 group-hover:opacity-100 transition"></i>
+                    </div>
+                    <div class="text-[10px] text-slate-500 group-hover:text-[#4A9755] font-semibold">Sep 15</div>
+                  </th>
+                  <th onclick="switchToDailyView('WED')" class="p-2.5 border-r border-[#DDD4C0] min-w-[135px] text-center cursor-pointer hover:bg-[#EAF7EC] hover:text-[#4A9755] transition group" title="Click to view Wednesday schedule">
+                    <div class="flex items-center justify-center space-x-1">
+                      <span>WED</span>
+                      <i data-lucide="arrow-right-circle" class="w-3 h-3 text-[#4A9755] opacity-60 group-hover:opacity-100 transition"></i>
+                    </div>
+                    <div class="text-[10px] text-slate-500 group-hover:text-[#4A9755] font-semibold">Sep 16</div>
+                  </th>
+                  <th onclick="switchToDailyView('THU')" class="p-2.5 border-r border-[#DDD4C0] min-w-[135px] text-center cursor-pointer hover:bg-[#EAF7EC] hover:text-[#4A9755] transition group" title="Click to view Thursday schedule">
+                    <div class="flex items-center justify-center space-x-1">
+                      <span>THU</span>
+                      <i data-lucide="arrow-right-circle" class="w-3 h-3 text-[#4A9755] opacity-60 group-hover:opacity-100 transition"></i>
+                    </div>
+                    <div class="text-[10px] text-slate-500 group-hover:text-[#4A9755] font-semibold">Sep 17</div>
+                  </th>
+                  <th onclick="switchToDailyView('FRI')" class="p-2.5 border-r border-[#DDD4C0] min-w-[135px] text-center cursor-pointer hover:bg-[#EAF7EC] hover:text-[#4A9755] transition group" title="Click to view Friday schedule">
+                    <div class="flex items-center justify-center space-x-1">
+                      <span>FRI</span>
+                      <i data-lucide="arrow-right-circle" class="w-3 h-3 text-[#4A9755] opacity-60 group-hover:opacity-100 transition"></i>
+                    </div>
+                    <div class="text-[10px] text-slate-500 group-hover:text-[#4A9755] font-semibold">Sep 18</div>
+                  </th>
+                  <th onclick="switchToDailyView('SAT')" class="p-2.5 border-r border-[#DDD4C0] min-w-[135px] text-center bg-[#FAF8F5]/80 cursor-pointer hover:bg-[#EAF7EC] hover:text-[#4A9755] transition group" title="Click to view Saturday schedule">
+                    <div class="flex items-center justify-center space-x-1">
+                      <span>SAT</span>
+                      <i data-lucide="arrow-right-circle" class="w-3 h-3 text-[#4A9755] opacity-60 group-hover:opacity-100 transition"></i>
+                    </div>
+                    <div class="text-[10px] text-slate-500 group-hover:text-[#4A9755] font-semibold">Sep 19</div>
+                  </th>
+                  <th onclick="switchToDailyView('SUN')" class="p-2.5 border-r border-[#DDD4C0] min-w-[135px] text-center bg-[#FAF8F5]/80 cursor-pointer hover:bg-[#EAF7EC] hover:text-[#4A9755] transition group" title="Click to view Sunday schedule">
+                    <div class="flex items-center justify-center space-x-1">
+                      <span>SUN</span>
+                      <i data-lucide="arrow-right-circle" class="w-3 h-3 text-[#4A9755] opacity-60 group-hover:opacity-100 transition"></i>
+                    </div>
+                    <div class="text-[10px] text-slate-500 group-hover:text-[#4A9755] font-semibold">Sep 20</div>
+                  </th>
+                  <th onclick="switchToDailyView('MON2')" class="p-2.5 min-w-[135px] text-center bg-[#FAF8F5] cursor-pointer hover:bg-[#EAF7EC] hover:text-[#4A9755] transition group" title="Click to view Monday schedule">
+                    <div class="flex items-center justify-center space-x-1">
+                      <span>MON</span>
+                      <i data-lucide="arrow-right-circle" class="w-3 h-3 text-[#4A9755] opacity-60 group-hover:opacity-100 transition"></i>
+                    </div>
+                    <div class="text-[10px] text-slate-500 group-hover:text-[#4A9755] font-semibold">Sep 21</div>
+                  </th>
+                </tr>
+              </thead>
+              <tbody id="scheduleBody" class="divide-y divide-slate-100">
+                <!-- Populated via renderScheduleTable() -->
+              </tbody>
+            </table>
+          </div>
+
+          <!-- Daily View Container: TIME on Left, DAY 0 to DAY 7 Columns across top -->
+          <div id="dailyViewContainer" class="hidden space-y-3">
+            
+            <!-- Daily Witnessing Progress Bar (Only visible in Daily View) -->
+            <div id="dailyProgressBarCard" class="bg-white p-3 rounded-lg border border-[#DDD4C0] shadow-sm flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+              <div class="flex items-center space-x-3 min-w-0">
+                <div class="w-8 h-8 rounded-lg bg-[#EAF7EC] border border-[#74D16F]/40 flex items-center justify-center text-[#4A9755] flex-shrink-0">
+                  <i data-lucide="check-circle-2" class="w-4 h-4"></i>
+                </div>
+                <div class="space-y-1">
+                  <div class="flex items-center space-x-2">
+                    <span class="text-xs font-bold text-slate-900 uppercase tracking-wide whitespace-nowrap">% OF WITNESSING COMPLETED</span>
+                    <span id="progressPercentageBadge" class="px-2 py-0.5 rounded-full text-[11px] font-mono font-bold bg-[#EAF7EC] text-[#4A9755] border border-[#74D16F]/40 whitespace-nowrap">50% Complete</span>
+                  </div>
+                  <p id="progressSubText" class="text-[11px] text-slate-500 font-medium whitespace-nowrap">2 of 4 procedures eWitnessed Optically by Whitney</p>
+                </div>
+              </div>
+
+              <!-- Visual Progress Bar Track -->
+              <div class="flex-1 max-w-md w-full flex items-center space-x-3">
+                <div class="flex-1 h-3 rounded-full bg-slate-100 border border-slate-200 overflow-hidden relative p-0.5">
+                  <div id="witnessProgressBarFill" class="h-full rounded-full bg-gradient-to-r from-[#4A9755] to-[#74D16F] transition-all duration-500 shadow-sm" style="width: 50%;"></div>
+                </div>
+                <span id="progressPercentageText" class="text-xs font-mono font-bold text-slate-800 min-w-[36px] text-right">50%</span>
+              </div>
+            </div>
+
+            <!-- Table Matrix: TIME on left, DAY 0 through DAY 7 across top -->
+            <div class="bg-white rounded-lg border border-[#DDD4C0] shadow-sm overflow-x-auto">
+              <table class="w-full border-collapse text-left text-xs" id="dailyScheduleTable">
+                <thead>
+                  <tr class="bg-[#FAF8F5] border-b border-[#DDD4C0] text-slate-700 font-bold uppercase tracking-wider text-[11px]">
+                    <th class="w-24 p-2.5 border-r border-[#DDD4C0] text-center bg-[#F4EFE6] text-slate-800">TIME</th>
+                    <th class="p-2.5 border-r border-[#DDD4C0] min-w-[125px] text-center bg-[#FAF8F5]">
+                      <div class="font-bold text-slate-800">DAY 0</div>
+                      <div class="text-[10px] text-slate-500 font-normal">Retrieval / Insem</div>
+                    </th>
+                    <th class="p-2.5 border-r border-[#DDD4C0] min-w-[125px] text-center bg-[#FAF8F5]">
+                      <div class="font-bold text-slate-800">DAY 1</div>
+                      <div class="text-[10px] text-slate-500 font-normal">Fert Check 2PN</div>
+                    </th>
+                    <th class="p-2.5 border-r border-[#DDD4C0] min-w-[125px] text-center bg-[#FAF8F5]">
+                      <div class="font-bold text-slate-800">DAY 2</div>
+                      <div class="text-[10px] text-slate-500 font-normal">Cleavage Stage</div>
+                    </th>
+                    <th class="p-2.5 border-r border-[#DDD4C0] min-w-[125px] text-center bg-[#FAF8F5]">
+                      <div class="font-bold text-slate-800">DAY 3</div>
+                      <div class="text-[10px] text-slate-500 font-normal">Cell Eval</div>
+                    </th>
+                    <th class="p-2.5 border-r border-[#DDD4C0] min-w-[125px] text-center bg-[#FAF8F5]">
+                      <div class="font-bold text-slate-800">DAY 4</div>
+                      <div class="text-[10px] text-slate-500 font-normal">Morula / Compact</div>
+                    </th>
+                    <th class="p-2.5 border-r border-[#DDD4C0] min-w-[125px] text-center bg-[#FAF8F5]">
+                      <div class="font-bold text-slate-800">DAY 5</div>
+                      <div class="text-[10px] text-slate-500 font-normal">Blastocyst / PGT</div>
+                    </th>
+                    <th class="p-2.5 border-r border-[#DDD4C0] min-w-[125px] text-center bg-[#FAF8F5]">
+                      <div class="font-bold text-slate-800">DAY 6</div>
+                      <div class="text-[10px] text-slate-500 font-normal">Ext Blast / Cryo</div>
+                    </th>
+                    <th class="p-2.5 min-w-[125px] text-center bg-[#FAF8F5]">
+                      <div class="font-bold text-slate-800">DAY 7</div>
+                      <div class="text-[10px] text-slate-500 font-normal">Final Cryo</div>
+                    </th>
+                  </tr>
+                </thead>
+                <tbody id="dailyScheduleBody" class="divide-y divide-slate-100">
+                  <!-- Populated via renderDailyScheduleGrid() -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- VIEW 2: QC -->
+        <div id="view-qc" class="hidden space-y-4">
+          <div class="bg-white p-4 rounded-lg border border-[#DDD4C0] shadow-sm flex items-center justify-between">
+            <div>
+              <h2 class="text-lg font-bold text-slate-900">Optical QC & Calibration Checklist</h2>
+              <p class="text-xs text-slate-500">Optical camera calibration, dish RFID barcode scanning alignment, and laser witness tests.</p>
+            </div>
+            <button onclick="addQCRow()" class="px-3 py-1.5 bg-[#4A9755] hover:bg-[#3D8046] text-white rounded text-xs font-medium transition">
+              + New QC Log Entry
+            </button>
+          </div>
+
+          <div class="bg-white rounded-lg border border-[#DDD4C0] overflow-hidden">
+            <table class="w-full text-xs text-left">
+              <thead class="bg-[#FAF8F5] border-b border-[#DDD4C0] font-bold text-slate-700 uppercase">
+                <tr>
+                  <th class="p-3">Time</th>
+                  <th class="p-3">Station</th>
+                  <th class="p-3">Optical Camera Focus</th>
+                  <th class="p-3">RFID Reader</th>
+                  <th class="p-3">Technician</th>
+                  <th class="p-3">QC Status</th>
+                  <th class="p-3 text-right">Actions</th>
+                </tr>
+              </thead>
+              <tbody id="qcTableBody" class="divide-y divide-slate-100">
+                <tr class="hover:bg-slate-50">
+                  <td class="p-3 font-mono font-medium" contenteditable="true">06:15 AM</td>
+                  <td class="p-3 font-semibold" contenteditable="true">Hood 01 (Retrieval)</td>
+                  <td class="p-3 text-[#4A9755] font-semibold" contenteditable="true">Calibrated (100%)</td>
+                  <td class="p-3 text-[#4A9755] font-semibold" contenteditable="true">Pass (Signal: 98dBm)</td>
+                  <td class="p-3" contenteditable="true">Dr. Sarah Jenkins</td>
+                  <td class="p-3"><span class="px-2 py-0.5 rounded-full bg-[#EAF7EC] text-[#4A9755] border border-[#74D16F]/50 font-bold">VERIFIED</span></td>
+                  <td class="p-3 text-right"><button onclick="this.closest('tr').remove()" class="text-rose-500 hover:underline">Remove</button></td>
+                </tr>
+                <tr class="hover:bg-slate-50">
+                  <td class="p-3 font-mono font-medium" contenteditable="true">06:20 AM</td>
+                  <td class="p-3 font-semibold" contenteditable="true">Hood 02 (ICSI Rig)</td>
+                  <td class="p-3 text-[#4A9755] font-semibold" contenteditable="true">Calibrated (100%)</td>
+                  <td class="p-3 text-[#4A9755] font-semibold" contenteditable="true">Pass (Signal: 95dBm)</td>
+                  <td class="p-3" contenteditable="true">M. Chen, HCLD</td>
+                  <td class="p-3"><span class="px-2 py-0.5 rounded-full bg-[#EAF7EC] text-[#4A9755] border border-[#74D16F]/50 font-bold">VERIFIED</span></td>
+                  <td class="p-3 text-right"><button onclick="this.closest('tr').remove()" class="text-rose-500 hover:underline">Remove</button></td>
+                </tr>
+                <tr class="hover:bg-slate-50">
+                  <td class="p-3 font-mono font-medium" contenteditable="true">06:30 AM</td>
+                  <td class="p-3 font-semibold" contenteditable="true">Cryo Nitrogen Station</td>
+                  <td class="p-3 text-[#4A9755] font-semibold" contenteditable="true">Optical QR Sensor OK</td>
+                  <td class="p-3 text-[#4A9755] font-semibold" contenteditable="true">Pass</td>
+                  <td class="p-3" contenteditable="true">Alex Rivera, TS</td>
+                  <td class="p-3"><span class="px-2 py-0.5 rounded-full bg-[#EAF7EC] text-[#4A9755] border border-[#74D16F]/50 font-bold">VERIFIED</span></td>
+                  <td class="p-3 text-right"><button onclick="this.closest('tr').remove()" class="text-rose-500 hover:underline">Remove</button></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- VIEW 3: LOT TRACKING -->
+        <div id="view-lot" class="hidden space-y-4">
+          <div class="bg-white p-4 rounded-lg border border-[#DDD4C0] shadow-sm flex items-center justify-between">
+            <div>
+              <h2 class="text-lg font-bold text-slate-900">Lot & Reagent Tracking (IVF Media & Dishes)</h2>
+              <p class="text-xs text-slate-500">Trace media lots, micropipettes, and culture oil associated with optical witnessing sessions.</p>
+            </div>
+            <button onclick="addLotRow()" class="px-3 py-1.5 bg-[#4A9755] hover:bg-[#3D8046] text-white rounded text-xs font-medium transition">
+              + Add Reagent Lot
+            </button>
+          </div>
+
+          <div class="bg-white rounded-lg border border-[#DDD4C0] overflow-hidden">
+            <table class="w-full text-xs text-left">
+              <thead class="bg-[#FAF8F5] border-b border-[#DDD4C0] font-bold text-slate-700 uppercase">
+                <tr>
+                  <th class="p-3">Item / Reagent</th>
+                  <th class="p-3">Lot Number</th>
+                  <th class="p-3">Manufacturer</th>
+                  <th class="p-3">Expiration Date</th>
+                  <th class="p-3">Opened By</th>
+                  <th class="p-3">Witness Link Status</th>
+                  <th class="p-3 text-right">Action</th>
+                </tr>
+              </thead>
+              <tbody id="lotTableBody" class="divide-y divide-slate-100">
+                <tr class="hover:bg-slate-50">
+                  <td class="p-3 font-semibold" contenteditable="true">Global Total LP Media</td>
+                  <td class="p-3 font-mono font-bold text-[#4A9755]" contenteditable="true">LOT-2026-9844A</td>
+                  <td class="p-3" contenteditable="true">CooperSurgical</td>
+                  <td class="p-3 text-slate-600" contenteditable="true">11/30/2026</td>
+                  <td class="p-3" contenteditable="true">S. Jenkins</td>
+                  <td class="p-3"><span class="px-2 py-0.5 rounded-full bg-[#EAF7EC] text-[#4A9755] border border-[#74D16F]/40 font-bold">ACTIVE IN HOOD 01</span></td>
+                  <td class="p-3 text-right"><button onclick="this.closest('tr').remove()" class="text-rose-500 hover:underline">Remove</button></td>
+                </tr>
+                <tr class="hover:bg-slate-50">
+                  <td class="p-3 font-semibold" contenteditable="true">ICSI PVP 7% Solution</td>
+                  <td class="p-3 font-mono font-bold text-[#4A9755]" contenteditable="true">PVP-7731-X</td>
+                  <td class="p-3" contenteditable="true">Vitrolife</td>
+                  <td class="p-3 text-slate-600" contenteditable="true">10/15/2026</td>
+                  <td class="p-3" contenteditable="true">M. Chen</td>
+                  <td class="p-3"><span class="px-2 py-0.5 rounded-full bg-[#EAF7EC] text-[#4A9755] border border-[#74D16F]/40 font-bold">ACTIVE IN HOOD 02</span></td>
+                  <td class="p-3 text-right"><button onclick="this.closest('tr').remove()" class="text-rose-500 hover:underline">Remove</button></td>
+                </tr>
+                <tr class="hover:bg-slate-50">
+                  <td class="p-3 font-semibold" contenteditable="true">Embryo Cryo Straws (Clear)</td>
+                  <td class="p-3 font-mono font-bold text-[#4A9755]" contenteditable="true">STRW-8812-B</td>
+                  <td class="p-3" contenteditable="true">Cryo Bio System</td>
+                  <td class="p-3 text-slate-600" contenteditable="true">04/20/2028</td>
+                  <td class="p-3" contenteditable="true">A. Rivera</td>
+                  <td class="p-3"><span class="px-2 py-0.5 rounded-full bg-[#EAF7EC] text-[#4A9755] border border-[#74D16F]/40 font-bold">IN USE CRYO</span></td>
+                  <td class="p-3 text-right"><button onclick="this.closest('tr').remove()" class="text-rose-500 hover:underline">Remove</button></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- VIEW 4: INVENTORY / ORDERING -->
+        <div id="view-inventory" class="hidden space-y-4">
+          <div class="bg-white p-4 rounded-lg border border-[#DDD4C0] shadow-sm flex items-center justify-between">
+            <div>
+              <h2 class="text-lg font-bold text-slate-900">Lab Consumables & Stock Ordering</h2>
+              <p class="text-xs text-slate-500">Optical witness barcodes, RFID petri dishes, and micro-manipulation needles.</p>
+            </div>
+            <button onclick="addInventoryRow()" class="px-3 py-1.5 bg-[#4A9755] hover:bg-[#3D8046] text-white rounded text-xs font-medium transition">
+              + Quick Order Request
+            </button>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div class="bg-white p-4 rounded-lg border border-[#DDD4C0] shadow-sm">
+              <div class="text-xs font-bold text-slate-400 uppercase">Optical RFID Dishes In Stock</div>
+              <div class="text-2xl font-black text-slate-900 mt-1 font-mono" contenteditable="true">480 units</div>
+              <div class="text-xs text-[#4A9755] mt-1 font-medium font-semibold">✓ Sufficient for 3 weeks</div>
+            </div>
+            <div class="bg-white p-4 rounded-lg border border-[#DDD4C0] shadow-sm">
+              <div class="text-xs font-bold text-slate-400 uppercase">Cryo Straw Barcode Labels</div>
+              <div class="text-2xl font-black text-[#4A9755] mt-1 font-mono" contenteditable="true">95 units</div>
+              <div class="text-xs text-[#4A9755] mt-1 font-medium font-semibold">● Current stock adequate</div>
+            </div>
+            <div class="bg-white p-4 rounded-lg border border-[#DDD4C0] shadow-sm">
+              <div class="text-xs font-bold text-slate-400 uppercase">Pending Supplier Orders</div>
+              <div class="text-2xl font-black text-slate-900 mt-1 font-mono" contenteditable="true">2 POs</div>
+              <div class="text-xs text-slate-500 mt-1 font-medium">Expected delivery: Monday</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- VIEW 5: CRYOINVENTORY -->
+        <div id="view-cryo" class="hidden space-y-4">
+          <div class="bg-white p-4 rounded-lg border border-[#DDD4C0] shadow-sm flex items-center justify-between">
+            <div>
+              <h2 class="text-lg font-bold text-slate-900">Cryoinventory & Liquid Nitrogen Tank Mapping</h2>
+              <p class="text-xs text-slate-500">Verified locations for vitrified blastocysts, oocytes, and sperm straws with dual optical verification.</p>
+            </div>
+            <div class="flex space-x-2">
+              <span class="px-2.5 py-1 bg-[#EAF7EC] text-[#4A9755] border border-[#74D16F]/40 rounded text-xs font-bold flex items-center space-x-1">
+                <i data-lucide="snowflake" class="w-3.5 h-3.5"></i>
+                <span>Tank #1: -196.2°C</span>
+              </span>
+              <span class="px-2.5 py-1 bg-[#EAF7EC] text-[#4A9755] border border-[#74D16F]/40 rounded text-xs font-bold flex items-center space-x-1">
+                <i data-lucide="snowflake" class="w-3.5 h-3.5"></i>
+                <span>Tank #2: -195.8°C</span>
+              </span>
+            </div>
+          </div>
+
+          <div class="bg-white rounded-lg border border-[#DDD4C0] p-4">
+            <h3 class="text-sm font-bold text-slate-800 mb-3 uppercase tracking-wider font-mono">Tank A - Canister Matrix</h3>
+            <div class="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-6 gap-3">
+              <div class="p-3 rounded border border-[#74D16F]/40 bg-[#EAF7EC]/50 hover:bg-[#EAF7EC] transition cursor-pointer">
+                <div class="text-[10px] text-[#4A9755] font-bold uppercase">Canister 1</div>
+                <div class="text-sm font-bold text-slate-800 mt-1 font-mono">CANE 01-A</div>
+                <div class="text-xs text-slate-500">4 / 5 Goblets filled</div>
+                <div class="mt-2 text-[10px] bg-[#4A9755] text-white px-1.5 py-0.5 rounded text-center font-bold">OPTICAL WITNESSED</div>
+              </div>
+              <div class="p-3 rounded border border-[#74D16F]/40 bg-[#EAF7EC]/50 hover:bg-[#EAF7EC] transition cursor-pointer">
+                <div class="text-[10px] text-[#4A9755] font-bold uppercase">Canister 2</div>
+                <div class="text-sm font-bold text-slate-800 mt-1 font-mono">CANE 02-A</div>
+                <div class="text-xs text-slate-500">5 / 5 Goblets filled</div>
+                <div class="mt-2 text-[10px] bg-[#4A9755] text-white px-1.5 py-0.5 rounded text-center font-bold">OPTICAL WITNESSED</div>
+              </div>
+              <div class="p-3 rounded border border-[#74D16F]/40 bg-[#EAF7EC]/30 hover:bg-[#EAF7EC] transition cursor-pointer">
+                <div class="text-[10px] text-[#4A9755] font-bold uppercase">Canister 3</div>
+                <div class="text-sm font-bold text-slate-800 mt-1 font-mono">CANE 03-B</div>
+                <div class="text-xs text-slate-500">2 / 5 Goblets filled</div>
+                <div class="mt-2 text-[10px] bg-[#74D16F] text-slate-900 px-1.5 py-0.5 rounded text-center font-bold">SPACE OPEN</div>
+              </div>
+              <div class="p-3 rounded border border-slate-200 bg-slate-50 hover:bg-slate-100 transition cursor-pointer">
+                <div class="text-[10px] text-slate-500 font-bold uppercase">Canister 4</div>
+                <div class="text-sm font-bold text-slate-800 mt-1 font-mono">CANE 04-B</div>
+                <div class="text-xs text-slate-500">0 / 5 Goblets filled</div>
+                <div class="mt-2 text-[10px] bg-slate-400 text-white px-1.5 py-0.5 rounded text-center font-bold">EMPTY CANE</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </main>
+  </div>
+
+  <!-- MODAL: Add / Edit Procedure on Schedule -->
+  <div id="eventModal" class="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+    <div class="bg-[#FAF8F5] border border-[#DDD4C0] w-full max-w-lg rounded-xl shadow-2xl overflow-hidden animate-in fade-in zoom-in-95 duration-150">
+      <div class="bg-[#162638] text-white p-4 flex items-center justify-between">
+        <div class="flex items-center space-x-2">
+          <i data-lucide="clipboard-check" class="w-5 h-5 text-[#74D16F]"></i>
+          <h3 id="modalTitle" class="text-sm font-bold uppercase tracking-wider">Whitney eWitness Procedure</h3>
+        </div>
+        <button onclick="closeEventModal()" class="text-slate-400 hover:text-white">
+          <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+      </div>
+
+      <form id="eventForm" onsubmit="saveScheduleEvent(event)" class="p-5 space-y-4 text-xs">
+        <input type="hidden" id="editCellKey" value="">
+        <input type="hidden" id="editEventId" value="">
+
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block text-slate-600 font-bold mb-1">Day of Week</label>
+            <select id="modalDay" class="w-full bg-white border border-[#DDD4C0] rounded p-2 text-slate-800 font-semibold focus:outline-[#4A9755]">
+              <option value="MON1">Monday (Sep 14 - Day 0)</option>
+              <option value="TUE">Tuesday (Sep 15 - Day 1)</option>
+              <option value="WED">Wednesday (Sep 16 - Day 2)</option>
+              <option value="THU">Thursday (Sep 17 - Day 3)</option>
+              <option value="FRI">Friday (Sep 18 - Day 4)</option>
+              <option value="SAT">Saturday (Sep 19 - Day 5)</option>
+              <option value="SUN">Sunday (Sep 20 - Day 6)</option>
+              <option value="MON2">Monday (Sep 21 - Day 7)</option>
+            </select>
+          </div>
+
+          <div id="modalCultureDayContainer" class="hidden">
+            <label class="block text-slate-600 font-bold mb-1">Culture Stage (Column)</label>
+            <select id="modalCultureDay" class="w-full bg-white border border-[#DDD4C0] rounded p-2 text-slate-800 font-semibold focus:outline-[#4A9755]">
+              <option value="DAY 0">DAY 0 (Retrieval / Insem)</option>
+              <option value="DAY 1">DAY 1 (Fert Check 2PN)</option>
+              <option value="DAY 2">DAY 2 (Cleavage Stage)</option>
+              <option value="DAY 3">DAY 3 (Cell Evaluation)</option>
+              <option value="DAY 4">DAY 4 (Morula / Compact)</option>
+              <option value="DAY 5">DAY 5 (Blastocyst / PGT)</option>
+              <option value="DAY 6">DAY 6 (Extended Blast)</option>
+              <option value="DAY 7">DAY 7 (Final Cryo)</option>
+            </select>
+          </div>
+
+          <div>
+            <label class="block text-slate-600 font-bold mb-1">Time Slot (30-min step)</label>
+            <select id="modalTime" class="w-full bg-white border border-[#DDD4C0] rounded p-2 text-slate-800 font-semibold focus:outline-[#4A9755]">
+              <!-- Dynamically populated 06:00 to 17:00 -->
+            </select>
+          </div>
+        </div>
+
+        <div>
+          <label class="block text-slate-600 font-bold mb-1">Witness Procedure Type</label>
+          <select id="modalProcedure" class="w-full bg-white border border-[#DDD4C0] rounded p-2 text-slate-800 font-semibold focus:outline-[#4A9755]">
+            <option value="Egg Retrieval">Egg Retrieval</option>
+            <option value="Sperm Collection">Sperm Collection (Partner)</option>
+            <option value="Denudation">Denudation / Dish-to-Dish Transfer</option>
+            <option value="ICSI">ICSI</option>
+            <option value="Fertilization Check">Fertilization Check</option>
+            <option value="Undisturbed Incubator Culture">Undisturbed Incubator Culture</option>
+            <option value="Day 5 Check & Biopsy">Day 5 Check & Biopsy (PGT)</option>
+            <option value="Day 6 Check & Vitrification">Day 6 Check & Vitrification</option>
+            <option value="Day 7 Check (Final Cryo)">Day 7 Check (Final Cryo)</option>
+            <option value="Thaw & Transfer (FET)">Embryo Thaw & Transfer Witness</option>
+          </select>
+        </div>
+
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block text-slate-600 font-bold mb-1">Patient Name / Initials</label>
+            <input type="text" id="modalPatient" placeholder="e.g., E. Davis (MRN-928)" required class="w-full bg-white border border-[#DDD4C0] rounded p-2 text-slate-800 focus:outline-[#4A9755]">
+          </div>
+          <div>
+            <label class="block text-slate-600 font-bold mb-1">Station / Hood ID</label>
+            <input type="text" id="modalStation" placeholder="e.g., Hood 02 - ICSI" required class="w-full bg-white border border-[#DDD4C0] rounded p-2 text-slate-800 focus:outline-[#4A9755]">
+          </div>
+        </div>
+
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block text-slate-600 font-bold mb-1">Embryologist</label>
+            <input type="text" id="modalWitness" placeholder="e.g., M. Chen (HCLD)" required class="w-full bg-white border border-[#DDD4C0] rounded p-2 text-slate-800 focus:outline-[#4A9755]">
+          </div>
+          <div>
+            <label class="block text-slate-600 font-bold mb-1">Optical Status</label>
+            <select id="modalStatus" class="w-full bg-white border border-[#DDD4C0] rounded p-2 text-slate-800 font-semibold focus:outline-[#4A9755]">
+              <option value="VERIFIED">VERIFIED (Dual Optical Pass)</option>
+              <option value="SCHEDULED">SCHEDULED (Awaiting Witness)</option>
+              <option value="IN_PROGRESS">IN PROGRESS (Camera Live)</option>
+              <option value="FLAGGED">FLAGGED (Manual Double-Check)</option>
+            </select>
+          </div>
+        </div>
+
+        <div>
+          <label class="block text-slate-600 font-bold mb-1">Procedure Notes & Dish Barcode</label>
+          <input type="text" id="modalNotes" placeholder="e.g., Dish Barcode: #DISH-9821, 6 MII oocytes injected" class="w-full bg-white border border-[#DDD4C0] rounded p-2 text-slate-800 focus:outline-[#4A9755]">
+        </div>
+
+        <div class="flex items-center justify-between pt-3 border-t border-[#DDD4C0]">
+          <button type="button" id="deleteEventBtn" onclick="deleteCurrentEvent()" class="text-rose-600 hover:text-rose-800 font-bold hidden">
+            Delete Procedure
+          </button>
+          <div class="flex space-x-2 ml-auto">
+            <button type="button" onclick="closeEventModal()" class="px-3 py-1.5 border border-[#DDD4C0] rounded bg-white text-slate-700 hover:bg-slate-100">
+              Cancel
+            </button>
+            <button type="submit" class="px-4 py-1.5 bg-[#4A9755] hover:bg-[#3D8046] text-white font-bold rounded shadow-sm">
+              Save Entry
+            </button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- MODAL: Share / Export with Co-Founder -->
+  <div id="shareModal" class="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+    <div class="bg-[#FAF8F5] border border-[#DDD4C0] w-full max-w-xl rounded-xl shadow-2xl overflow-hidden">
+      <div class="bg-[#162638] text-white p-4 flex items-center justify-between">
+        <div class="flex items-center space-x-2">
+          <i data-lucide="share-2" class="w-5 h-5 text-[#74D16F]"></i>
+          <h3 class="text-sm font-bold uppercase tracking-wider">Share Workspace With Co-Founder</h3>
+        </div>
+        <button onclick="closeShareModal()" class="text-slate-400 hover:text-white">
+          <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+      </div>
+
+      <div class="p-5 space-y-4 text-xs">
+        <p class="text-slate-600 leading-relaxed">
+          Export your current schedule data as JSON to send to your co-founder or load it onto another machine.
+        </p>
+
+        <div>
+          <label class="block font-bold text-slate-700 mb-1">Schedule Configuration JSON</label>
+          <textarea id="exportJsonArea" readonly rows="8" class="w-full font-mono text-[11px] bg-white border border-[#DDD4C0] rounded-lg p-2.5 text-slate-800 focus:outline-[#4A9755] select-all"></textarea>
+        </div>
+
+        <div class="flex items-center justify-between pt-2 border-t border-[#DDD4C0]">
+          <span id="copyFeedback" class="text-[#4A9755] font-semibold">Ready to copy</span>
+          <div class="flex space-x-2">
+            <button onclick="importJsonPrompt()" class="px-3 py-1.5 border border-[#DDD4C0] rounded bg-white hover:bg-slate-50 text-slate-700 font-medium">
+              Import JSON
+            </button>
+            <button onclick="downloadJsonFile()" class="px-3 py-1.5 border border-[#DDD4C0] rounded bg-white hover:bg-slate-50 text-slate-700 font-medium">
+              Download .json
+            </button>
+            <button onclick="copyShareData()" class="px-3 py-1.5 bg-[#4A9755] hover:bg-[#3D8046] text-white font-bold rounded shadow-sm">
+              Copy to Clipboard
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const DAYS = ['MON1', 'TUE', 'WED', 'THU', 'FRI', 'SAT', 'SUN', 'MON2'];
+    const CULTURE_DAYS = ['DAY 0', 'DAY 1', 'DAY 2', 'DAY 3', 'DAY 4', 'DAY 5', 'DAY 6', 'DAY 7'];
+    const DAY_DETAILS = {
+      'MON1': { name: 'Monday', date: 'Sep 14', label: 'MON Sep 14', full: 'Monday, September 14, 2026' },
+      'TUE':  { name: 'Tuesday', date: 'Sep 15', label: 'TUE Sep 15', full: 'Tuesday, September 15, 2026' },
+      'WED':  { name: 'Wednesday', date: 'Sep 16', label: 'WED Sep 16', full: 'Wednesday, September 16, 2026' },
+      'THU':  { name: 'Thursday', date: 'Sep 17', label: 'THU Sep 17', full: 'Thursday, September 17, 2026' },
+      'FRI':  { name: 'Friday', date: 'Sep 18', label: 'FRI Sep 18', full: 'Friday, September 18, 2026' },
+      'SAT':  { name: 'Saturday', date: 'Sep 19', label: 'SAT Sep 19', full: 'Saturday, September 19, 2026' },
+      'SUN':  { name: 'Sunday', date: 'Sep 20', label: 'SUN Sep 20', full: 'Sunday, September 20, 2026' },
+      'MON2': { name: 'Monday', date: 'Sep 21', label: 'MON Sep 21', full: 'Monday, September 21, 2026' }
+    };
+    
+    function generateTimeSlots() {
+      const slots = [];
+      for (let hour = 6; hour <= 17; hour++) {
+        const hh = hour < 10 ? '0' + hour : '' + hour;
+        slots.push(`${hh}:00`);
+        if (hour < 17) {
+          slots.push(`${hh}:30`);
+        }
+      }
+      return slots;
+    }
+    const TIME_SLOTS = generateTimeSlots();
+
+    // Default auto-populated cycle data matching user rules
+    const DEFAULT_WHITNEY_EVENTS = [
+      // Mon 09/14/2026 - Day 0: Whitney Witness (Egg Retrieval) - WITNESSED BY LP & WHITNEY
+      {
+        weekKey: 'MON1_07:00',
+        dayKey: 'DAYVIEW_MON1_DAY0_07:00',
+        event: {
+          id: 'whitney-d0-retrieval',
+          patient: 'Whitney Witness',
+          dob: '07/21/1990',
+          mrn: '12345',
+          procedure: 'Egg Retrieval',
+          stage: 'Day 0',
+          timingNote: 'T=0:00 (36.0h post-trigger)',
+          operator: 'Attending MD / Lab',
+          station: 'OR Suite 1 / Hood 01',
+          witness: 'Attending MD / Lab',
+          tech: 'LP',
+          isWitnessed: true,
+          status: 'VERIFIED',
+          borderColor: 'yellow'
+        }
+      },
+      // Mon 09/14/2026 - Day 0: Lonyl Palao (Sperm Collection - Partner) - WITNESSED BY LP & WHITNEY
+      {
+        weekKey: 'MON1_07:00',
+        dayKey: 'DAYVIEW_MON1_DAY0_07:00',
+        event: {
+          id: 'lonyl-d0-sperm-collection',
+          patient: 'Lonyl Palao',
+          dob: '04/01/1990',
+          mrn: '54321',
+          procedure: 'Sperm Collection',
+          stage: 'Day 0',
+          timingNote: 'Partner Collection / Andrology Wash',
+          operator: 'Andrology Lab',
+          station: 'Andrology Hood 01',
+          witness: 'Embryologist',
+          tech: 'LP',
+          isWitnessed: true,
+          status: 'VERIFIED',
+          borderColor: 'yellow'
+        }
+      },
+      {
+        weekKey: 'MON1_09:30',
+        dayKey: 'DAYVIEW_MON1_DAY0_09:30',
+        event: {
+          id: 'whitney-d0-denudation',
+          patient: 'Whitney Witness',
+          dob: '07/21/1990',
+          mrn: '12345',
+          procedure: 'Denudation',
+          stage: 'Day 0',
+          timingNote: '2.0 – 4.0h post-OPU',
+          operator: 'Embryologist',
+          station: 'Hood 01 (Strip)',
+          witness: 'Embryologist',
+          tech: 'LP',
+          isWitnessed: false,
+          isInProgress: true,
+          status: 'IN_PROGRESS',
+          borderColor: 'yellow'
+        }
+      },
+      {
+        weekKey: 'MON1_11:30',
+        dayKey: 'DAYVIEW_MON1_DAY0_11:30',
+        event: {
+          id: 'whitney-d0-icsi',
+          patient: 'Whitney Witness',
+          dob: '07/21/1990',
+          mrn: '12345',
+          partner: {
+            name: 'Lonyl Palao',
+            dob: '04/01/1990',
+            mrn: '54321'
+          },
+          procedure: 'ICSI',
+          stage: 'Day 0',
+          timingNote: '1.0 – 2.0h post-stripping',
+          operator: 'Embryologist',
+          station: 'Hood 02 (ICSI Rig)',
+          witness: 'Embryologist',
+          tech: '',
+          isWitnessed: false,
+          status: 'SCHEDULED',
+          borderColor: 'yellow'
+        }
+      },
+      // Wed 09/16/2026 - Day 2
+      {
+        weekKey: 'WED_07:00',
+        dayKey: 'DAYVIEW_WED_DAY2_07:00',
+        event: {
+          id: 'whitney-d2-undisturbed',
+          patient: 'Whitney Witness',
+          dob: '07/21/1990',
+          mrn: '12345',
+          procedure: 'Undisturbed Incubator Culture',
+          stage: 'Day 2',
+          timingNote: '40 – 48h post-ICSI',
+          operator: 'System / Auto',
+          station: 'Miri Incubator Chamber 03',
+          witness: 'System / Auto',
+          status: 'IN_PROGRESS',
+          borderColor: 'yellow'
+        }
+      },
+      // Thu 09/17/2026 - Day 3
+      {
+        weekKey: 'THU_07:00',
+        dayKey: 'DAYVIEW_THU_DAY3_07:00',
+        event: {
+          id: 'whitney-d3-undisturbed',
+          patient: 'Whitney Witness',
+          dob: '07/21/1990',
+          mrn: '12345',
+          procedure: 'Undisturbed Incubator Culture',
+          stage: 'Day 3',
+          timingNote: '64 – 72h post-ICSI',
+          operator: 'System / Auto',
+          station: 'Miri Incubator Chamber 03',
+          witness: 'System / Auto',
+          status: 'IN_PROGRESS',
+          borderColor: 'yellow'
+        }
+      },
+      // Fri 09/18/2026 - Day 4
+      {
+        weekKey: 'FRI_07:00',
+        dayKey: 'DAYVIEW_FRI_DAY4_07:00',
+        event: {
+          id: 'whitney-d4-undisturbed',
+          patient: 'Whitney Witness',
+          dob: '07/21/1990',
+          mrn: '12345',
+          procedure: 'Undisturbed Incubator Culture',
+          stage: 'Day 4',
+          timingNote: '88 – 96h post-ICSI',
+          operator: 'System / Auto',
+          station: 'Miri Incubator Chamber 03',
+          witness: 'System / Auto',
+          status: 'IN_PROGRESS',
+          borderColor: 'yellow'
+        }
+      },
+      // Sat 09/19/2026 - Day 5
+      {
+        weekKey: 'SAT_08:00',
+        dayKey: 'DAYVIEW_SAT_DAY5_08:00',
+        event: {
+          id: 'whitney-d5-check',
+          patient: 'Whitney Witness',
+          dob: '07/21/1990',
+          mrn: '12345',
+          procedure: 'Day 5 Check & Biopsy',
+          stage: 'Day 5',
+          timingNote: '114 – 120h post-ICSI',
+          operator: 'Embryologist',
+          station: 'Hood 02 (Laser Biopsy)',
+          witness: 'Embryologist',
+          status: 'SCHEDULED',
+          borderColor: 'yellow'
+        }
+      },
+      // Sun 09/20/2026 - Day 6
+      {
+        weekKey: 'SUN_08:00',
+        dayKey: 'DAYVIEW_SUN_DAY6_08:00',
+        event: {
+          id: 'whitney-d6-check',
+          patient: 'Whitney Witness',
+          dob: '07/21/1990',
+          mrn: '12345',
+          procedure: 'Day 6 Check & Vitrification',
+          stage: 'Day 6',
+          timingNote: '136 – 144h post-ICSI',
+          operator: 'Embryologist',
+          station: 'Hood 03 / Cryo Rig',
+          witness: 'Embryologist',
+          status: 'SCHEDULED',
+          borderColor: 'yellow'
+        }
+      },
+      // Mon 09/21/2026 - Day 7 (Placed on MON2_08:30 so it appears on 9/21/2026)
+      {
+        weekKey: 'MON2_08:30',
+        dayKey: 'DAYVIEW_MON2_DAY7_08:30',
+        event: {
+          id: 'whitney-d7-check',
+          patient: 'Whitney Witness',
+          dob: '07/21/1990',
+          mrn: '12345',
+          procedure: 'Day 7 Check (Final Cryo)',
+          stage: 'Day 7',
+          timingNote: '160 – 168h post-ICSI',
+          operator: 'Embryologist',
+          station: 'Hood 03 (Vitrification)',
+          witness: 'Embryologist',
+          status: 'SCHEDULED',
+          borderColor: 'yellow'
+        }
+      }
+    ];
+
+    // Updates the Daily View Witnessing Progress Bar based on current day's events
+    function updateDailyWitnessingProgress(day) {
+      const fillEl = document.getElementById('witnessProgressBarFill');
+      const badgeEl = document.getElementById('progressPercentageBadge');
+      const textEl = document.getElementById('progressPercentageText');
+      const subTextEl = document.getElementById('progressSubText');
+
+      // Find all procedures scheduled for this specific day across all time slots and culture stages
+      let totalProcedures = 0;
+      let witnessedProcedures = 0;
+
+      Object.keys(scheduleData).forEach(key => {
+        const isDayKey = key.startsWith(`DAYVIEW_${day}_`) || (day === 'MON1' && key.startsWith('MON1_'));
+        if (isDayKey) {
+          const list = scheduleData[key];
+          if (Array.isArray(list)) {
+            list.forEach(ev => {
+              // Ignore undisturbed incubator culture days from active witnessing calculation
+              const proc = (ev.procedure || '').toLowerCase();
+              if (proc.includes('undisturbed')) return;
+
+              totalProcedures++;
+              if (ev.status === 'VERIFIED') {
+                witnessedProcedures++;
+              }
+            });
+          }
+        }
+      });
+
+      // Special preset demonstration for Day 0 (Monday Sep 14):
+      // Exactly 4 procedures total: Retrieval, Sperm Collection, Denudation, ICSI.
+      // First 2 (Retrieval & Sperm Collection) witnessed optically by Whitney -> 50%
+      if (day === 'MON1') {
+        totalProcedures = 4;
+        witnessedProcedures = 2;
+      }
+
+      const percentage = totalProcedures > 0 ? Math.round((witnessedProcedures / totalProcedures) * 100) : 0;
+
+      if (fillEl) fillEl.style.width = `${percentage}%`;
+      if (badgeEl) badgeEl.textContent = `${percentage}% Complete`;
+      if (textEl) textEl.textContent = `${percentage}%`;
+      if (subTextEl) subTextEl.textContent = `${witnessedProcedures} of ${totalProcedures} procedures eWitnessed Optically by Whitney`;
+    }
+
+    let scheduleData = {};
+    try {
+      const saved = localStorage.getItem('whitney_schedule_data');
+      if (saved && Object.keys(JSON.parse(saved)).length > 0) {
+        scheduleData = JSON.parse(saved);
+        // Clean legacy MON_08:30 collision if present from previous 7-day model
+        if (scheduleData['MON_08:30']) {
+          delete scheduleData['MON_08:30'];
+        }
+        if (!scheduleData['MON2_08:30']) {
+          const d7Event = DEFAULT_WHITNEY_EVENTS.find(e => e.weekKey === 'MON2_08:30');
+          if (d7Event) {
+            scheduleData['MON2_08:30'] = [{ ...d7Event.event }];
+            scheduleData['DAYVIEW_MON2_DAY7_08:30'] = [{ ...d7Event.event }];
+          }
+        }
+        // Migrate MON_07:00, MON_09:30, MON_11:30 to MON1 keys if needed
+        ['07:00', '09:30', '11:30'].forEach(t => {
+          if (scheduleData[`MON_${t}`]) {
+            scheduleData[`MON1_${t}`] = scheduleData[`MON_${t}`];
+            delete scheduleData[`MON_${t}`];
+          }
+          if (scheduleData[`DAYVIEW_MON_DAY0_${t}`]) {
+            scheduleData[`DAYVIEW_MON1_DAY0_${t}`] = scheduleData[`DAYVIEW_MON_DAY0_${t}`];
+            delete scheduleData[`DAYVIEW_MON_DAY0_${t}`];
+          }
+        });
+
+        // Ensure 07:00 items on Mon1 are flagged as witnessed by LP & Whitney
+        ['MON1_07:00', 'DAYVIEW_MON1_DAY0_07:00'].forEach(k => {
+          if (Array.isArray(scheduleData[k])) {
+            scheduleData[k].forEach(ev => {
+              ev.isWitnessed = true;
+              ev.tech = 'LP';
+              ev.status = 'VERIFIED';
+            });
+          }
+        });
+
+        // Ensure 09:30 Denudation on Mon1 is linked to active device Whitney 1 (LP - IN PROGRESS)
+        ['MON1_09:30', 'DAYVIEW_MON1_DAY0_09:30'].forEach(k => {
+          if (Array.isArray(scheduleData[k])) {
+            scheduleData[k].forEach(ev => {
+              if (ev.id === 'whitney-d0-denudation' || ev.procedure === 'Denudation') {
+                ev.isInProgress = true;
+                ev.tech = 'LP';
+                ev.status = 'IN_PROGRESS';
+              }
+            });
+          }
+        });
+
+        // Ensure procedure label is updated to ICSI across existing data
+        Object.keys(scheduleData).forEach(k => {
+          if (Array.isArray(scheduleData[k])) {
+            scheduleData[k].forEach(ev => {
+              if (ev.procedure === 'Fertilization (ICSI / cIVF)' || ev.procedure === 'ICSI' || ev.id === 'whitney-d0-icsi') {
+                ev.procedure = 'ICSI';
+                ev.partner = {
+                  name: 'Lonyl Palao',
+                  dob: '04/01/1990',
+                  mrn: '54321'
+                };
+              }
+            });
+          }
+        });
+
+        // Ensure partner Lonyl Palao is added into the 07:00 slot
+        const lonylEvent = DEFAULT_WHITNEY_EVENTS.find(e => e.event.id === 'lonyl-d0-sperm-collection');
+        if (lonylEvent) {
+          ['MON1_07:00', 'DAYVIEW_MON1_DAY0_07:00'].forEach(key => {
+            if (!scheduleData[key]) scheduleData[key] = [];
+            const existingLonyl = scheduleData[key].find(ev => ev.id === 'lonyl-d0-sperm-collection' || ev.patient === 'Lonyl Palao');
+            if (existingLonyl) {
+              existingLonyl.stage = 'Day 0';
+              existingLonyl.isWitnessed = true;
+              existingLonyl.tech = 'LP';
+            } else {
+              scheduleData[key].push({ ...lonylEvent.event });
+            }
+          });
+        }
+      } else {
+        loadDefaultWhitneyCohort();
+      }
+    } catch (e) {
+      loadDefaultWhitneyCohort();
+    }
+
+    function loadDefaultWhitneyCohort() {
+      scheduleData = {};
+      DEFAULT_WHITNEY_EVENTS.forEach(item => {
+        // Populate Weekly Key
+        if (!scheduleData[item.weekKey]) scheduleData[item.weekKey] = [];
+        scheduleData[item.weekKey].push({ ...item.event });
+
+        // Populate Daily Key
+        if (!scheduleData[item.dayKey]) scheduleData[item.dayKey] = [];
+        scheduleData[item.dayKey].push({ ...item.event });
+      });
+      persistData();
+    }
+
+    function populateWhitneyCycle() {
+      loadDefaultWhitneyCohort();
+      if (currentScheduleMode === 'DAY') {
+        renderDailyScheduleGrid();
+      } else {
+        renderScheduleTable();
+      }
+      closeEventModal();
+    }
+
+    let globalEditMode = false;
+    let currentScheduleMode = 'WEEK'; // 'WEEK' or 'DAY'
+    let currentActiveDay = 'MON1';
+
+    function initApp() {
+      populateTimeOptions();
+      renderScheduleTable();
+      lucide.createIcons();
+    }
+
+    function populateTimeOptions() {
+      const select = document.getElementById('modalTime');
+      select.innerHTML = '';
+      TIME_SLOTS.forEach(time => {
+        const opt = document.createElement('option');
+        opt.value = time;
+        opt.textContent = time;
+        select.appendChild(opt);
+      });
+    }
+
+    // Helper to generate the exact demographic card requested
+    function createDemographicsCardHtml(event, cellKey, isDailyView = false) {
+      const borderColorClass = (event.borderColor === 'yellow' || !event.borderColor) 
+        ? 'border-[#EAB308] shadow-[0_1px_3px_rgba(234,179,8,0.18)]' 
+        : event.borderColor === 'emerald' ? 'border-[#4A9755]'
+        : event.borderColor === 'sky' ? 'border-sky-500'
+        : event.borderColor === 'purple' ? 'border-purple-500'
+        : 'border-rose-500';
+
+      const patientName = escapeHtml(event.patient || 'Whitney Witness');
+      const dob = escapeHtml(event.dob || '07/21/1990');
+      const mrn = escapeHtml(event.mrn || '12345');
+      const procedure = escapeHtml(event.procedure || 'Witness Session');
+      
+      // Determine if this event is an undisturbed culture day (Day 2, Day 3, Day 4)
+      const stageStr = (event.stage || '').toLowerCase();
+      const procStr = procedure.toLowerCase();
+      const isUndisturbed = stageStr.includes('day 2') || 
+                            stageStr.includes('day 3') || 
+                            stageStr.includes('day 4') ||
+                            procStr.includes('undisturbed');
+
+      // Check if this procedure has already been completed / witnessed optically
+      const isWitnessed = Boolean(event.isWitnessed || event.status === 'VERIFIED');
+      // Check if this procedure is currently active/in progress on the headset
+      const isInProgress = Boolean(event.isInProgress || event.status === 'IN_PROGRESS');
+
+      // Only show stage badge on Weekly View; omit on Daily View since the column heading already specifies Day 0 - Day 7
+      const showStageBadge = !isDailyView && event.stage;
+
+      // Active procedures are in BOLD font-bold, undisturbed days stay in regular/normal font weight
+      const procedureFontWeight = isUndisturbed ? 'font-normal text-slate-500 italic' : 'font-bold text-slate-900';
+
+      // Grayed-out interior for Day 2/3/4 (Undisturbed / Ignore), white background for active intervention days
+      const cardBgClass = isUndisturbed 
+        ? 'bg-[#E5E7EB] hover:bg-[#DDD6FE]/10 text-slate-600' 
+        : 'bg-white hover:bg-[#FFFDF7] text-slate-900';
+
+      const nameColorClass = isUndisturbed ? 'text-slate-700' : 'text-slate-900';
+      const metaColorClass = isUndisturbed ? 'text-slate-500' : 'text-slate-600';
+      const badgeClass = isUndisturbed
+        ? 'bg-slate-300/80 text-slate-700 border-slate-400/70'
+        : 'bg-amber-100/80 text-amber-900 border-amber-300/60';
+
+      // Mini Whitney Logo SVG helper (2 overlapping checkmarks in green)
+      const miniWhitneyLogoSvg = `
+        <svg class="w-3.5 h-3 inline-block ml-0.5 align-middle" viewBox="0 0 100 80" fill="none" xmlns="http://www.w3.org/2000/svg" title="Whitney Optically Witnessed">
+          <path d="M12 40 L38 66 L68 14" stroke="#4A9755" stroke-width="16" stroke-linecap="round" stroke-linejoin="round" />
+          <path d="M38 40 L64 66 L94 14" stroke="#74D16F" stroke-width="16" stroke-linecap="round" stroke-linejoin="round" />
+        </svg>
+      `;
+
+      return `
+        <div onclick="openEditEventModal('${cellKey}', '${event.id}')"
+             class="group/card relative p-2 rounded-md ${cardBgClass} border-2 ${borderColorClass} transition-all duration-150 hover:shadow-md cursor-pointer overflow-hidden">
+          
+          ${isWitnessed ? `
+          <!-- Green diagonal slash across the whole box to signal it is done/witnessed -->
+          <svg class="witnessed-slash-overlay" viewBox="0 0 100 100" preserveAspectRatio="none">
+            <line x1="2" y1="98" x2="98" y2="2" stroke="#4A9755" stroke-width="3" stroke-linecap="round" opacity="0.82" />
+          </svg>
+          ` : ''}
+
+          <!-- PATIENT DEMOGRAPHICS & CYCLE DATA -->
+          <div class="space-y-0.5 relative z-10">
+            <div class="text-[11px] font-bold ${nameColorClass} tracking-tight leading-tight truncate flex items-center justify-between">
+              <span title="${patientName}">${patientName}</span>
+              <div class="flex items-center space-x-1">
+                ${showStageBadge ? `<span class="text-[9px] font-semibold font-mono px-1 py-0.2 rounded ${badgeClass} border">${event.stage}</span>` : ''}
+                ${isWitnessed ? `
+                <!-- Whitney Logo in green at top right indicating witnessed completion -->
+                <span class="inline-flex items-center px-1 py-0.5 bg-[#EAF7EC] border border-[#74D16F]/60 rounded text-[9px] font-bold text-[#4A9755]" title="Whitney eWitness Verified">
+                  <svg class="w-3 h-2.5 mr-0.5" viewBox="0 0 100 80" fill="none">
+                    <path d="M12 40 L38 66 L68 14" stroke="#4A9755" stroke-width="18" stroke-linecap="round" stroke-linejoin="round" />
+                    <path d="M38 40 L64 66 L94 14" stroke="#74D16F" stroke-width="18" stroke-linecap="round" stroke-linejoin="round" />
+                  </svg>
+                  <span class="text-[8px] font-mono leading-none">DONE</span>
+                </span>
+                ` : ''}
+              </div>
+            </div>
+            
+            <div class="flex items-center justify-between text-[9.5px] font-mono ${metaColorClass} pt-0.5">
+              <span><strong class="font-semibold text-slate-500">DOB:</strong> ${dob}</span>
+            </div>
+
+            <div class="flex items-center justify-between text-[9.5px] font-mono ${metaColorClass}">
+              <span><strong class="font-semibold text-slate-500">MRN:</strong> ${mrn}</span>
+            </div>
+          </div>
+
+          ${event.partner ? `
+          <!-- Partner Match Data (Combined Gametes) -->
+          <div class="mt-1.5 pt-1.5 border-t border-dashed border-amber-300/80 space-y-0.5 bg-amber-50/50 -mx-1 px-1 py-1 rounded relative z-10">
+            <div class="text-[10.5px] font-bold text-slate-800 tracking-tight leading-tight truncate flex items-center justify-between">
+              <span title="${escapeHtml(event.partner.name)}">${escapeHtml(event.partner.name)}</span>
+            </div>
+            <div class="flex items-center justify-between text-[9px] font-mono text-slate-600">
+              <span><strong class="font-semibold text-slate-500">DOB:</strong> ${escapeHtml(event.partner.dob)}</span>
+            </div>
+            <div class="flex items-center justify-between text-[9px] font-mono text-slate-600">
+              <span><strong class="font-semibold text-slate-500">MRN:</strong> ${escapeHtml(event.partner.mrn)}</span>
+            </div>
+          </div>
+          ` : ''}
+
+          <!-- Procedure milestone: BOLD for active procedures, regular for Undisturbed culture -->
+          <div class="mt-1 pt-1 border-t ${isUndisturbed ? 'border-slate-300' : 'border-amber-200/60'} text-[9.5px] ${procedureFontWeight} truncate relative z-10" title="${procedure}">
+            ${procedure}
+          </div>
+
+          ${!isUndisturbed ? `
+          <!-- Tech Field with LP / Whitney Logo for completed/witnessed procedures or flashing glasses for IN PROGRESS -->
+          <div class="text-[9px] text-slate-500 font-mono mt-0.5 flex items-center relative z-10 flex-wrap gap-y-0.5">
+            <span class="font-semibold text-slate-600">Tech:</span>
+            ${isWitnessed ? `
+              <span class="ml-1 font-bold text-[#4A9755] flex items-center">
+                <span>LP /</span>
+                ${miniWhitneyLogoSvg}
+              </span>
+            ` : isInProgress ? `
+              <span class="ml-1 font-bold text-slate-800 flex items-center space-x-1">
+                <span>LP /</span>
+                <span class="inline-flex items-center space-x-1 px-1.5 py-0.5 rounded bg-[#EAF7EC] border border-[#74D16F] shadow-[0_0_8px_rgba(116,209,111,0.55)]">
+                  <!-- Flashing bright green Whitney glasses icon -->
+                  <svg class="w-3.5 h-3.5 text-[#22c55e] animate-glasses-glow flex-shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="6" cy="15" r="4"></circle>
+                    <circle cx="18" cy="15" r="4"></circle>
+                    <path d="M14 15a2 2 0 0 0-2-2 2 2 0 0 0-2 2"></path>
+                    <path d="M2.5 13 5 7c.7-1.3 1.4-2 3-2"></path>
+                    <path d="M21.5 13 19 7c-.7-1.3-1.4-2-3-2"></path>
+                  </svg>
+                  <span class="text-[8px] font-extrabold text-[#15803d] tracking-wide animate-pulse">IN PROGRESS</span>
+                </span>
+              </span>
+            ` : `
+              <span class="ml-1 text-slate-400 font-normal italic">${event.tech ? escapeHtml(event.tech) : ''}</span>
+            `}
+          </div>
+          ` : ''}
+        </div>
+      `;
+    }
+
+    // Switch to Daily View for a selected day (e.g. MON1, TUE, ..., MON2) with DAY 0 - DAY 7 columns
+    function switchToDailyView(day) {
+      if (!DAYS.includes(day)) day = 'MON1';
+      currentScheduleMode = 'DAY';
+      currentActiveDay = day;
+
+      const subHeading = document.getElementById('scheduleSubHeading');
+      const dayNav = document.getElementById('dayNavControls');
+      const weekNav = document.getElementById('weekNavControls');
+      const dayLabel = document.getElementById('dayNavLabel');
+
+      const weekBtn = document.getElementById('toggleWeekViewBtn');
+      const dailyBtn = document.getElementById('toggleDailyViewBtn');
+      if (weekBtn && dailyBtn) {
+        weekBtn.className = "px-2.5 py-1 text-xs font-semibold rounded-md text-slate-600 hover:text-slate-900 hover:bg-white/60 transition flex items-center space-x-1.5";
+        dailyBtn.className = "px-2.5 py-1 text-xs font-bold rounded-md bg-white text-slate-900 shadow-sm border border-[#DDD4C0]/60 transition flex items-center space-x-1.5";
+      }
+
+      subHeading.textContent = `Daily View: ${DAY_DETAILS[day].full}`;
+      dayNav.classList.remove('hidden');
+      dayNav.classList.add('flex');
+      weekNav.classList.add('hidden');
+      dayLabel.textContent = `${DAY_DETAILS[day].label}`;
+
+      document.getElementById('weeklyGridContainer').classList.add('hidden');
+      document.getElementById('dailyViewContainer').classList.remove('hidden');
+
+      // Show the dedicated Daily Progress card in the sidebar
+      const sidebarWidget = document.getElementById('sidebarDailyWitnessWidget');
+      if (sidebarWidget) {
+        sidebarWidget.classList.remove('hidden');
+      }
+
+      // Update progress bar calculations for this day
+      updateDailyWitnessingProgress(day);
+
+      renderDailyScheduleGrid();
+      lucide.createIcons();
+    }
+
+    // Switch back to Weekly View
+    function switchToWeeklyView() {
+      currentScheduleMode = 'WEEK';
+
+      const subHeading = document.getElementById('scheduleSubHeading');
+      const dayNav = document.getElementById('dayNavControls');
+      const weekNav = document.getElementById('weekNavControls');
+
+      const weekBtn = document.getElementById('toggleWeekViewBtn');
+      const dailyBtn = document.getElementById('toggleDailyViewBtn');
+      if (weekBtn && dailyBtn) {
+        weekBtn.className = "px-2.5 py-1 text-xs font-bold rounded-md bg-white text-slate-900 shadow-sm border border-[#DDD4C0]/60 transition flex items-center space-x-1.5";
+        dailyBtn.className = "px-2.5 py-1 text-xs font-semibold rounded-md text-slate-600 hover:text-slate-900 hover:bg-white/60 transition flex items-center space-x-1.5";
+      }
+
+      subHeading.textContent = 'September 14 – September 21, 2026';
+      dayNav.classList.add('hidden');
+      dayNav.classList.remove('flex');
+      weekNav.classList.remove('hidden');
+
+      document.getElementById('weeklyGridContainer').classList.remove('hidden');
+      document.getElementById('dailyViewContainer').classList.add('hidden');
+
+      // Hide the Daily Progress card in the sidebar when in Weekly View
+      const sidebarWidget = document.getElementById('sidebarDailyWitnessWidget');
+      if (sidebarWidget) {
+        sidebarWidget.classList.add('hidden');
+      }
+
+      renderScheduleTable();
+      lucide.createIcons();
+    }
+
+    // Navigate to next or previous day in Daily View
+    function navigateDay(delta) {
+      const currentIndex = DAYS.indexOf(currentActiveDay);
+      let newIndex = currentIndex + delta;
+      if (newIndex < 0) newIndex = DAYS.length - 1;
+      if (newIndex >= DAYS.length) newIndex = 0;
+      switchToDailyView(DAYS[newIndex]);
+    }
+
+    // Render Daily View grid: Left timing column + DAY 0 to DAY 7 columns
+    function renderDailyScheduleGrid() {
+      const tbody = document.getElementById('dailyScheduleBody');
+      if (!tbody) return;
+      tbody.innerHTML = '';
+
+      TIME_SLOTS.forEach((time) => {
+        const tr = document.createElement('tr');
+        const isHour = time.endsWith(':00');
+        tr.className = isHour ? 'border-t-2 border-[#DDD4C0]/70' : 'border-t border-slate-100';
+
+        // Time Column on left
+        const timeTd = document.createElement('td');
+        timeTd.className = `p-2 font-mono text-center font-bold border-r border-[#DDD4C0] select-none ${isHour ? 'bg-[#F4EFE6] text-slate-800 text-xs' : 'bg-[#FAF8F5] text-slate-400 text-[11px]'}`;
+        timeTd.textContent = time;
+        tr.appendChild(timeTd);
+
+        // Columns: DAY 0 through DAY 7
+        CULTURE_DAYS.forEach((cDay) => {
+          const colTd = document.createElement('td');
+          colTd.className = 'p-1.5 border-r border-[#E2DACB] align-top schedule-cell relative group hover:bg-[#FAF8F5]/80 min-h-[46px]';
+          
+          const cellKey = `DAYVIEW_${currentActiveDay}_${cDay.replace(' ', '')}_${time}`;
+          colTd.dataset.cellKey = cellKey;
+
+          // Hover quick add button
+          const addBtn = document.createElement('button');
+          addBtn.type = 'button';
+          addBtn.className = 'cell-add-btn opacity-0 group-hover:opacity-100 transition absolute bottom-1 right-1 text-[10px] bg-[#4A9755] hover:bg-[#3D8046] text-white rounded px-1.5 py-0.5 shadow-sm z-10';
+          addBtn.textContent = '+ Add';
+          addBtn.onclick = (e) => {
+            e.stopPropagation();
+            openNewDailyEventModal(currentActiveDay, cDay, time);
+          };
+          colTd.appendChild(addBtn);
+
+          // Render patient cards in this cell (passing isDailyView = true to omit redundant Day 0-7 badge)
+          const events = scheduleData[cellKey] || [];
+          const eventsBox = document.createElement('div');
+          eventsBox.className = 'space-y-1.5';
+
+          events.forEach(event => {
+            const cardWrapper = document.createElement('div');
+            cardWrapper.innerHTML = createDemographicsCardHtml(event, cellKey, true);
+            eventsBox.appendChild(cardWrapper.firstElementChild);
+          });
+
+          colTd.appendChild(eventsBox);
+          tr.appendChild(colTd);
+        });
+
+        tbody.appendChild(tr);
+      });
+    }
+
+    // Modal opener for Daily View entries
+    function openNewDailyEventModal(day, cultureDay, time) {
+      openNewEventModal(day, time);
+      document.getElementById('modalTitle').textContent = `New Witness Entry (${cultureDay})`;
+      document.getElementById('modalCultureDayContainer').classList.remove('hidden');
+      document.getElementById('modalCultureDay').value = cultureDay || 'DAY 0';
+      
+      const procSelect = document.getElementById('modalProcedure');
+      if (cultureDay === 'DAY 0') procSelect.value = 'Oocyte Retrieval';
+      else if (cultureDay === 'DAY 1') procSelect.value = 'Fertilization Check';
+      else if (cultureDay === 'DAY 2' || cultureDay === 'DAY 3' || cultureDay === 'DAY 4') procSelect.value = 'Undisturbed Incubator Culture';
+      else if (cultureDay === 'DAY 5') procSelect.value = 'Embryo Biopsy (PGT)';
+      else if (cultureDay === 'DAY 6' || cultureDay === 'DAY 7') procSelect.value = 'Embryo Vitrification';
+    }
+
+    // Render Weekly schedule grid across all 8 cycle days (Sep 14 to Sep 21)
+    function renderScheduleTable() {
+      const tbody = document.getElementById('scheduleBody');
+      tbody.innerHTML = '';
+
+      TIME_SLOTS.forEach((time) => {
+        const tr = document.createElement('tr');
+        const isHour = time.endsWith(':00');
+        tr.className = isHour ? 'border-t-2 border-[#DDD4C0]/70' : 'border-t border-slate-100';
+
+        // Time Column
+        const timeTd = document.createElement('td');
+        timeTd.className = `p-2 font-mono text-center font-bold border-r border-[#DDD4C0] select-none ${isHour ? 'bg-[#F4EFE6] text-slate-800 text-xs' : 'bg-[#FAF8F5] text-slate-400 text-[11px]'}`;
+        timeTd.textContent = time;
+        tr.appendChild(timeTd);
+
+        // Day Columns: MON1 (9/14) through MON2 (9/21)
+        DAYS.forEach(day => {
+          const dayTd = document.createElement('td');
+          dayTd.className = 'p-1.5 border-r border-[#E2DACB] align-top schedule-cell relative group hover:bg-[#FAF8F5]/80 min-h-[46px]';
+          const cellKey = `${day}_${time}`;
+          dayTd.dataset.cellKey = cellKey;
+
+          // Quick Add button appears on hover in brand green
+          const addBtn = document.createElement('button');
+          addBtn.type = 'button';
+          addBtn.className = 'cell-add-btn opacity-0 group-hover:opacity-100 transition absolute bottom-1 right-1 text-[10px] bg-[#4A9755] hover:bg-[#3D8046] text-white rounded px-1.5 py-0.5 shadow-sm z-10';
+          addBtn.textContent = '+ Witness';
+          addBtn.onclick = (e) => {
+            e.stopPropagation();
+            openNewEventModal(day, time);
+          };
+          dayTd.appendChild(addBtn);
+
+          // Events in this slot (Weekly View: pass isDailyView = false so stage badge shows)
+          const events = scheduleData[cellKey] || [];
+          const eventsContainer = document.createElement('div');
+          eventsContainer.className = 'space-y-1.5';
+
+          events.forEach(event => {
+            const cardWrapper = document.createElement('div');
+            cardWrapper.innerHTML = createDemographicsCardHtml(event, cellKey, false);
+            eventsContainer.appendChild(cardWrapper.firstElementChild);
+          });
+
+          dayTd.appendChild(eventsContainer);
+          tr.appendChild(dayTd);
+        });
+
+        tbody.appendChild(tr);
+      });
+    }
+
+    function switchTab(tabKey) {
+      const tabs = ['schedule', 'qc', 'lot', 'inventory', 'cryo'];
+      tabs.forEach(t => {
+        const btn = document.getElementById(`tab-${t}`);
+        const view = document.getElementById(`view-${t}`);
+        if (!btn || !view) return;
+
+        if (t === tabKey) {
+          btn.className = "px-4 py-2 text-xs sm:text-sm font-semibold border-t-2 border-r-2 border-l-2 border-[#DDD4C0] rounded-t-lg transition cream-tab-active bg-[#FAF8F5]";
+          view.classList.remove('hidden');
+        } else {
+          btn.className = "px-3.5 py-2 text-xs sm:text-sm font-medium border-t-2 border-r-2 border-l-2 border-transparent hover:border-[#DDD4C0] rounded-t-lg text-slate-700 hover:text-slate-900 bg-[#E8E2D6] hover:bg-[#FAF8F5] transition";
+          view.classList.add('hidden');
+        }
+      });
+      lucide.createIcons();
+    }
+
+    function openNewEventModal(day = 'MON1', time = '08:00') {
+      document.getElementById('modalTitle').textContent = 'New Optical eWitness Session';
+      document.getElementById('editCellKey').value = '';
+      document.getElementById('editEventId').value = '';
+      document.getElementById('modalDay').value = day || currentActiveDay || 'MON1';
+      document.getElementById('modalTime').value = time;
+      document.getElementById('modalProcedure').value = 'Oocyte Retrieval';
+      document.getElementById('modalPatient').value = 'Whitney Witness';
+      document.getElementById('modalStation').value = 'Hood 01 (Retrieval)';
+      document.getElementById('modalWitness').value = 'Dr. S. Jenkins';
+      document.getElementById('modalStatus').value = 'SCHEDULED';
+      document.getElementById('modalNotes').value = '';
+      document.getElementById('deleteEventBtn').classList.add('hidden');
+
+      if (currentScheduleMode === 'DAY') {
+        document.getElementById('modalCultureDayContainer').classList.remove('hidden');
+      } else {
+        document.getElementById('modalCultureDayContainer').classList.add('hidden');
+      }
+
+      document.getElementById('eventModal').classList.remove('hidden');
+    }
+
+    function openEditEventModal(cellKey, eventId) {
+      const list = scheduleData[cellKey] || [];
+      const ev = list.find(item => item.id === eventId);
+      if (!ev) return;
+
+      document.getElementById('modalTitle').textContent = 'Edit Witness Session';
+      document.getElementById('editCellKey').value = cellKey;
+      document.getElementById('editEventId').value = eventId;
+
+      if (cellKey.startsWith('DAYVIEW_')) {
+        const parts = cellKey.split('_');
+        document.getElementById('modalDay').value = parts[1];
+        document.getElementById('modalCultureDayContainer').classList.remove('hidden');
+        const formattedCday = parts[2].startsWith('DAY') ? `DAY ${parts[2].replace('DAY', '')}` : 'DAY 0';
+        document.getElementById('modalCultureDay').value = formattedCday;
+        document.getElementById('modalTime').value = parts[3];
+      } else {
+        const [day, time] = cellKey.split('_');
+        document.getElementById('modalDay').value = day;
+        document.getElementById('modalCultureDayContainer').classList.add('hidden');
+        document.getElementById('modalTime').value = time;
+      }
+
+      document.getElementById('modalProcedure').value = ev.procedure;
+      document.getElementById('modalPatient').value = ev.patient;
+      document.getElementById('modalStation').value = ev.station;
+      document.getElementById('modalWitness').value = ev.witness;
+      document.getElementById('modalStatus').value = ev.status;
+      document.getElementById('modalNotes').value = ev.timingNote || ev.notes || '';
+      document.getElementById('deleteEventBtn').classList.remove('hidden');
+
+      document.getElementById('eventModal').classList.remove('hidden');
+    }
+
+    function closeEventModal() {
+      document.getElementById('eventModal').classList.add('hidden');
+    }
+
+    function saveScheduleEvent(e) {
+      e.preventDefault();
+      const oldCellKey = document.getElementById('editCellKey').value;
+      const eventId = document.getElementById('editEventId').value;
+
+      const day = document.getElementById('modalDay').value;
+      const time = document.getElementById('modalTime').value;
+
+      let newCellKey = '';
+      let cDay = 'DAY 0';
+      if (currentScheduleMode === 'DAY' || (oldCellKey && oldCellKey.startsWith('DAYVIEW_'))) {
+        cDay = document.getElementById('modalCultureDay').value || 'DAY 0';
+        newCellKey = `DAYVIEW_${day}_${cDay.replace(' ', '')}_${time}`;
+      } else {
+        newCellKey = `${day}_${time}`;
+      }
+
+      const newEvent = {
+        id: eventId || 'ev-' + Date.now(),
+        patient: document.getElementById('modalPatient').value.trim(),
+        dob: '07/21/1990',
+        mrn: '12345',
+        procedure: document.getElementById('modalProcedure').value,
+        stage: cDay,
+        station: document.getElementById('modalStation').value.trim(),
+        witness: document.getElementById('modalWitness').value.trim(),
+        status: document.getElementById('modalStatus').value,
+        borderColor: 'yellow',
+        timingNote: document.getElementById('modalNotes').value.trim()
+      };
+
+      if (oldCellKey && scheduleData[oldCellKey]) {
+        scheduleData[oldCellKey] = scheduleData[oldCellKey].filter(it => it.id !== eventId);
+        if (scheduleData[oldCellKey].length === 0) {
+          delete scheduleData[oldCellKey];
+        }
+      }
+
+      if (!scheduleData[newCellKey]) {
+        scheduleData[newCellKey] = [];
+      }
+      scheduleData[newCellKey].push(newEvent);
+
+      // Also ensure it syncs across Week or Day view
+      const syncKey = newCellKey.startsWith('DAYVIEW_') ? `${day}_${time}` : `DAYVIEW_${day}_DAY0_${time}`;
+      if (!scheduleData[syncKey]) scheduleData[syncKey] = [];
+      const existingSyncIdx = scheduleData[syncKey].findIndex(it => it.id === newEvent.id);
+      if (existingSyncIdx >= 0) {
+        scheduleData[syncKey][existingSyncIdx] = newEvent;
+      } else {
+        scheduleData[syncKey].push(newEvent);
+      }
+
+      persistData();
+      if (currentScheduleMode === 'DAY') {
+        renderDailyScheduleGrid();
+      } else {
+        renderScheduleTable();
+      }
+      closeEventModal();
+    }
+
+    function deleteCurrentEvent() {
+      const cellKey = document.getElementById('editCellKey').value;
+      const eventId = document.getElementById('editEventId').value;
+      if (cellKey && scheduleData[cellKey]) {
+        scheduleData[cellKey] = scheduleData[cellKey].filter(it => it.id !== eventId);
+        if (scheduleData[cellKey].length === 0) {
+          delete scheduleData[cellKey];
+        }
+        persistData();
+        if (currentScheduleMode === 'DAY') {
+          renderDailyScheduleGrid();
+        } else {
+          renderScheduleTable();
+        }
+      }
+      closeEventModal();
+    }
+
+    function toggleGlobalEditMode() {
+      globalEditMode = !globalEditMode;
+      const label = document.getElementById('editModeLabel');
+      const btn = document.getElementById('toggleEditModeBtn');
+      if (globalEditMode) {
+        label.textContent = 'Edit Mode: ON';
+        btn.classList.add('bg-[#74D16F]', 'text-slate-900', 'font-bold');
+        btn.classList.remove('bg-[#74D16F]/10', 'text-[#74D16F]');
+      } else {
+        label.textContent = 'Edit Mode: OFF';
+        btn.classList.remove('bg-[#74D16F]', 'text-slate-900', 'font-bold');
+        btn.classList.add('bg-[#74D16F]/10', 'text-[#74D16F]');
+      }
+      if (currentScheduleMode === 'DAY') {
+        renderDailyScheduleGrid();
+      } else {
+        renderScheduleTable();
+      }
+    }
+
+    function openShareModal() {
+      const jsonArea = document.getElementById('exportJsonArea');
+      jsonArea.value = JSON.stringify(scheduleData, null, 2);
+      document.getElementById('shareModal').classList.remove('hidden');
+    }
+
+    function closeShareModal() {
+      document.getElementById('shareModal').classList.add('hidden');
+    }
+
+    function copyShareData() {
+      const jsonArea = document.getElementById('exportJsonArea');
+      jsonArea.select();
+      document.execCommand('copy');
+      const feedback = document.getElementById('copyFeedback');
+      const original = feedback.textContent;
+      feedback.textContent = 'Copied to Clipboard!';
+      setTimeout(() => feedback.textContent = original, 2000);
+    }
+
+    function downloadJsonFile() {
+      const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(scheduleData, null, 2));
+      const downloadAnchor = document.createElement('a');
+      downloadAnchor.setAttribute("href", dataStr);
+      downloadAnchor.setAttribute("download", `whitney-ewitness-schedule-${new Date().toISOString().slice(0,10)}.json`);
+      document.body.appendChild(downloadAnchor);
+      downloadAnchor.click();
+      downloadAnchor.remove();
+    }
+
+    function importJsonPrompt() {
+      const userInput = prompt("Paste Whitney Verify schedule JSON here to load:");
+      if (!userInput) return;
+      try {
+        const parsed = JSON.parse(userInput);
+        scheduleData = parsed;
+        persistData();
+        if (currentScheduleMode === 'DAY') {
+          renderDailyScheduleGrid();
+        } else {
+          renderScheduleTable();
+        }
+        closeShareModal();
+      } catch (err) {
+        console.error("Invalid JSON:", err);
+      }
+    }
+
+    function persistData() {
+      try {
+        localStorage.setItem('whitney_schedule_data', JSON.stringify(scheduleData));
+      } catch (e) {
+        console.warn("Storage not available");
+      }
+    }
+
+    function promptLogoUpdate() {
+      const fileInput = document.getElementById('logoFileInput');
+      fileInput.click();
+    }
+
+    function loadUploadedLogo(event) {
+      const file = event.target.files && event.target.files[0];
+      if (!file) return;
+
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        setLogoImage(e.target.result);
+      };
+      reader.readAsDataURL(file);
+    }
+
+    function setLogoImage(imgSrc) {
+      const img = document.getElementById('customLogoImg');
+      const svg = document.getElementById('defaultLogoSvg');
+      if (imgSrc) {
+        img.src = imgSrc;
+        img.classList.remove('hidden');
+        svg.classList.add('hidden');
+        try {
+          localStorage.setItem('whitney_custom_logo', imgSrc);
+        } catch(err) {
+          console.warn("Storage limit reached for custom logo image");
+        }
+      } else {
+        img.classList.add('hidden');
+        svg.classList.remove('hidden');
+        localStorage.removeItem('whitney_custom_logo');
+      }
+    }
+
+    function handleLogoFallback() {
+      const img = document.getElementById('customLogoImg');
+      const svg = document.getElementById('defaultLogoSvg');
+      img.classList.add('hidden');
+      svg.classList.remove('hidden');
+    }
+
+    function loadSavedLogo() {
+      const savedLogo = localStorage.getItem('whitney_custom_logo');
+      if (savedLogo) {
+        setLogoImage(savedLogo);
+      }
+    }
+
+    function changeWeek() {
+      renderScheduleTable();
+    }
+
+    function addQCRow() {
+      const tbody = document.getElementById('qcTableBody');
+      const tr = document.createElement('tr');
+      tr.className = 'hover:bg-slate-50';
+      tr.innerHTML = `
+        <td class="p-3 font-mono font-medium" contenteditable="true">07:00 AM</td>
+        <td class="p-3 font-semibold" contenteditable="true">Hood 03 (Biopsy)</td>
+        <td class="p-3 text-[#4A9755] font-semibold" contenteditable="true">Calibrated (100%)</td>
+        <td class="p-3 text-[#4A9755] font-semibold" contenteditable="true">Pass (Signal: 99dBm)</td>
+        <td class="p-3" contenteditable="true">New Embryologist</td>
+        <td class="p-3"><span class="px-2 py-0.5 rounded-full bg-[#EAF7EC] text-[#4A9755] border border-[#74D16F]/50 font-bold">VERIFIED</span></td>
+        <td class="p-3 text-right"><button onclick="this.closest('tr').remove()" class="text-rose-500 hover:underline">Remove</button></td>
+      `;
+      tbody.prepend(tr);
+    }
+
+    function addLotRow() {
+      const tbody = document.getElementById('lotTableBody');
+      const tr = document.createElement('tr');
+      tr.className = 'hover:bg-slate-50';
+      tr.innerHTML = `
+        <td class="p-3 font-semibold" contenteditable="true">ICSI Injection Pipette</td>
+        <td class="p-3 font-mono font-bold text-[#4A9755]" contenteditable="true">LOT-PIP-${Math.floor(1000 + Math.random()*9000)}</td>
+        <td class="p-3" contenteditable="true">Origio</td>
+        <td class="p-3 text-slate-600" contenteditable="true">12/31/2027</td>
+        <td class="p-3" contenteditable="true">Dr. Jenkins</td>
+        <td class="p-3"><span class="px-2 py-0.5 rounded-full bg-[#EAF7EC] text-[#4A9755] border border-[#74D16F]/40 font-bold">LOGGED</span></td>
+        <td class="p-3 text-right"><button onclick="this.closest('tr').remove()" class="text-rose-500 hover:underline">Remove</button></td>
+      `;
+      tbody.prepend(tr);
+    }
+
+    function addInventoryRow() {
+      const newPo = prompt("Enter order item name (e.g., RFID Petri Dishes):");
+      if (newPo) {
+        console.log("Order logged:", newPo);
+      }
+    }
+
+    function escapeHtml(string) {
+      if (!string) return '';
+      return String(string)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;');
+    }
+
+    window.onload = function() {
+      initApp();
+      loadSavedLogo();
+    };
+  </script>
+</body>
+</html>
