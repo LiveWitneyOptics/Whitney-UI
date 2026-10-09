@@ -2198,11 +2198,12 @@
             <option value="Sperm Processing">Sperm Processing</option>
             <option value="Denudation">Denudation / Dish-to-Dish Transfer</option>
             <option value="ICSI">ICSI</option>
+            <option value="Fertilization Assessment">Fertilization Assessment (16–20h post-ICSI)</option>
             <option value="Fertilization Check">Fertilization Check</option>
             <option value="Undisturbed Incubator Culture">Undisturbed Incubator Culture</option>
-            <option value="Day 5 Check & Biopsy">Day 5 Check & Biopsy (PGT)</option>
-            <option value="Day 6 Check & Vitrification">Day 6 Check & Vitrification</option>
-            <option value="Day 7 Check (Final Cryo)">Day 7 Check (Final Cryo)</option>
+            <option value="Day 5 Check / BX / Cryo">Day 5 Check / BX / Cryo</option>
+            <option value="Day 6 Check / BX / Cryo">Day 6 Check / BX / Cryo</option>
+            <option value="Day 7 Check / BX / Cryo">Day 7 Check / BX / Cryo</option>
             <option value="Thaw & Transfer (FET)">Embryo Thaw & Transfer Witness</option>
           </select>
         </div>
@@ -2231,6 +2232,35 @@
         <div>
           <label class="block text-slate-600 font-bold mb-1">Procedure Notes & Dish Barcode</label>
           <input type="text" id="modalNotes" placeholder="e.g., Dish Barcode: #DISH-9821, 6 MII oocytes injected" class="w-full bg-white border border-[#DDD4C0] rounded p-2 text-slate-800 focus:outline-[#4A9755]">
+        </div>
+
+        <!-- Patient Card Border Color Picker -->
+        <div>
+          <div class="flex items-center justify-between mb-1.5">
+            <label class="block text-slate-700 font-bold">Patient Card Border Color</label>
+            <span id="selectedColorLabel" class="text-[11px] font-mono font-semibold text-slate-600 bg-slate-100 px-2 py-0.5 rounded border border-slate-200">Yellow (Standard)</span>
+          </div>
+          <input type="hidden" id="modalBorderColor" value="yellow">
+          <div class="flex items-center space-x-2.5 p-2 bg-white rounded-lg border border-[#DDD4C0]">
+            <button type="button" onclick="selectBorderColor('yellow', 'Yellow (Standard)')" class="color-swatch-btn w-7 h-7 rounded-full bg-yellow-400 border-2 border-white shadow-sm ring-2 ring-yellow-500 transition-transform transform scale-110 flex items-center justify-center" data-color="yellow" title="Yellow (Standard Cycle)">
+              <i data-lucide="check" class="w-3.5 h-3.5 text-slate-900 stroke-[3]"></i>
+            </button>
+            <button type="button" onclick="selectBorderColor('emerald', 'Emerald Green (Witnessed)')" class="color-swatch-btn w-7 h-7 rounded-full bg-emerald-500 border-2 border-white shadow-sm ring-1 ring-slate-300 hover:scale-105 transition-transform flex items-center justify-center" data-color="emerald" title="Emerald Green (Witnessed / Insem)">
+              <i data-lucide="check" class="w-3.5 h-3.5 text-white stroke-[3] hidden"></i>
+            </button>
+            <button type="button" onclick="selectBorderColor('sky', 'Sky Blue (FET / Thaw)')" class="color-swatch-btn w-7 h-7 rounded-full bg-sky-500 border-2 border-white shadow-sm ring-1 ring-slate-300 hover:scale-105 transition-transform flex items-center justify-center" data-color="sky" title="Sky Blue (FET / Thaw)">
+              <i data-lucide="check" class="w-3.5 h-3.5 text-white stroke-[3] hidden"></i>
+            </button>
+            <button type="button" onclick="selectBorderColor('purple', 'Purple (Biopsy / PGT)')" class="color-swatch-btn w-7 h-7 rounded-full bg-purple-500 border-2 border-white shadow-sm ring-1 ring-slate-300 hover:scale-105 transition-transform flex items-center justify-center" data-color="purple" title="Purple (Biopsy / PGT)">
+              <i data-lucide="check" class="w-3.5 h-3.5 text-white stroke-[3] hidden"></i>
+            </button>
+            <button type="button" onclick="selectBorderColor('rose', 'Rose (Priority / Alert)')" class="color-swatch-btn w-7 h-7 rounded-full bg-rose-500 border-2 border-white shadow-sm ring-1 ring-slate-300 hover:scale-105 transition-transform flex items-center justify-center" data-color="rose" title="Rose (Priority / Alert)">
+              <i data-lucide="check" class="w-3.5 h-3.5 text-white stroke-[3] hidden"></i>
+            </button>
+            <button type="button" onclick="selectBorderColor('orange', 'Orange (Andrology / Specimen)')" class="color-swatch-btn w-7 h-7 rounded-full bg-orange-500 border-2 border-white shadow-sm ring-1 ring-slate-300 hover:scale-105 transition-transform flex items-center justify-center" data-color="orange" title="Orange (Andrology / Specimen)">
+              <i data-lucide="check" class="w-3.5 h-3.5 text-white stroke-[3] hidden"></i>
+            </button>
+          </div>
         </div>
 
         <div class="flex items-center justify-between pt-3 border-t border-[#DDD4C0]">
@@ -2736,6 +2766,27 @@
           borderColor: 'yellow'
         }
       },
+      // Tue 09/15/2026 - Day 1: Fertilization Assessment (16 - 20h post-ICSI)
+      {
+        weekKey: 'TUE_07:00',
+        dayKey: 'DAYVIEW_TUE_DAY1_07:00',
+        event: {
+          id: 'whitney-d1-fert-assessment',
+          patient: 'Whitney Witness',
+          dob: '07/21/1990',
+          mrn: '12345',
+          procedure: 'Fertilization Assessment',
+          stage: 'Day 1',
+          timingNote: '16 – 20h post-ICSI',
+          operator: 'Embryologist',
+          station: 'Hood 01 (Inverted Scope)',
+          witness: 'Embryologist',
+          tech: 'LP',
+          isWitnessed: false,
+          status: 'SCHEDULED',
+          borderColor: 'yellow'
+        }
+      },
       // Wed 09/16/2026 - Day 2
       {
         weekKey: 'WED_07:00',
@@ -2802,7 +2853,7 @@
           patient: 'Whitney Witness',
           dob: '07/21/1990',
           mrn: '12345',
-          procedure: 'Day 5 Check & Biopsy',
+          procedure: 'Day 5 Check / BX / Cryo',
           stage: 'Day 5',
           timingNote: '114 – 120h post-ICSI',
           operator: 'Embryologist',
@@ -2821,7 +2872,7 @@
           patient: 'Whitney Witness',
           dob: '07/21/1990',
           mrn: '12345',
-          procedure: 'Day 6 Check & Vitrification',
+          procedure: 'Day 6 Check / BX / Cryo',
           stage: 'Day 6',
           timingNote: '136 – 144h post-ICSI',
           operator: 'Embryologist',
@@ -2840,7 +2891,7 @@
           patient: 'Whitney Witness',
           dob: '07/21/1990',
           mrn: '12345',
-          procedure: 'Day 7 Check (Final Cryo)',
+          procedure: 'Day 7 Check / BX / Cryo',
           stage: 'Day 7',
           timingNote: '160 – 168h post-ICSI',
           operator: 'Embryologist',
@@ -2977,6 +3028,34 @@
           );
         }
 
+        // Ensure Tuesday 07:00 Fertilization Assessment (Day 1) is populated
+        if (!scheduleData['TUE_07:00'] || !scheduleData['TUE_07:00'].some(e => e.id === 'whitney-d1-fert-assessment' || e.procedure === 'Fertilization Assessment')) {
+          const fertEvent = DEFAULT_WHITNEY_EVENTS.find(e => e.event.id === 'whitney-d1-fert-assessment');
+          if (fertEvent) {
+            if (!scheduleData['TUE_07:00']) scheduleData['TUE_07:00'] = [];
+            scheduleData['TUE_07:00'].push({ ...fertEvent.event });
+            if (!scheduleData['DAYVIEW_TUE_DAY1_07:00']) scheduleData['DAYVIEW_TUE_DAY1_07:00'] = [];
+            scheduleData['DAYVIEW_TUE_DAY1_07:00'].push({ ...fertEvent.event });
+          }
+        }
+
+        // Migrate Day 5, 6, and 7 procedure labels to Day X Check / BX / Cryo
+        Object.keys(scheduleData).forEach(k => {
+          if (Array.isArray(scheduleData[k])) {
+            scheduleData[k].forEach(ev => {
+              if (ev.id === 'whitney-d5-check' || ev.stage === 'Day 5' || (ev.procedure && ev.procedure.includes('Day 5'))) {
+                ev.procedure = 'Day 5 Check / BX / Cryo';
+              }
+              if (ev.id === 'whitney-d6-check' || ev.stage === 'Day 6' || (ev.procedure && ev.procedure.includes('Day 6'))) {
+                ev.procedure = 'Day 6 Check / BX / Cryo';
+              }
+              if (ev.id === 'whitney-d7-check' || ev.stage === 'Day 7' || (ev.procedure && ev.procedure.includes('Day 7'))) {
+                ev.procedure = 'Day 7 Check / BX / Cryo';
+              }
+            });
+          }
+        });
+
         const lonylEvent = DEFAULT_WHITNEY_EVENTS.find(e => e.event.id === 'lonyl-d0-sperm-collection');
         if (lonylEvent) {
           if (!scheduleData['DAYVIEW_MON1_ANDROLOGY_07:00']) {
@@ -3049,11 +3128,12 @@
     // Helper to generate the exact demographic card requested
     function createDemographicsCardHtml(event, cellKey, isDailyView = false) {
       const borderColorClass = (event.borderColor === 'yellow' || !event.borderColor) 
-        ? 'border-[#EAB308] shadow-[0_1px_3px_rgba(234,179,8,0.18)]' 
-        : event.borderColor === 'emerald' ? 'border-[#4A9755]'
-        : event.borderColor === 'sky' ? 'border-sky-500'
-        : event.borderColor === 'purple' ? 'border-purple-500'
-        : 'border-rose-500';
+        ? 'border-yellow-400 shadow-[0_1px_3px_rgba(234,179,8,0.22)]' 
+        : event.borderColor === 'emerald' ? 'border-[#4A9755] shadow-[0_1px_3px_rgba(74,151,85,0.25)]'
+        : event.borderColor === 'sky' ? 'border-sky-500 shadow-[0_1px_3px_rgba(14,165,233,0.25)]'
+        : event.borderColor === 'purple' ? 'border-purple-500 shadow-[0_1px_3px_rgba(168,85,247,0.25)]'
+        : event.borderColor === 'orange' ? 'border-orange-500 shadow-[0_1px_3px_rgba(249,115,22,0.25)]'
+        : 'border-rose-500 shadow-[0_1px_3px_rgba(244,63,94,0.25)]';
 
       const patientName = escapeHtml(event.patient || 'Whitney Witness');
       const dob = escapeHtml(event.dob || '07/21/1990');
@@ -3338,11 +3418,11 @@
       if (cultureDay === 'FET') procSelect.value = 'Thaw & Transfer (FET)';
       else if (cultureDay === 'ANDROLOGY') procSelect.value = 'Sperm Processing';
       else if (cultureDay === 'DAY 0') procSelect.value = 'Egg Retrieval';
-      else if (cultureDay === 'DAY 1') procSelect.value = 'Fertilization Check';
+      else if (cultureDay === 'DAY 1') procSelect.value = 'Fertilization Assessment';
       else if (cultureDay === 'DAY 2' || cultureDay === 'DAY 3' || cultureDay === 'DAY 4') procSelect.value = 'Undisturbed Incubator Culture';
-      else if (cultureDay === 'DAY 5') procSelect.value = 'Day 5 Check & Biopsy';
-      else if (cultureDay === 'DAY 6') procSelect.value = 'Day 6 Check & Vitrification';
-      else if (cultureDay === 'DAY 7') procSelect.value = 'Day 7 Check (Final Cryo)';
+      else if (cultureDay === 'DAY 5') procSelect.value = 'Day 5 Check / BX / Cryo';
+      else if (cultureDay === 'DAY 6') procSelect.value = 'Day 6 Check / BX / Cryo';
+      else if (cultureDay === 'DAY 7') procSelect.value = 'Day 7 Check / BX / Cryo';
     }
 
     // Render Weekly schedule grid across all 8 cycle days (Sep 14 to Sep 21)
@@ -3507,6 +3587,7 @@
       document.getElementById('modalStatus').value = 'SCHEDULED';
       document.getElementById('modalNotes').value = '';
       document.getElementById('deleteEventBtn').classList.add('hidden');
+      selectBorderColor('yellow', 'Yellow (Standard)');
 
       if (currentScheduleMode === 'DAY') {
         document.getElementById('modalCultureDayContainer').classList.remove('hidden');
@@ -3548,7 +3629,89 @@
       document.getElementById('modalNotes').value = ev.timingNote || ev.notes || '';
       document.getElementById('deleteEventBtn').classList.remove('hidden');
 
+      const colorLabels = {
+        'yellow':  'Yellow (Standard)',
+        'emerald': 'Emerald Green (Witnessed)',
+        'forest':  'Forest Green (Insemination)',
+        'cyan':    'Cyan / Aqua (Oocyte / Strip)',
+        'sky':     'Sky Blue (FET / Thaw)',
+        'indigo':  'Indigo (Donor / Third Party)',
+        'purple':  'Purple (Biopsy / PGT)',
+        'fuchsia': 'Fuchsia / Magenta (PGT-M / PGT-SR)',
+        'rose':    'Rose (Priority / Alert)',
+        'red':     'Crimson Red (Stat / Critical)',
+        'orange':  'Orange (Andrology / Specimen)',
+        'amber':   'Amber / Gold (Research / Special)',
+        'slate':   'Slate / Charcoal (Archive / Hold)'
+      };
+      const activeColor = ev.borderColor || 'yellow';
+      if (activeColor.startsWith('#')) {
+        selectBorderColor(activeColor, `Custom (${activeColor.toUpperCase()})`);
+      } else {
+        selectBorderColor(activeColor, colorLabels[activeColor] || 'Yellow (Standard)');
+      }
+
       document.getElementById('eventModal').classList.remove('hidden');
+    }
+
+    function selectBorderColor(colorKey, labelText) {
+      const input = document.getElementById('modalBorderColor');
+      const label = document.getElementById('selectedColorLabel');
+      if (input) input.value = colorKey;
+      if (label) label.textContent = labelText;
+
+      const ringColors = {
+        'yellow':  'ring-yellow-500',
+        'emerald': 'ring-emerald-500',
+        'forest':  'ring-green-700',
+        'cyan':    'ring-cyan-400',
+        'sky':     'ring-sky-500',
+        'indigo':  'ring-indigo-600',
+        'purple':  'ring-purple-500',
+        'fuchsia': 'ring-fuchsia-500',
+        'rose':    'ring-rose-500',
+        'red':     'ring-red-600',
+        'orange':  'ring-orange-500',
+        'amber':   'ring-amber-500',
+        'slate':   'ring-slate-600'
+      };
+
+      const swatchButtons = document.querySelectorAll('.color-swatch-btn');
+      swatchButtons.forEach(btn => {
+        const btnColor = btn.dataset.color;
+        const checkIcon = btn.querySelector('i, svg');
+        
+        // Clear active states
+        btn.classList.remove('scale-110', 'ring-2', 'ring-yellow-500', 'ring-emerald-500', 'ring-green-700', 'ring-cyan-400', 'ring-sky-500', 'ring-indigo-600', 'ring-purple-500', 'ring-fuchsia-500', 'ring-rose-500', 'ring-red-600', 'ring-orange-500', 'ring-amber-500', 'ring-slate-600');
+
+        if (btnColor === colorKey) {
+          btn.classList.add('scale-110', 'ring-2', ringColors[btnColor] || 'ring-slate-500');
+          btn.classList.remove('ring-1', 'ring-slate-300');
+          if (checkIcon) checkIcon.classList.remove('hidden');
+        } else {
+          btn.classList.add('ring-1', 'ring-slate-300');
+          if (checkIcon) checkIcon.classList.add('hidden');
+        }
+      });
+
+      // If custom hex was chosen, style the custom picker label
+      const customPickerLabel = document.getElementById('customColorPickerLabel');
+      if (customPickerLabel) {
+        if (colorKey.startsWith('#')) {
+          customPickerLabel.style.backgroundColor = colorKey;
+          customPickerLabel.classList.add('scale-110', 'ring-2', 'ring-slate-800');
+        } else {
+          customPickerLabel.style.backgroundColor = '';
+          customPickerLabel.classList.remove('scale-110', 'ring-2', 'ring-slate-800');
+        }
+      }
+
+      lucide.createIcons();
+    }
+
+    function handleCustomColorChange(hexVal) {
+      if (!hexVal) return;
+      selectBorderColor(hexVal, `Custom (${hexVal.toUpperCase()})`);
     }
 
     function closeEventModal() {
@@ -3640,6 +3803,15 @@
           notes: '1.0 – 2.0h post-stripping; ICSI Rig 02'
         },
         {
+          date: '09/15/2026',
+          time: '07:00 AM',
+          procedure: 'Fertilization Assessment',
+          stage: 'Day 1',
+          tech: 'LP',
+          status: 'SCHEDULED',
+          notes: '16 – 20h post-ICSI (2PN / 2PB verification)'
+        },
+        {
           date: '09/16/2026',
           time: '07:00 AM',
           procedure: 'Undisturbed Incubator Culture',
@@ -3669,16 +3841,16 @@
         {
           date: '09/19/2026',
           time: '08:00 AM',
-          procedure: 'Day 5 Check & Biopsy',
+          procedure: 'Day 5 Check / BX / Cryo',
           stage: 'Day 5',
           tech: 'LP',
           status: 'SCHEDULED',
-          notes: 'Laser Biopsy Hood 02 (PGT-A)'
+          notes: 'Laser Biopsy Hood 02 (PGT-A) & Vitrification'
         },
         {
           date: '09/20/2026',
           time: '08:00 AM',
-          procedure: 'Day 6 Check & Vitrification',
+          procedure: 'Day 6 Check / BX / Cryo',
           stage: 'Day 6',
           tech: 'LP',
           status: 'SCHEDULED',
@@ -3687,11 +3859,11 @@
         {
           date: '09/21/2026',
           time: '08:30 AM',
-          procedure: 'Day 7 Check (Final Cryo)',
+          procedure: 'Day 7 Check / BX / Cryo',
           stage: 'Day 7',
           tech: 'LP',
           status: 'SCHEDULED',
-          notes: 'Final cryopreservation straw #STRW-8812'
+          notes: 'Final blastocyst check, biopsy & cryopreservation'
         }
       ];
 
@@ -3769,7 +3941,7 @@
         station: document.getElementById('modalStation') ? document.getElementById('modalStation').value.trim() : (oldCellKey && scheduleData[oldCellKey] ? (scheduleData[oldCellKey].find(it => it.id === eventId)?.station || '') : ''),
         witness: document.getElementById('modalWitness').value.trim(),
         status: document.getElementById('modalStatus').value,
-        borderColor: 'yellow',
+        borderColor: document.getElementById('modalBorderColor') ? document.getElementById('modalBorderColor').value : 'yellow',
         timingNote: document.getElementById('modalNotes').value.trim()
       };
 
