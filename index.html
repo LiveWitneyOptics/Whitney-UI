@@ -2747,11 +2747,153 @@
           operator: 'Embryologist',
           station: 'Hood 01 (Strip)',
           witness: 'Embryologist',
-          tech: 'LP',
+          tech: '',
           isWitnessed: false,
           isInProgress: true,
           status: 'IN_PROGRESS',
           borderColor: 'yellow'
+        }
+      },
+      // Mon 09/14/2026 - Day 1: Tracy Bohl (Fertilization Check) - Blue Border
+      {
+        weekKey: 'MON1_09:30',
+        dayKey: 'DAYVIEW_MON1_DAY1_09:30',
+        event: {
+          id: 'tracy-d1-fert-check',
+          patient: 'Tracy Bohl',
+          dob: '01/02/1993',
+          mrn: '22233',
+          procedure: 'Fertilization Check',
+          stage: 'Day 1',
+          timingNote: '16–20h post-ICSI 2PN check',
+          operator: 'Embryologist',
+          station: 'Hood 01 (Inverted Scope)',
+          witness: 'Embryologist',
+          tech: 'LP',
+          isWitnessed: false,
+          isInProgress: true,
+          status: 'IN_PROGRESS',
+          borderColor: 'sky'
+        }
+      },
+      // Tue 09/15/2026 - Day 2: Tracy Bohl (Undisturbed Incubator Culture)
+      {
+        weekKey: 'TUE_09:30',
+        dayKey: 'DAYVIEW_TUE_DAY2_09:30',
+        event: {
+          id: 'tracy-d2-undisturbed',
+          patient: 'Tracy Bohl',
+          dob: '01/02/1993',
+          mrn: '22233',
+          procedure: 'Undisturbed Incubator Culture',
+          stage: 'Day 2',
+          timingNote: '40 – 48h post-ICSI',
+          operator: 'System / Auto',
+          station: 'Miri Incubator Chamber 02',
+          witness: 'System / Auto',
+          tech: 'Auto',
+          status: 'IN_PROGRESS',
+          borderColor: 'sky'
+        }
+      },
+      // Wed 09/16/2026 - Day 3: Tracy Bohl (Undisturbed Incubator Culture)
+      {
+        weekKey: 'WED_09:30',
+        dayKey: 'DAYVIEW_WED_DAY3_09:30',
+        event: {
+          id: 'tracy-d3-undisturbed',
+          patient: 'Tracy Bohl',
+          dob: '01/02/1993',
+          mrn: '22233',
+          procedure: 'Undisturbed Incubator Culture',
+          stage: 'Day 3',
+          timingNote: '64 – 72h post-ICSI',
+          operator: 'System / Auto',
+          station: 'Miri Incubator Chamber 02',
+          witness: 'System / Auto',
+          tech: 'Auto',
+          status: 'IN_PROGRESS',
+          borderColor: 'sky'
+        }
+      },
+      // Thu 09/17/2026 - Day 4: Tracy Bohl (Undisturbed Incubator Culture)
+      {
+        weekKey: 'THU_09:30',
+        dayKey: 'DAYVIEW_THU_DAY4_09:30',
+        event: {
+          id: 'tracy-d4-undisturbed',
+          patient: 'Tracy Bohl',
+          dob: '01/02/1993',
+          mrn: '22233',
+          procedure: 'Undisturbed Incubator Culture',
+          stage: 'Day 4',
+          timingNote: '88 – 96h post-ICSI',
+          operator: 'System / Auto',
+          station: 'Miri Incubator Chamber 02',
+          witness: 'System / Auto',
+          tech: 'Auto',
+          status: 'IN_PROGRESS',
+          borderColor: 'sky'
+        }
+      },
+      // Fri 09/18/2026 - Day 5: Tracy Bohl (Day 5 Check / BX / Cryo)
+      {
+        weekKey: 'FRI_09:30',
+        dayKey: 'DAYVIEW_FRI_DAY5_09:30',
+        event: {
+          id: 'tracy-d5-check',
+          patient: 'Tracy Bohl',
+          dob: '01/02/1993',
+          mrn: '22233',
+          procedure: 'Day 5 Check / BX / Cryo',
+          stage: 'Day 5',
+          timingNote: '114 – 120h post-ICSI',
+          operator: 'Embryologist',
+          station: 'Hood 02 (Laser Biopsy)',
+          witness: 'Embryologist',
+          tech: '',
+          status: 'SCHEDULED',
+          borderColor: 'sky'
+        }
+      },
+      // Sat 09/19/2026 - Day 6: Tracy Bohl (Day 6 Check / BX / Cryo)
+      {
+        weekKey: 'SAT_09:30',
+        dayKey: 'DAYVIEW_SAT_DAY6_09:30',
+        event: {
+          id: 'tracy-d6-check',
+          patient: 'Tracy Bohl',
+          dob: '01/02/1993',
+          mrn: '22233',
+          procedure: 'Day 6 Check / BX / Cryo',
+          stage: 'Day 6',
+          timingNote: '136 – 144h post-ICSI',
+          operator: 'Embryologist',
+          station: 'Hood 03 / Cryo Rig',
+          witness: 'Embryologist',
+          tech: '',
+          status: 'SCHEDULED',
+          borderColor: 'sky'
+        }
+      },
+      // Sun 09/20/2026 - Day 7: Tracy Bohl (Day 7 Check / BX / Cryo)
+      {
+        weekKey: 'SUN_09:30',
+        dayKey: 'DAYVIEW_SUN_DAY7_09:30',
+        event: {
+          id: 'tracy-d7-check',
+          patient: 'Tracy Bohl',
+          dob: '01/02/1993',
+          mrn: '22233',
+          procedure: 'Day 7 Check / BX / Cryo',
+          stage: 'Day 7',
+          timingNote: '160 – 168h post-ICSI',
+          operator: 'Embryologist',
+          station: 'Hood 03 (Vitrification)',
+          witness: 'Embryologist',
+          tech: '',
+          status: 'SCHEDULED',
+          borderColor: 'sky'
         }
       },
       {
@@ -3007,7 +3149,7 @@
             scheduleData[k].forEach(ev => {
               if (ev.id === 'whitney-d0-denudation' || ev.procedure === 'Denudation') {
                 ev.isInProgress = true;
-                ev.tech = 'LP';
+                ev.tech = '';
                 ev.status = 'IN_PROGRESS';
               }
             });
@@ -3040,6 +3182,164 @@
             ev => ev.id !== 'lonyl-d0-sperm-collection' && ev.patient !== 'Lonyl Palao'
           );
         }
+
+        // Ensure Tracy Bohl Fertilization Check is populated at 09:30 Day 1
+        const tracyEvent = {
+          id: 'tracy-d1-fert-check',
+          patient: 'Tracy Bohl',
+          dob: '01/02/1993',
+          mrn: '22233',
+          procedure: 'Fertilization Check',
+          stage: 'Day 1',
+          timingNote: '16–20h post-ICSI 2PN check',
+          operator: 'Embryologist',
+          station: 'Hood 01 (Inverted Scope)',
+          witness: 'Embryologist',
+          tech: 'LP',
+          isWitnessed: false,
+          isInProgress: true,
+          status: 'IN_PROGRESS',
+          borderColor: 'sky'
+        };
+
+        if (!scheduleData['DAYVIEW_MON1_DAY1_09:30'] || !scheduleData['DAYVIEW_MON1_DAY1_09:30'].some(e => e.patient === 'Tracy Bohl')) {
+          if (!scheduleData['DAYVIEW_MON1_DAY1_09:30']) scheduleData['DAYVIEW_MON1_DAY1_09:30'] = [];
+          scheduleData['DAYVIEW_MON1_DAY1_09:30'].push({ ...tracyEvent });
+        }
+
+        if (!scheduleData['MON1_09:30'] || !scheduleData['MON1_09:30'].some(e => e.patient === 'Tracy Bohl')) {
+          if (!scheduleData['MON1_09:30']) scheduleData['MON1_09:30'] = [];
+          scheduleData['MON1_09:30'].push({ ...tracyEvent });
+        }
+
+        // Ensure Tracy Bohl Days 2 through 7 are populated in both Weekly and Daily view keys
+        const tracyCycleList = [
+          {
+            weekKey: 'TUE_09:30',
+            dayKey: 'DAYVIEW_TUE_DAY2_09:30',
+            event: {
+              id: 'tracy-d2-undisturbed',
+              patient: 'Tracy Bohl',
+              dob: '01/02/1993',
+              mrn: '22233',
+              procedure: 'Undisturbed Incubator Culture',
+              stage: 'Day 2',
+              timingNote: '40 – 48h post-ICSI',
+              operator: 'System / Auto',
+              station: 'Miri Incubator Chamber 02',
+              witness: 'System / Auto',
+              tech: 'Auto',
+              status: 'IN_PROGRESS',
+              borderColor: 'sky'
+            }
+          },
+          {
+            weekKey: 'WED_09:30',
+            dayKey: 'DAYVIEW_WED_DAY3_09:30',
+            event: {
+              id: 'tracy-d3-undisturbed',
+              patient: 'Tracy Bohl',
+              dob: '01/02/1993',
+              mrn: '22233',
+              procedure: 'Undisturbed Incubator Culture',
+              stage: 'Day 3',
+              timingNote: '64 – 72h post-ICSI',
+              operator: 'System / Auto',
+              station: 'Miri Incubator Chamber 02',
+              witness: 'System / Auto',
+              tech: 'Auto',
+              status: 'IN_PROGRESS',
+              borderColor: 'sky'
+            }
+          },
+          {
+            weekKey: 'THU_09:30',
+            dayKey: 'DAYVIEW_THU_DAY4_09:30',
+            event: {
+              id: 'tracy-d4-undisturbed',
+              patient: 'Tracy Bohl',
+              dob: '01/02/1993',
+              mrn: '22233',
+              procedure: 'Undisturbed Incubator Culture',
+              stage: 'Day 4',
+              timingNote: '88 – 96h post-ICSI',
+              operator: 'System / Auto',
+              station: 'Miri Incubator Chamber 02',
+              witness: 'System / Auto',
+              tech: 'Auto',
+              status: 'IN_PROGRESS',
+              borderColor: 'sky'
+            }
+          },
+          {
+            weekKey: 'FRI_09:30',
+            dayKey: 'DAYVIEW_FRI_DAY5_09:30',
+            event: {
+              id: 'tracy-d5-check',
+              patient: 'Tracy Bohl',
+              dob: '01/02/1993',
+              mrn: '22233',
+              procedure: 'Day 5 Check / BX / Cryo',
+              stage: 'Day 5',
+              timingNote: '114 – 120h post-ICSI',
+              operator: 'Embryologist',
+              station: 'Hood 02 (Laser Biopsy)',
+              witness: 'Embryologist',
+              tech: '',
+              status: 'SCHEDULED',
+              borderColor: 'sky'
+            }
+          },
+          {
+            weekKey: 'SAT_09:30',
+            dayKey: 'DAYVIEW_SAT_DAY6_09:30',
+            event: {
+              id: 'tracy-d6-check',
+              patient: 'Tracy Bohl',
+              dob: '01/02/1993',
+              mrn: '22233',
+              procedure: 'Day 6 Check / BX / Cryo',
+              stage: 'Day 6',
+              timingNote: '136 – 144h post-ICSI',
+              operator: 'Embryologist',
+              station: 'Hood 03 / Cryo Rig',
+              witness: 'Embryologist',
+              tech: '',
+              status: 'SCHEDULED',
+              borderColor: 'sky'
+            }
+          },
+          {
+            weekKey: 'SUN_09:30',
+            dayKey: 'DAYVIEW_SUN_DAY7_09:30',
+            event: {
+              id: 'tracy-d7-check',
+              patient: 'Tracy Bohl',
+              dob: '01/02/1993',
+              mrn: '22233',
+              procedure: 'Day 7 Check / BX / Cryo',
+              stage: 'Day 7',
+              timingNote: '160 – 168h post-ICSI',
+              operator: 'Embryologist',
+              station: 'Hood 03 (Vitrification)',
+              witness: 'Embryologist',
+              tech: '',
+              status: 'SCHEDULED',
+              borderColor: 'sky'
+            }
+          }
+        ];
+
+        tracyCycleList.forEach(item => {
+          if (!scheduleData[item.weekKey] || !scheduleData[item.weekKey].some(e => e.patient === 'Tracy Bohl')) {
+            if (!scheduleData[item.weekKey]) scheduleData[item.weekKey] = [];
+            scheduleData[item.weekKey].push({ ...item.event });
+          }
+          if (!scheduleData[item.dayKey] || !scheduleData[item.dayKey].some(e => e.patient === 'Tracy Bohl')) {
+            if (!scheduleData[item.dayKey]) scheduleData[item.dayKey] = [];
+            scheduleData[item.dayKey].push({ ...item.event });
+          }
+        });
 
         // Ensure Tuesday 07:00 Fertilization Assessment (Day 1) is populated
         if (!scheduleData['TUE_07:00'] || !scheduleData['TUE_07:00'].some(e => e.id === 'whitney-d1-fert-assessment' || e.procedure === 'Fertilization Assessment')) {
@@ -3256,23 +3556,36 @@
             <span class="font-semibold text-slate-600">Tech:</span>
             ${isWitnessed ? `
               <span class="ml-1 font-bold text-[#4A9755] flex items-center">
-                <span>LP /</span>
+                <span>${event.tech ? escapeHtml(event.tech) : 'LP'} /</span>
                 ${miniWhitneyLogoSvg}
               </span>
             ` : isInProgress ? `
               <span class="ml-1 font-bold text-slate-800 flex items-center space-x-1">
-                <span>LP /</span>
-                <span class="inline-flex items-center space-x-1 px-1.5 py-0.5 rounded bg-[#EAF7EC] border border-[#74D16F] shadow-[0_0_8px_rgba(116,209,111,0.55)]">
-                  <!-- Flashing bright green Whitney glasses icon -->
-                  <svg class="w-3.5 h-3.5 text-[#22c55e] animate-glasses-glow flex-shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                    <circle cx="6" cy="15" r="4"></circle>
-                    <circle cx="18" cy="15" r="4"></circle>
-                    <path d="M14 15a2 2 0 0 0-2-2 2 2 0 0 0-2 2"></path>
-                    <path d="M2.5 13 5 7c.7-1.3 1.4-2 3-2"></path>
-                    <path d="M21.5 13 19 7c-.7-1.3-1.4-2-3-2"></path>
-                  </svg>
-                  <span class="text-[8px] font-extrabold text-[#15803d] tracking-wide animate-pulse">IN PROGRESS</span>
-                </span>
+                ${event.tech ? `
+                  <span>${escapeHtml(event.tech)} /</span>
+                  <span class="inline-flex items-center space-x-1 px-1.5 py-0.5 rounded bg-[#EAF7EC] text-[#2E7D32] border border-[#74D16F]/60">
+                    <svg class="w-3.5 h-3.5 text-[#4A9755] animate-pulse flex-shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                      <circle cx="6" cy="15" r="4"></circle>
+                      <circle cx="18" cy="15" r="4"></circle>
+                      <path d="M14 15a2 2 0 0 0-2-2 2 2 0 0 0-2 2"></path>
+                      <path d="M2.5 13 5 7c.7-1.3 1.4-2 3-2"></path>
+                      <path d="M21.5 13 19 7c-.7-1.3-1.4-2-3-2"></path>
+                    </svg>
+                    <span class="text-[8px] font-bold text-[#2E7D32] tracking-wide">In Progress</span>
+                  </span>
+                ` : `
+                  <span class="inline-flex items-center space-x-1 px-1.5 py-0.5 rounded bg-amber-50/80 border border-amber-300 shadow-[0_0_8px_rgba(234,179,8,0.35)]">
+                    <!-- Flashing Whitney glasses icon in yellow/amber -->
+                    <svg class="w-3.5 h-3.5 text-yellow-500 animate-pulse flex-shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                      <circle cx="6" cy="15" r="4"></circle>
+                      <circle cx="18" cy="15" r="4"></circle>
+                      <path d="M14 15a2 2 0 0 0-2-2 2 2 0 0 0-2 2"></path>
+                      <path d="M2.5 13 5 7c.7-1.3 1.4-2 3-2"></path>
+                      <path d="M21.5 13 19 7c-.7-1.3-1.4-2-3-2"></path>
+                    </svg>
+                    <span class="text-[8px] font-bold text-yellow-500 tracking-wide">Ready For Witnessing</span>
+                  </span>
+                `}
               </span>
             ` : `
               <span class="ml-1 text-slate-400 font-normal italic">${event.tech ? escapeHtml(event.tech) : ''}</span>
@@ -3777,108 +4090,178 @@
         </svg>
       `;
 
-      // Define default chronological sequence for Whitney Witness cycle
-      const cycleSequence = [
-        {
-          date: '09/14/2026',
-          time: '07:00 AM',
-          procedure: 'Egg Retrieval',
-          stage: 'Day 0',
-          tech: 'LP',
-          status: 'VERIFIED',
-          notes: 'Follicular aspirate verified; Dish #DISH-9821'
-        },
-        {
-          date: '09/14/2026',
-          time: '07:00 AM',
-          procedure: 'Sperm Processing (Partner Match)',
-          stage: 'Andrology',
-          tech: 'LP',
-          status: 'VERIFIED',
-          notes: 'Partner Lonyl Palao (MRN: 54321) cup barcode match'
-        },
-        {
-          date: '09/14/2026',
-          time: '09:30 AM',
-          procedure: 'Denudation',
-          stage: 'Day 0',
-          tech: 'LP',
-          status: 'IN_PROGRESS',
-          notes: '2.0 – 4.0h post-OPU; Strip dish validated'
-        },
-        {
-          date: '09/14/2026',
-          time: '11:30 AM',
-          procedure: 'ICSI',
-          stage: 'Day 0',
-          tech: 'LP',
-          status: 'SCHEDULED',
-          notes: '1.0 – 2.0h post-stripping; ICSI Rig 02'
-        },
-        {
-          date: '09/15/2026',
-          time: '07:00 AM',
-          procedure: 'Fertilization Assessment',
-          stage: 'Day 1',
-          tech: 'LP',
-          status: 'SCHEDULED',
-          notes: '16 – 20h post-ICSI (2PN / 2PB verification)'
-        },
-        {
-          date: '09/16/2026',
-          time: '07:00 AM',
-          procedure: 'Undisturbed Incubator Culture',
-          stage: 'Day 2',
-          tech: 'Auto',
-          status: 'IN_PROGRESS',
-          notes: 'Miri Incubator Chamber 03'
-        },
-        {
-          date: '09/17/2026',
-          time: '07:00 AM',
-          procedure: 'Undisturbed Incubator Culture',
-          stage: 'Day 3',
-          tech: 'Auto',
-          status: 'IN_PROGRESS',
-          notes: 'Miri Incubator Chamber 03'
-        },
-        {
-          date: '09/18/2026',
-          time: '07:00 AM',
-          procedure: 'Undisturbed Incubator Culture',
-          stage: 'Day 4',
-          tech: 'Auto',
-          status: 'IN_PROGRESS',
-          notes: 'Miri Incubator Chamber 03'
-        },
-        {
-          date: '09/19/2026',
-          time: '08:00 AM',
-          procedure: 'Day 5 Check / BX / Cryo',
-          stage: 'Day 5',
-          tech: 'LP',
-          status: 'SCHEDULED',
-          notes: 'Laser Biopsy Hood 02 (PGT-A) & Vitrification'
-        },
-        {
-          date: '09/20/2026',
-          time: '08:00 AM',
-          procedure: 'Day 6 Check / BX / Cryo',
-          stage: 'Day 6',
-          tech: 'LP',
-          status: 'SCHEDULED',
-          notes: 'Hood 03 / Cryo Rig'
-        },
-        {
-          date: '09/21/2026',
-          time: '08:30 AM',
-          procedure: 'Day 7 Check / BX / Cryo',
-          stage: 'Day 7',
-          tech: 'LP',
-          status: 'SCHEDULED',
-          notes: 'Final blastocyst check, biopsy & cryopreservation'
-        }
-      ];
+      // Define chronological sequence based on target patient
+      let cycleSequence = [];
+
+      if (pName.toLowerCase().includes('tracy')) {
+        cycleSequence = [
+          {
+            date: '09/14/2026',
+            time: '09:30 AM',
+            procedure: 'Fertilization Check',
+            stage: 'Day 1',
+            tech: 'LP',
+            status: 'IN_PROGRESS',
+            notes: '16–20h post-ICSI 2PN check; Inverted Scope Hood 01'
+          },
+          {
+            date: '09/15/2026',
+            time: '09:30 AM',
+            procedure: 'Undisturbed Incubator Culture',
+            stage: 'Day 2',
+            tech: 'Auto',
+            status: 'IN_PROGRESS',
+            notes: 'Miri Incubator Chamber 02 (40–48h post-ICSI)'
+          },
+          {
+            date: '09/16/2026',
+            time: '09:30 AM',
+            procedure: 'Undisturbed Incubator Culture',
+            stage: 'Day 3',
+            tech: 'Auto',
+            status: 'IN_PROGRESS',
+            notes: 'Miri Incubator Chamber 02 (64–72h post-ICSI)'
+          },
+          {
+            date: '09/17/2026',
+            time: '09:30 AM',
+            procedure: 'Undisturbed Incubator Culture',
+            stage: 'Day 4',
+            tech: 'Auto',
+            status: 'IN_PROGRESS',
+            notes: 'Miri Incubator Chamber 02 (88–96h post-ICSI)'
+          },
+          {
+            date: '09/18/2026',
+            time: '09:30 AM',
+            procedure: 'Day 5 Check / BX / Cryo',
+            stage: 'Day 5',
+            tech: 'LP',
+            status: 'SCHEDULED',
+            notes: 'Laser Biopsy Hood 02 (PGT-A) & Vitrification'
+          },
+          {
+            date: '09/19/2026',
+            time: '09:30 AM',
+            procedure: 'Day 6 Check / BX / Cryo',
+            stage: 'Day 6',
+            tech: 'LP',
+            status: 'SCHEDULED',
+            notes: 'Hood 03 / Cryo Rig'
+          },
+          {
+            date: '09/20/2026',
+            time: '09:30 AM',
+            procedure: 'Day 7 Check / BX / Cryo',
+            stage: 'Day 7',
+            tech: 'LP',
+            status: 'SCHEDULED',
+            notes: 'Final blastocyst check, biopsy & cryopreservation'
+          }
+        ];
+      } else {
+        cycleSequence = [
+          {
+            date: '09/14/2026',
+            time: '07:00 AM',
+            procedure: 'Egg Retrieval',
+            stage: 'Day 0',
+            tech: 'LP',
+            status: 'VERIFIED',
+            notes: 'Follicular aspirate verified; Dish #DISH-9821'
+          },
+          {
+            date: '09/14/2026',
+            time: '07:00 AM',
+            procedure: 'Sperm Processing (Partner Match)',
+            stage: 'Andrology',
+            tech: 'LP',
+            status: 'VERIFIED',
+            notes: 'Partner Lonyl Palao (MRN: 54321) cup barcode match'
+          },
+          {
+            date: '09/14/2026',
+            time: '09:30 AM',
+            procedure: 'Denudation',
+            stage: 'Day 0',
+            tech: '—',
+            status: 'IN_PROGRESS',
+            notes: '2.0 – 4.0h post-OPU; Strip dish validated'
+          },
+          {
+            date: '09/14/2026',
+            time: '11:30 AM',
+            procedure: 'ICSI',
+            stage: 'Day 0',
+            tech: 'LP',
+            status: 'SCHEDULED',
+            notes: '1.0 – 2.0h post-stripping; ICSI Rig 02'
+          },
+          {
+            date: '09/15/2026',
+            time: '07:00 AM',
+            procedure: 'Fertilization Assessment',
+            stage: 'Day 1',
+            tech: 'LP',
+            status: 'SCHEDULED',
+            notes: '16 – 20h post-ICSI (2PN / 2PB verification)'
+          },
+          {
+            date: '09/16/2026',
+            time: '07:00 AM',
+            procedure: 'Undisturbed Incubator Culture',
+            stage: 'Day 2',
+            tech: 'Auto',
+            status: 'IN_PROGRESS',
+            notes: 'Miri Incubator Chamber 03'
+          },
+          {
+            date: '09/17/2026',
+            time: '07:00 AM',
+            procedure: 'Undisturbed Incubator Culture',
+            stage: 'Day 3',
+            tech: 'Auto',
+            status: 'IN_PROGRESS',
+            notes: 'Miri Incubator Chamber 03'
+          },
+          {
+            date: '09/18/2026',
+            time: '07:00 AM',
+            procedure: 'Undisturbed Incubator Culture',
+            stage: 'Day 4',
+            tech: 'Auto',
+            status: 'IN_PROGRESS',
+            notes: 'Miri Incubator Chamber 03'
+          },
+          {
+            date: '09/19/2026',
+            time: '08:00 AM',
+            procedure: 'Day 5 Check / BX / Cryo',
+            stage: 'Day 5',
+            tech: 'LP',
+            status: 'SCHEDULED',
+            notes: 'Laser Biopsy Hood 02 (PGT-A) & Vitrification'
+          },
+          {
+            date: '09/20/2026',
+            time: '08:00 AM',
+            procedure: 'Day 6 Check / BX / Cryo',
+            stage: 'Day 6',
+            tech: 'LP',
+            status: 'SCHEDULED',
+            notes: 'Hood 03 / Cryo Rig'
+          },
+          {
+            date: '09/21/2026',
+            time: '08:30 AM',
+            procedure: 'Day 7 Check / BX / Cryo',
+            stage: 'Day 7',
+            tech: 'LP',
+            status: 'SCHEDULED',
+            notes: 'Final blastocyst check, biopsy & cryopreservation'
+          }
+        ];
+      }
 
       tbody.innerHTML = '';
       cycleSequence.forEach(point => {
@@ -3894,9 +4277,9 @@
             <span>VERIFIED BY WHITNEY</span>
           </div>
         ` : isInProgress ? `
-          <div class="inline-flex items-center space-x-1 px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-300 font-bold text-[10.5px]">
-            <i data-lucide="glasses" class="w-3 h-3 text-[#4A9755]"></i>
-            <span>IN PROGRESS</span>
+          <div class="inline-flex items-center space-x-1 px-2 py-0.5 rounded-full bg-amber-50 text-yellow-600 border border-amber-300 font-bold text-[10.5px]">
+            <i data-lucide="glasses" class="w-3 h-3 text-yellow-500"></i>
+            <span>Ready For Witnessing</span>
           </div>
         ` : `
           <span class="px-2 py-0.5 rounded-full bg-slate-100 text-slate-500 border border-slate-200 font-semibold text-[10px]">
